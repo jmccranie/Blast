@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu_background"
+    tools:context=".PlayMenuActivity" >
+    
+    <LinearLayout android:id="@+id/main_menu"
+        android:orientation="vertical"
+        android:layout_below="@id/menu_icon"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true" >
+
+        <TextView android:id="@+id/pass_n_play"
+	        android:text="@string/pass_n_play"
+	        android:onClick="onClick"
+	        style="@style/MenuFont" />
+
+	    <TextView android:id="@+id/bluetooth"
+	        android:text="@string/bluetooth"
+	        android:onClick="onClick"
+	        style="@style/MenuFont" />
+
+	    <TextView android:id="@+id/online"
+	        android:text="@string/online"
+	        android:onClick="onClick"
+	        style="@style/MenuFont" />
+        
+    </LinearLayout>
+
+</RelativeLayout>

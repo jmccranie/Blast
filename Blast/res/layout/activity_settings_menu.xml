@@ -1,0 +1,45 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu_background"
+    tools:context=".SettingsMenuActivity" >
+    
+    <LinearLayout 
+        android:orientation="horizontal"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+        
+        <TextView android:id="@+id/settings_music_tv"
+	        android:text="@string/settings_music"
+	        android:layout_weight="1"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent" />
+
+    	<CheckBox android:id="@+id/chk_music"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:onClick="onClick" />
+        
+	</LinearLayout>
+	
+    <LinearLayout 
+        android:orientation="horizontal"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+        
+        <TextView android:id="@+id/settings_sfx"
+	        android:text="@string/settings_sfx"
+	        android:layout_weight="1"
+	        android:layout_width="0dp"
+	        android:layout_height="match_parent" />
+
+    	<CheckBox android:id="@+id/chk_sfx"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:onClick="onClick" />
+        
+	</LinearLayout>
+    
+</LinearLayout>

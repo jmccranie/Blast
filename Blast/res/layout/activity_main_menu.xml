@@ -1,0 +1,40 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_menu_relative"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/menu_background"
+    tools:context=".MenuActivity" >
+    
+    <ImageView android:id="@+id/menu_icon"
+        android:src="@drawable/blast_icon"
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+    
+    <LinearLayout android:id="@+id/main_menu"
+        android:orientation="vertical"
+        android:layout_below="@id/menu_icon"
+        android:layout_margin="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <TextView android:id="@+id/play"
+            style="@style/MenuFont"
+            android:onClick="onClick"
+            android:text="@string/play" />
+        
+        <TextView android:id="@+id/settings"
+            android:text="@string/settings"
+            android:onClick="onClick"
+            style="@style/MenuFont" />
+        
+        <TextView android:id="@+id/help"
+            android:text="@string/help"
+            android:onClick="onClick"
+            style="@style/MenuFont" />
+        
+    </LinearLayout>
+
+</RelativeLayout>

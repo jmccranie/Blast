@@ -1,0 +1,72 @@
+package com.cen3031.blast;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.CheckBox;
+
+import com.cen3031.blast.R;
+
+public class SettingsMenuActivity extends Activity {
+    public static final String PREFS_NAME = "BlastPrefs";
+    
+    private CheckBox mMusic;
+    private CheckBox mSFX;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_settings_menu);
+        
+        mMusic = (CheckBox)findViewById(R.id.chk_music);
+        mSFX = (CheckBox)findViewById(R.id.chk_sfx);
+        
+        //load the saved settings checkbox states
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        boolean music = settings.getBoolean("music", false);
+        boolean SFX = settings.getBoolean("sfx", false);
+        mMusic.setChecked(music);
+        mSFX.setChecked(SFX);
+        setMusic(music);
+        setSFX(SFX);
+    }
+    
+    protected void onStop() {
+        super.onStop();
+
+       //save the current settings checkbox states
+       SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+       SharedPreferences.Editor editor = settings.edit();
+       editor.putBoolean("music", mMusic.isChecked());
+       editor.putBoolean("sfx", mSFX.isChecked());
+
+       editor.commit();
+     }
+    
+    //turn music on or off
+    private void setMusic(boolean onOff) {
+        //TODO turn music on or off
+    }
+    
+    //turn SFX on or off
+    private void setSFX(boolean onOff) {
+        //TODO turn SFX on or off
+    }
+    
+    public void onClick(View v) {
+        boolean checked = ((CheckBox) v).isChecked();
+        
+        switch (v.getId()) {
+        case R.id.chk_music :
+            mMusic.setChecked(checked);
+            setMusic(checked);
+            break;
+        case R.id.chk_sfx :
+            mSFX.setChecked(checked);
+            setSFX(checked);
+            break;
+        }
+    }
+}
