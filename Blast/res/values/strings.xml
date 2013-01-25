@@ -15,5 +15,6 @@
     <string name="title_activity_help_menu">HelpMenuActivity</string>
     <string name="settings_music">Music</string>
     <string name="settings_sfx">Sound Effects</string>
+    <string name="title_activity_bluetooth">BluetoothActivity</string>
 
 </resources>
