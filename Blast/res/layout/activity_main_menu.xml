@@ -13,25 +13,25 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
     
-    <LinearLayout android:id="@+id/main_menu"
+    <LinearLayout android:id="@+id/ll_main_menu"
         android:orientation="vertical"
         android:layout_below="@id/menu_icon"
         android:layout_margin="10dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
 
-        <TextView android:id="@+id/play"
+        <TextView android:id="@+id/tv_play"
             style="@style/MenuFont"
             android:onClick="onClick"
-            android:text="@string/play" />
+            android:text="@string/tv_main_menu_play" />
         
-        <TextView android:id="@+id/settings"
-            android:text="@string/settings"
+        <TextView android:id="@+id/tv_settings"
+            android:text="@string/tv_main_menu_settings"
             android:onClick="onClick"
             style="@style/MenuFont" />
         
-        <TextView android:id="@+id/help"
-            android:text="@string/help"
+        <TextView android:id="@+id/tv_help"
+            android:text="@string/tv_main_menu_help"
             android:onClick="onClick"
             style="@style/MenuFont" />
         

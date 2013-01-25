@@ -20,8 +20,8 @@ public class SettingsMenuActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings_menu);
         
-        mMusic = (CheckBox)findViewById(R.id.chk_music);
-        mSFX = (CheckBox)findViewById(R.id.chk_sfx);
+        mMusic = (CheckBox)findViewById(R.id.cb_music);
+        mSFX = (CheckBox)findViewById(R.id.cb_sfx);
         
         //load the saved settings checkbox states
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -33,6 +33,7 @@ public class SettingsMenuActivity extends Activity {
         setSFX(SFX);
     }
     
+    @Override
     protected void onStop() {
         super.onStop();
 
@@ -59,11 +60,11 @@ public class SettingsMenuActivity extends Activity {
         boolean checked = ((CheckBox) v).isChecked();
         
         switch (v.getId()) {
-        case R.id.chk_music :
+        case R.id.cb_music :
             mMusic.setChecked(checked);
             setMusic(checked);
             break;
-        case R.id.chk_sfx :
+        case R.id.cb_sfx :
             mSFX.setChecked(checked);
             setSFX(checked);
             break;

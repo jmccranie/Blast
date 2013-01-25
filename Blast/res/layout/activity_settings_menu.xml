@@ -11,13 +11,13 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content" >
         
-        <TextView android:id="@+id/settings_music_tv"
-	        android:text="@string/settings_music"
+        <TextView android:id="@+id/tv_music"
+	        android:text="@string/tv_settings_music"
 	        android:layout_weight="1"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent" />
 
-    	<CheckBox android:id="@+id/chk_music"
+    	<CheckBox android:id="@+id/cb_music"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:onClick="onClick" />
@@ -29,13 +29,13 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content" >
         
-        <TextView android:id="@+id/settings_sfx"
-	        android:text="@string/settings_sfx"
+        <TextView android:id="@+id/tv_sfx"
+	        android:text="@string/tv_settings_sfx"
 	        android:layout_weight="1"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent" />
 
-    	<CheckBox android:id="@+id/chk_sfx"
+    	<CheckBox android:id="@+id/cb_sfx"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:onClick="onClick" />

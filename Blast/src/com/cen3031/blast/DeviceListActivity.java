@@ -11,8 +11,8 @@ import android.view.Menu;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-public class BluetoothActivity extends Activity {
-	public static final int REQUEST_ENABLE_BT = 1;
+public class DeviceListActivity extends Activity {
+	private static final int REQUEST_ENABLE_BT = 1;
 	private BluetoothAdapter mBluetoothAdapter;
 	private ArrayAdapter<String> mArrayAdapter;
 	
@@ -27,7 +27,7 @@ public class BluetoothActivity extends Activity {
 			finish();
 		}
 		else {
-			setContentView(R.layout.activity_bluetooth);
+			setContentView(R.layout.activity_device_list);
 			
 			if (!mBluetoothAdapter.isEnabled()) {
 			    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -44,21 +44,35 @@ public class BluetoothActivity extends Activity {
 	}
 	
 	@Override
-	  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if (requestCode == REQUEST_ENABLE_BT) {
-		      if (resultCode == RESULT_OK) {
-		    	  Toast.makeText(getApplicationContext(), "Bluetooth enabled", Toast.LENGTH_SHORT).show();
-		    	  startBluetoothServices();
-		      } 
-		      else if (resultCode == RESULT_CANCELED) {
-		    	  Toast.makeText(getApplicationContext(), "This mode is not available if bluetooth is not enabled", Toast.LENGTH_SHORT).show();
-		    	  finish();
-		      }
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    if (requestCode == REQUEST_ENABLE_BT) {
+	        if (resultCode == RESULT_OK) {
+	            Toast.makeText(getApplicationContext(), "Bluetooth enabled", Toast.LENGTH_SHORT).show();
+	            startBluetoothServices();
+		    } 
+		    else if (resultCode == RESULT_CANCELED) {
+		    	Toast.makeText(getApplicationContext(), "This mode is not available if bluetooth is not enabled", Toast.LENGTH_SHORT).show();
+		    	finish();
+		    }
 		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+	    super.onDestroy();
+	    
+	    //TODO turn off bluetooth discovery and other things maybe
 	}
 	
 	private void startBluetoothServices() {
 		checkForPairedDevices();
+		
+		if (mBluetoothAdapter.isDiscovering()) {
+		    mBluetoothAdapter.cancelDiscovery();
+		}
+		//if (mBluetoothAdapter.startDiscovery()) {
+		    //Toast.makeText(getApplicationContext(), "Searching for devices", Toast.LENGTH_SHORT).show();
+		//}
 	}
 	
 	private void checkForPairedDevices() {

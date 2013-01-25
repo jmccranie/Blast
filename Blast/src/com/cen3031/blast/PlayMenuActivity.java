@@ -24,15 +24,15 @@ public class PlayMenuActivity extends Activity {
         Intent intent;
         
         switch (v.getId()) {
-        case R.id.pass_n_play :
+        case R.id.tv_pass_n_play :
             //intent = new Intent(this, PlayMenuActivity.class);
             //startActivity(intent);
             break;
-        case R.id.bluetooth :
-            intent = new Intent(this, BluetoothActivity.class);
+        case R.id.tv_bluetooth :
+            intent = new Intent(this, DeviceListActivity.class);
             startActivity(intent);
             break;
-        case R.id.online :
+        case R.id.tv_online :
             //intent = new Intent(this, HelpMenuActivity.class);
             //startActivity(intent);
             break;

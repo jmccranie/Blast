@@ -25,15 +25,15 @@ public class MainMenuActivity extends Activity {
         Intent intent;
         
         switch (v.getId()) {
-        case R.id.play :
+        case R.id.tv_play :
             intent = new Intent(this, PlayMenuActivity.class);
             startActivity(intent);
             break;
-        case R.id.settings :
+        case R.id.tv_settings :
             intent = new Intent(this, SettingsMenuActivity.class);
             startActivity(intent);
             break;
-        case R.id.help :
+        case R.id.tv_help :
             intent = new Intent(this, HelpMenuActivity.class);
             startActivity(intent);
             break;
