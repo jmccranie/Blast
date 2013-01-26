@@ -23,15 +23,15 @@
         <TextView android:id="@+id/tv_play"
             style="@style/MenuFont"
             android:onClick="onClick"
-            android:text="@string/tv_main_menu_play" />
+            android:text="@string/play" />
         
         <TextView android:id="@+id/tv_settings"
-            android:text="@string/tv_main_menu_settings"
+            android:text="@string/settings"
             android:onClick="onClick"
             style="@style/MenuFont" />
         
         <TextView android:id="@+id/tv_help"
-            android:text="@string/tv_main_menu_help"
+            android:text="@string/help"
             android:onClick="onClick"
             style="@style/MenuFont" />
         

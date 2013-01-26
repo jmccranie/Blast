@@ -3,21 +3,63 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     
+	<TextView android:id="@+id/tv_paired_devices"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/paired_devices"
+        android:background="#666"
+        android:textColor="#fff"
+        android:paddingLeft="5dp" />
+    
     <ListView android:id="@+id/lv_paired_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stackFromBottom="true"
-        android:layout_weight="1"
-    />
+        android:layout_weight="1" />
+    
+    <LinearLayout android:id="@+id/ll_progress_bar" 
+    	android:orientation="horizontal"
+    	android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:background="#666" >
+    	
+        <TextView android:id="@+id/tv_new_devices"
+	        android:layout_width="0dp"
+	        android:layout_weight="1"
+	        android:layout_height="wrap_content"
+	        android:text="@string/other_devices"
+	        android:textColor="#fff"
+	        android:paddingLeft="5dp" />
+        
+        <TextView android:id="@+id/tv_scanning"
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:text="@string/scanning"
+	         android:visibility="gone" />
+    
+    	<ProgressBar android:id="@+id/pb_scanning"
+    	    android:visibility="gone"
+    	    android:layout_marginRight="5dp"
+			style="@style/GenericProgressIndicator" />
+    	
+    </LinearLayout>
+    
     <ListView android:id="@+id/lv_new_devices"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:stackFromBottom="true"
-        android:layout_weight="2"
-    />
-    <Button android:id="@+id/button_scan"
+        android:layout_weight="2" />
+    
+    <Button android:id="@+id/button_start_scan"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/button_scan"
-    />
+        android:text="@string/button_start_scan"
+        android:onClick="onClick" />
+    
+	    
+    <Button android:id="@+id/button_stop_scan"
+    	android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="@string/button_stop_scan"
+	    android:visibility="gone"
+	    android:onClick="onClick" />
+        
 </LinearLayout>

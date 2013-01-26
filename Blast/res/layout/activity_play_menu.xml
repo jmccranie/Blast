@@ -14,17 +14,17 @@
         android:layout_centerHorizontal="true" >
 
         <TextView android:id="@+id/tv_pass_n_play"
-	        android:text="@string/tv_play_menu_pass_n_play"
+	        android:text="@string/pass_n_play"
 	        android:onClick="onClick"
 	        style="@style/MenuFont" />
 
 	    <TextView android:id="@+id/tv_bluetooth"
-	        android:text="@string/tv_play_menu_bluetooth"
+	        android:text="@string/bluetooth"
 	        android:onClick="onClick"
 	        style="@style/MenuFont" />
 
 	    <TextView android:id="@+id/tv_online"
-	        android:text="@string/tv_play_menu_online"
+	        android:text="@string/online"
 	        android:onClick="onClick"
 	        style="@style/MenuFont" />
         

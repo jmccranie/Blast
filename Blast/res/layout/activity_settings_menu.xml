@@ -12,7 +12,7 @@
 	    android:layout_height="wrap_content" >
         
         <TextView android:id="@+id/tv_music"
-	        android:text="@string/tv_settings_music"
+	        android:text="@string/music"
 	        android:layout_weight="1"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent" />
@@ -30,7 +30,7 @@
 	    android:layout_height="wrap_content" >
         
         <TextView android:id="@+id/tv_sfx"
-	        android:text="@string/tv_settings_sfx"
+	        android:text="@string/sfx"
 	        android:layout_weight="1"
 	        android:layout_width="0dp"
 	        android:layout_height="match_parent" />
