@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/menu_background"
+    android:background="#666"
     tools:context=".SettingsMenuActivity" >
     
     <LinearLayout 
@@ -15,8 +15,9 @@
 	        android:text="@string/music"
 	        android:layout_weight="1"
 	        android:layout_width="0dp"
-	        android:layout_height="match_parent" />
-
+	        android:layout_height="match_parent"
+	        style="@style/MenuFont" />
+	        
     	<CheckBox android:id="@+id/cb_music"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
@@ -33,7 +34,8 @@
 	        android:text="@string/sfx"
 	        android:layout_weight="1"
 	        android:layout_width="0dp"
-	        android:layout_height="match_parent" />
+	        android:layout_height="match_parent"
+	        style="@style/MenuFont" />
 
     	<CheckBox android:id="@+id/cb_sfx"
 	        android:layout_width="wrap_content"

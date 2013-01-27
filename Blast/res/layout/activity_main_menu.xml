@@ -3,7 +3,7 @@
     android:id="@+id/main_menu_relative"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/menu_background"
+    android:background="#666"
     tools:context=".MenuActivity" >
     
     <ImageView android:id="@+id/menu_icon"

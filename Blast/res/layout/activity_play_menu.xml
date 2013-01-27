@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/menu_background"
+    android:background="#666"
     tools:context=".PlayMenuActivity" >
     
     <LinearLayout android:id="@+id/ll_play_menu"

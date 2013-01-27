@@ -39,11 +39,11 @@ public class PlayMenuActivity extends Activity {
     
     public void onClick(View v) {
         switch (v.getId()) {
-        case R.id.tv_pass_n_play :
+        case R.id.tv_pass_n_play:
             //intent = new Intent(this, PlayMenuActivity.class);
             //startActivity(intent);
             break;
-        case R.id.tv_bluetooth :
+        case R.id.tv_bluetooth:
             BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             
             if (mBluetoothAdapter == null) {
@@ -61,7 +61,7 @@ public class PlayMenuActivity extends Activity {
                 }
             }
             break;
-        case R.id.tv_online :
+        case R.id.tv_online:
             //intent = new Intent(this, HelpMenuActivity.class);
             //startActivity(intent);
             break;
