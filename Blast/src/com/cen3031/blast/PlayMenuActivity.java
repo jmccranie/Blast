@@ -62,8 +62,8 @@ public class PlayMenuActivity extends Activity {
             }
             break;
         case R.id.tv_online:
-            //intent = new Intent(this, HelpMenuActivity.class);
-            //startActivity(intent);
+            Intent intent = new Intent(this, ActiveGameMenuActivity.class);
+            startActivity(intent);
             break;
         }
     }

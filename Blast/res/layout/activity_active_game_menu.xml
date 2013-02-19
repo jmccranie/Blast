@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+<RelativeLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="5dp"
+    android:paddingBottom="10dp" >
+
+    <TextView
+        android:id="@+id/activeLabel"
+        style="@style/MenuFont"
+        android:text="Active Games"
+        android:textSize="35sp" />  
+
+    <TextView
+        android:id="@+id/yourLabel"
+        style="@style/MenuFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/createView"        
+        android:background="@drawable/border"
+        android:text="Your Turn"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24dp" 
+        android:layout_marginTop="20sp"/>
+    
+    <ListView
+        android:id="@+id/yourLayout"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@+id/yourLabel"
+        android:background="@drawable/border"
+        android:orientation="vertical"
+        android:gravity = "center">
+    </ListView>
+
+ 	<TextView
+        android:id="@+id/theirLabel"
+        style="@style/MenuFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/yourLayout"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/border"
+        android:text="Their Turn"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24dp" />
+    
+    <ListView
+        android:id="@+id/theirLayout"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@+id/theirLabel"
+        android:background="@drawable/border"
+        android:orientation="vertical">
+    </ListView>
+
+    <TextView
+        android:id="@+id/overLabel"
+        style="@style/MenuFont"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/overLayout"
+        android:layout_below="@+id/theirLayout"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/border"
+        android:text="Game Over"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textSize="24dp" />
+
+    <ListView
+        android:id="@+id/overLayout"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_below="@+id/overLabel"
+        android:background="@drawable/border"
+        android:orientation="vertical" >
+    </ListView>
+
+    <TextView
+        android:id="@+id/createView"
+        style="@style/MenuFont"
+        android:layout_alignLeft="@+id/activeLabel"
+        android:layout_below="@+id/activeLabel"
+        android:background="@drawable/border"
+        android:onClick="onClick"
+        android:text="Start A New Game"
+        android:textSize="24dp" />
+
+</RelativeLayout>
+</RelativeLayout>

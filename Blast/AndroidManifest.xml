@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="11"
         android:targetSdkVersion="17" />
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -16,12 +16,12 @@
         android:allowBackup="true"
         android:icon="@drawable/blast_icon"
         android:label="@string/app_name"
-        android:screenOrientation="sensorLandscape"
+        android:screenOrientation="sensorPortrait"
         android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
         <activity
             android:name="com.cen3031.blast.MainMenuActivity"
             android:label="@string/app_name"
-            android:screenOrientation="sensorLandscape" >
+            android:screenOrientation="sensorPortrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,23 +31,26 @@
         <activity
             android:name="com.cen3031.blast.PlayMenuActivity"
             android:label="@string/title_activity_play_menu"
-            android:screenOrientation="sensorLandscape" >
+            android:screenOrientation= "sensorPortrait">
         </activity>
         <activity
             android:name="com.cen3031.blast.SettingsMenuActivity"
             android:label="@string/title_activity_settings_menu"
-            android:screenOrientation="sensorLandscape" >
+            android:screenOrientation="sensorPortrait">
         </activity>
         <activity
             android:name="com.cen3031.blast.HelpMenuActivity"
             android:label="@string/title_activity_help_menu"
-            android:screenOrientation="sensorLandscape" >
+            android:screenOrientation="sensorPortrait" >
         </activity>
         <activity
             android:name="com.cen3031.blast.DeviceListActivity"
             android:label="@string/title_activity_device_list"
-            android:screenOrientation="sensorLandscape" >
+            android:screenOrientation="sensorPortrait">"
         </activity>
+        <activity android:name="com.cen3031.blast.ActiveGameMenuActivity"></activity>
+        <activity android:name="com.cen3031.blast.GameState"></activity>
+        <activity android:name="com.cen3031.blast.GameStateArrayAdaptor"></activity>
     </application>
 
 </manifest>
