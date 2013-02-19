@@ -87,7 +87,7 @@ public class BluetoothChat extends Activity {
         if(D) Log.e(TAG, "+++ ON CREATE +++");
 
         // Set up the window layout
-        setContentView(R.layout.main);
+        setContentView(R.layout.activity_bluetooth_chat);
 
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -322,7 +322,7 @@ public class BluetoothChat extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.option_menu, menu);
+        inflater.inflate(R.menu.bluetooth_menu, menu);
         return true;
     }
 
