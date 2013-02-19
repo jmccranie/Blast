@@ -56,7 +56,7 @@ public class PlayMenuActivity extends Activity {
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                 }
                 else {
-                    Intent btIntent = new Intent(this, DeviceListActivity.class);
+                    Intent btIntent = new Intent(this, BluetoothChat.class);
                     startActivity(btIntent);
                 }
             }
