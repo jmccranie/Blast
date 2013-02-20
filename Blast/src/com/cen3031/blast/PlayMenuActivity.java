@@ -19,7 +19,7 @@ public class PlayMenuActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_play_menu, menu);
+        getMenuInflater().inflate(R.menu.options_menu, menu);
         return true;
     }
     
@@ -56,7 +56,7 @@ public class PlayMenuActivity extends Activity {
                     startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
                 }
                 else {
-                    Intent btIntent = new Intent(this, DeviceListActivity.class);
+                    Intent btIntent = new Intent(this, BluetoothChat.class);
                     startActivity(btIntent);
                 }
             }
