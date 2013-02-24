@@ -4,5 +4,90 @@
     android:layout_height="match_parent"
     android:background="#666"
     tools:context=".HelpMenuActivity" >
+    
+    
+    <RelativeLayout
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"> 
+                   
+                    <ImageView
+                    android:id="@+id/back"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@drawable/battle"
+                    android:alpha=".4"
+                    />
+                    
+                    </RelativeLayout>
+    
+   
+    <ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+        
+        
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scrollbars="vertical"
+        android:textColor="@android:color/white"
+        android:textSize = "16sp" 
+        android:text=" 
+   
+				TUTORIAL   
+\n        
+\n Play options:
+\n Upon pressing play from the main menu of the game the player will have 3 options. Pass -n-play, Bluetooth, and Wi-Fi.
+\n
+\n Pass-n-Play:
+\n Two players will play against each other on a single device. 
+\n
+\n Bluetooth (Bluetooth on your device must be enabled):
+\n Two players play against each other via Bluetooth connection. This interface will show a list of all currently discoverable bluetooth devices. The player that picks the bluetooth id of the other player will act as the server and try to initiate a connection with the client. If a connection is successfully made, the game setup screen will appear on both players’ devices.
+\n
+\n Wi-Fi:
+\n Two players play against each other via a local Wi-Fi connection. If you are returning to a previous game, a list of active games will be listed on this screen. From this screen, users will also have the option of starting a new Wi-Fi game.
+\n
+\n Game Modes:
+\n The Game Modes screen will allow users to select between three game modes: Short, Medium and Long. These game modes will allow users to determine a relative length of game they would like to play. The relative lengths are dictated by the amount of 'money' allocated at for each player for units. Players for the Short game modes are given the least money and long given the most.
+\n
+\n Weapons/Units:
+\n The user will be able to select from three units that will vary in size: Soldier, Tank, and Missile Launcher. The damage that each unit can take will vary. Each unit is equipped with a different weapon. In addition, a mine will be available that will act as a defensive weapon. If struck it will inflict damage on the firing user. Each weapon can inflict the same damage, but will have different user modes of firing.
+\n Each unit has a different mode of firing. The Soldier's mortar aiming is reflection based; the user selects a point on his/her side of the map and the corresponding location on the opponents sided is hit. The Tank's cannon uses 180o directional aiming; the user points the tank in a desired direction toward the enemies side and the first enemy its path will take damage. The Missile Launcher uses both 180 degree directional and power aiming; the user aims in a desired direction and the relative power (distance) the missile will travel and land on the calculated point. The Mine, if stuck by any of the opponent's units will inflict damage on unit that hit it.
+\n
+\n Unit Allocation Screen:
+\n The Unit Allocation Screen allows you to customize your side of the screen with units. Each user is given a set amount of 'money depending on which game mode was selected. Select a unit from the sidebar, which will also display your allotted money/balance. The selected unit will then be highlighted and you will be able to select an open space on the map. You will be able to zoom in and out of the map to place and view units. The cost of the unit will then be deducted from your balance, assuming you have enough money available. You will be able to select and delete misplaced or unwanted units by selecting the unit on their map and selected remove unit. The mobile devices hardware back button will remove the most recently placed item. Press OK to submit. .When both players have submitted their map a random generator will choose who will attack first.
+\n
+\n 
+\n 
+\n Game Play:
+\n
+\n Attacking Screen:
+\n The player who's turn is it will see the Attacking Screen. This screen will prompt the user to select between two options: Attack or Move. There are two map view modes; one showing the whole map on the screen (both user and opponents sides) and the other a zoomed in screen (scroll to view the opponents side). The zoomed in screen is where you can 'Attack' or 'Move' units. The 'Attack' will allow you to select one of your unit's to attack the opponent.  The Attacking screen will then show the unit firing its weapon and where it hits on the opponents side. If it lands on an opponent's unit it will reduce the health of the unit. The 'Move' option will allow you to move your non-destroyed units to different places on the map. The 'Move' will be in place of your attack for that turn. 
+\n
+\n Two map view mode:
+\n The two map view modes will be triggered by turning/holding the phone horizontally or vertically. Holding the phone horizontally will enable the zoomed in view and holding it vertically will show the whole map. When 'Attack' is pressed, select a unit and aim with that unit's firing mode and select 'Fire' when ready. When 'Fire' is selected the application will calculate where the shot will land. This spot will be visible to both players for one turn. If the calculated coordinate corresponds to that of an opponent's unit it will reduce the unit's health by a specified amount. If it corresponds to an opponent's Mine it will reduce the health of the firing unit. If a units health goes to zero, it will be destroyed. Destroyed units will be displayed as destroyed and will not be able to be attacked or moved. If the attack results in destroying the opponent’s last active unit the attacker will be declared the winner. If the opponent still has remaining active units the game will continue and the current user will go to the Waiting Screen.
+\n
+\n Waiting Screen:
+\n The Waiting Screen is viewed by whoever is waiting for an opponent to attack. This screen will allow the player to view the current health of both users' units. Whole map and Zoomed viewing modes can be used in the Waiting Screen. When your opponent submits his/her attack or move, the resulting animation will show on the screen. If the game is not over the Waiting Screen will change to the Attack Screen.
 
+" 
+
+/>
+    
+ 
+
+    
+    </ScrollView>
+    
+  
 </RelativeLayout>
+
+    
+    
+    
+
+    
