@@ -32,11 +32,11 @@ public class MainMenuActivity extends Activity {
         super.onCreate(savedInstanceState); 
         a = AnimationUtils.loadAnimation(this, R.anim.alpha);
         a.reset();
-//        if (mp == null){
-//        	mp = MediaPlayer.create(this, R.raw.bg);
-//            mp.start();
-//            mp.setLooping(true);
-//        }
+        if (mp == null){
+        	mp = MediaPlayer.create(this, R.raw.bg);
+            mp.start();
+            mp.setLooping(true);
+        }
 //        mp.setOnCompletionListener(new OnCompletionListener() {
 //
 //            @Override
