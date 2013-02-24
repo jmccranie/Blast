@@ -9,6 +9,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,6 +83,11 @@ public class ActiveGameMenuActivity extends Activity {
 	@Override
 	protected void onStart() {
 	    super.onStart();
+	    if(socket == null){
+	    	Toast.makeText(getApplicationContext(), "Sorry, Could not connect to Server",
+	    			Toast.LENGTH_LONG).show();
+	    	finish();
+	    }
 	    Intent intent = getIntent();
 	    SERVER_IP = intent.getStringExtra("ipAddr");
 	    Thread clientThread = new Thread(new ClientThread());
@@ -101,18 +107,28 @@ public class ActiveGameMenuActivity extends Activity {
                     	Toast.makeText(getApplicationContext(), strReceived, Toast.LENGTH_LONG).show();
                     }
                 });
-        } catch (Exception e) { Log.d("test2", "IP addr : FUCK");}
+        } catch (Exception e) { Log.d("test2", "IP addr : FUCK");
+        	//finish();
+    	}
 	}
 		
 	 @Override
 	    protected void onStop() {
 	        super.onStop();
 	        try {
-	            socket.shutdownInput();
-	            socket.close();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+	        	Log.d("test1", "Stop Connection");
+	        	socket.shutdownInput();
+	        	socket.close();
+	        } catch (SocketException e) {
+	        	Log.d("test2", e.toString());
+	        	
+	        } catch (Exception e) {
+				// TODO Auto-generated catch block
+	        	Log.d("test3", e.toString()); 
+				e.printStackTrace();
+				finish();
+			}
+	        return;
 	    } 	 
 
 class ClientThread implements Runnable {
@@ -197,7 +213,9 @@ class ClientThread implements Runnable {
 	                    	Log.d("test2", "IP addr : " + error);
 	                    	Toast.makeText(getApplicationContext(), "last error", Toast.LENGTH_LONG).show();
 	                    }
+	            	
 	                });
+
 	            }
 	        }
 	    }
