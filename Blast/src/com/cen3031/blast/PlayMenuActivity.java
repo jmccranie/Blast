@@ -1,11 +1,16 @@
 package com.cen3031.blast;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class PlayMenuActivity extends Activity {
@@ -62,10 +67,40 @@ public class PlayMenuActivity extends Activity {
             }
             break;
         case R.id.tv_online:
-            Intent intent = new Intent(this, ActiveGameMenuActivity.class);
-            startActivity(intent);
+            enterIP();
             break;
         }
     }
+    
+    private void enterIP()
+	 {
+	     LayoutInflater factory = LayoutInflater.from(this);
+	     final View textEntryView = factory.inflate(R.layout.ip_addr_dialog, null);
+	     AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+	     alert.setTitle("Server IP address");  
+	     alert.setMessage("Enter IP:");                
+	     alert.setView(textEntryView);
+	  
+	     alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
+	     public void onClick(DialogInterface dialog, int whichButton) {  
+	         EditText serverIP;
+	         serverIP = (EditText) textEntryView.findViewById(R.id.ip_address);
+	         String ipAddr = serverIP.getText().toString();
+	         //Log.d("test", "IP addr : " + ipAddr);
+	         Intent intent = new Intent(PlayMenuActivity.this, ActiveGameMenuActivity.class);
+	         intent.putExtra("ipAddr",ipAddr);
+	         startActivity(intent);
+	         return;                  
+	        }  
+	      });  
+
+	     alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+	         public void onClick(DialogInterface dialog, int which) {
+	             // TODO Auto-generated method stub
+	             return;   
+	         }
+	     });
+	             alert.show();   }
 
 }

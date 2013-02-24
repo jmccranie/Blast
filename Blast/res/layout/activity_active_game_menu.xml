@@ -7,10 +7,10 @@
 <RelativeLayout 
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:paddingTop="5dp"
-    android:paddingBottom="10dp" >
+    android:paddingLeft="20dip"
+    android:paddingRight="20dip"
+    android:paddingTop="5dip"
+    android:paddingBottom="10dip" >
 
     <TextView
         android:id="@+id/activeLabel"
@@ -28,12 +28,12 @@
         android:text="Your Turn"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textSize="24dp" 
-        android:layout_marginTop="20sp"/>
+        android:layout_marginTop="20dip"/>
     
     <ListView
         android:id="@+id/yourLayout"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="70dip"
         android:layout_below="@+id/yourLabel"
         android:background="@drawable/border"
         android:orientation="vertical"
@@ -46,7 +46,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/yourLayout"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="20dip"
         android:background="@drawable/border"
         android:text="Their Turn"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -55,7 +55,7 @@
     <ListView
         android:id="@+id/theirLayout"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="70dip"
         android:layout_below="@+id/theirLabel"
         android:background="@drawable/border"
         android:orientation="vertical">
@@ -77,7 +77,7 @@
     <ListView
         android:id="@+id/overLayout"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="70dip"
         android:layout_below="@+id/overLabel"
         android:background="@drawable/border"
         android:orientation="vertical" >
@@ -91,7 +91,7 @@
         android:background="@drawable/border"
         android:onClick="onClick"
         android:text="Start A New Game"
-        android:textSize="24dp" />
+        android:textSize="24dip" />
 
 </RelativeLayout>
 </RelativeLayout>
