@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
@@ -22,6 +23,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ActiveGameMenuActivity extends Activity {
@@ -30,7 +32,7 @@ public class ActiveGameMenuActivity extends Activity {
 	 Handler handler = new Handler();
 	 static Socket socket = null;
      PrintWriter printWriter;
-     ObjectInputStream in = null; 
+     ObjectInputStream in; 
 	 public ListView listView;
 	
 	/** Called when the activity is first created. */
@@ -83,33 +85,11 @@ public class ActiveGameMenuActivity extends Activity {
 	@Override
 	protected void onStart() {
 	    super.onStart();
-	    if(socket == null){
-	    	Toast.makeText(getApplicationContext(), "Sorry, Could not connect to Server",
-	    			Toast.LENGTH_LONG).show();
-	    	finish();
-	    }
+	    
 	    Intent intent = getIntent();
 	    SERVER_IP = intent.getStringExtra("ipAddr");
 	    Thread clientThread = new Thread(new ClientThread());
 	    clientThread.start();
-	    try{
-	    	in = new ObjectInputStream(socket.getInputStream());
-	    	final String strReceived = (String)in.readObject();
-	    	if(strReceived == null)
-	    		Log.d("test1", "IP addr : " + strReceived);
-	    	else
-	    		Log.d("test1", "Not working");
-        	
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                    	Log.d("test2", "IP addr : " + strReceived);
-                    	Toast.makeText(getApplicationContext(), strReceived, Toast.LENGTH_LONG).show();
-                    }
-                });
-        } catch (Exception e) { Log.d("test2", "IP addr : FUCK");
-        	//finish();
-    	}
 	}
 		
 	 @Override
@@ -131,79 +111,79 @@ public class ActiveGameMenuActivity extends Activity {
 	        return;
 	    } 	 
 
-class ClientThread implements Runnable {
+     class ClientThread implements Runnable {
 	        public void run() {
 	            try {
 	                InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
-	                
-	                handler.post(new Runnable() {
-	                    @Override
-	                    public void run() {
-	                    	//Toast.makeText(getApplicationContext(), "Connecting to the Sever", Toast.LENGTH_LONG).show();
-	                    }
-	                });
+	                final TextView activeLabel = (TextView)findViewById(R.id.activeLabel);
+//	                handler.post(new Runnable() {
+//	                    @Override
+//	                    public void run() {
+//	                    	//Toast.makeText(getApplicationContext(), "Connecting to the Sever", Toast.LENGTH_LONG).show();
+//	                    }
+//	                });
 
+	                in = new ObjectInputStream(socket.getInputStream());
 	                socket = new Socket(serverAddr, SERVER_PORT);
+	                Log.d("socket", "IP addr : ");  
+                    final String strReceived = (String)in.readObject();
+                    Log.d("test2", "IP addr : " + strReceived);
 	                try {
-	                    printWriter = new PrintWriter(new BufferedWriter(
-	                            new OutputStreamWriter(socket.getOutputStream())),
-	                            true);
+//	                    printWriter = new PrintWriter(new BufferedWriter(
+//	                            new OutputStreamWriter(socket.getOutputStream())),
+//	                            true);
 
 	                    //---get an InputStream object to read from the server---
-	                    in = new ObjectInputStream(socket.getInputStream());
-	                    final String strReceived = (String)in.readObject();
-	                    if(strReceived == null)
-	                    	Log.d("test1", "IP addr : " + strReceived);
-	                    else
-	                    	Log.d("test1", "Not working");
+	                    
+	                    
+	                    Toast.makeText(getApplicationContext(), "test", Toast.LENGTH_LONG).show();
 	                    try {
-
-	                            handler.post(new Runnable() {
-	                                @Override
-	                                public void run() {
-	                                	Log.d("test2", "IP addr : " + strReceived);
-	                                	Toast.makeText(getApplicationContext(), strReceived, Toast.LENGTH_LONG).show();
-	                                }
-	                            });
+	                    	Log.d("socket2", "IP addr : "); 
+	                            
+	                            ActiveGameMenuActivity.this.runOnUiThread(new Runnable() {
+		                    	    public void run() {
+		                    	    	Toast.makeText(ActiveGameMenuActivity.this, strReceived, Toast.LENGTH_SHORT).show();
+		                    	    }
+		                    	});
 	                        //}
 
 	                        //---disconnected from the server---
-	                        handler.post(new Runnable() {
-	                            @Override
-	                            public void run() {
-	                            	//Toast.makeText(getApplicationContext(), SERVER_IP, Toast.LENGTH_LONG).show();
-	                            }
-	                        });
+//	                        handler.post(new Runnable() {
+//	                            @Override
+//	                            public void run() {
+//	                            	//Toast.makeText(getApplicationContext(), SERVER_IP, Toast.LENGTH_LONG).show();
+//	                            }
+//	                        });
 
 	                    } catch (Exception e) {
 	                        final String error = e.getLocalizedMessage();
-	                        handler.post(new Runnable() {
-	                            @Override
-	                            public void run() {
-	                            	Log.d("test2", "IP addr : " + error);
-	                            	Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-	                               // textView1.setText(textView1.getText() + "\n" + error);
-	                            }
-	                        });
+//	                        handler.post(new Runnable() {
+//	                            @Override
+//	                            public void run() {
+//	                            	Log.d("Blast", "IP addr : " + error.toString());
+//	                            	Toast.makeText(getApplicationContext(), error.toString(), Toast.LENGTH_LONG).show();
+//	                               // textView1.setText(textView1.getText() + "\n" + error);
+//	                            }
+//	                        });
 	                    }
 
 	                } catch (Exception e) {
 	                    final String error = e.getLocalizedMessage();
-	                    handler.post(new Runnable() {
-	                        @Override
-	                        public void run() {
-	                        	Log.d("test2", "IP addr : " + error);
-	                        }
-	                    });
+//	                    handler.post(new Runnable() {
+//	                        @Override
+//	                        public void run() {
+//	                        	Log.d("test2", "IP addr : " + error);
+//	                        }
+//	                    });
 	                }
 
-	                handler.post(new Runnable() {
-	                    @Override
-	                    public void run() {
-	                      //  textView1.setText(textView1.getText() + "\n" + "Connection closed.");
-	                    	Log.d("test2", "IP addr : " );
-	                    }
-	                });
+//	                handler.post(new Runnable() {
+//	                    @Override
+//	                    public void run() {
+//	                      //  textView1.setText(textView1.getText() + "\n" + "Connection closed.");
+//	                    	Log.d("test2", "IP addr : " );
+//	                    }
+//	                });
 
 	            } catch (Exception e) {
 	                final String error = e.getLocalizedMessage();
@@ -211,7 +191,9 @@ class ClientThread implements Runnable {
 	                    @Override
 	                    public void run() {
 	                    	Log.d("test2", "IP addr : " + error);
-	                    	Toast.makeText(getApplicationContext(), "last error", Toast.LENGTH_LONG).show();
+	                    	Toast.makeText(getApplicationContext(), "Sorry, Could not connect to Server",
+		        	    			Toast.LENGTH_LONG).show();
+	                    	finish();
 	                    }
 	            	
 	                });

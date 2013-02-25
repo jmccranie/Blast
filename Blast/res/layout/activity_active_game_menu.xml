@@ -15,7 +15,7 @@
     <TextView
         android:id="@+id/activeLabel"
         style="@style/MenuFont"
-        android:text="Active Games"
+
         android:textSize="35sp" />  
 
     <TextView
