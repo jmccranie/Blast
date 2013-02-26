@@ -43,10 +43,12 @@ public class PlayMenuActivity extends Activity {
     }
     
     public void onClick(View v) {
+    	Intent intent;
+    	
         switch (v.getId()) {
         case R.id.tv_pass_n_play:
-            //intent = new Intent(this, PlayMenuActivity.class);
-            //startActivity(intent);
+            intent = new Intent(this, GameActivity.class);
+            startActivity(intent);
             break;
         case R.id.tv_bluetooth:
             BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
