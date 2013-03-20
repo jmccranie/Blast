@@ -16,7 +16,7 @@ import org.andengine.opengl.texture.atlas.bitmap.source.AssetBitmapTextureAtlasS
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
-import android.widget.Toast;
+import android.util.DisplayMetrics;
 
 /**
  * (c) 2010 Nicolas Gramlich
@@ -30,8 +30,8 @@ public class GameActivity extends SimpleBaseGameActivity {
 	// Constants
 	// ===========================================================
 
-	private static final int CAMERA_WIDTH = 720;
-	private static final int CAMERA_HEIGHT = 480;
+	private static int CAMERA_WIDTH;
+	private static int CAMERA_HEIGHT;
 
 	// ===========================================================
 	// Fields
@@ -56,10 +56,15 @@ public class GameActivity extends SimpleBaseGameActivity {
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		//Toast.makeText(this, "Touch & Drag the face!", Toast.LENGTH_LONG).show();
+		
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		CAMERA_WIDTH = metrics.widthPixels;
+		CAMERA_HEIGHT = metrics.heightPixels;
 
 		final Camera camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
-		return new EngineOptions(true, ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
+		return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
 	}
 
 	@Override
@@ -102,10 +107,12 @@ public class GameActivity extends SimpleBaseGameActivity {
 				if  (posY > CAMERA_HEIGHT / 2 - 1.6*this.getHeight()) {
 					posY = CAMERA_HEIGHT / 2 - (float)1.6*this.getHeight();
 				}
+				
 				this.setPosition(pSceneTouchEvent.getX() - this.getWidth() / 2, posY);
 				return true;
 			}
 		};
+		
 		tankBottom.setScale(2);
 		scene.attachChild(tankBottom);
 		scene.registerTouchArea(tankBottom);
