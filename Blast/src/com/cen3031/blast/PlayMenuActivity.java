@@ -42,6 +42,23 @@ public class PlayMenuActivity extends Activity {
         }
     }
     
+    @Override
+    protected void onPause(){
+    	super.onPause();
+    	if(MainMenuActivity.music){
+    		MainMenuActivity.mp.pause();
+    	}
+    }
+    
+    @Override
+    protected void onResume(){
+    	super.onResume();
+    	
+    	if (MainMenuActivity.music) {
+    		MainMenuActivity.mp.start();
+    	}
+    }
+    
     public void onClick(View v) {
     	Intent intent;
     	
