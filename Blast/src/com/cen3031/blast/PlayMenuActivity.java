@@ -47,7 +47,7 @@ public class PlayMenuActivity extends Activity {
     	
         switch (v.getId()) {
         case R.id.tv_pass_n_play:
-            intent = new Intent(this, GameActivity.class);
+            intent = new Intent(this, UnitAllocationActivity.class);
             startActivity(intent);
             break;
         case R.id.tv_bluetooth:

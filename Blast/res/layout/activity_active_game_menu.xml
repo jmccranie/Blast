@@ -1,21 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     >
-<RelativeLayout 
+
+<RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:paddingBottom="10dip"
     android:paddingLeft="20dip"
     android:paddingRight="20dip"
-    android:paddingTop="5dip"
-    android:paddingBottom="10dip" >
+    android:paddingTop="5dip" >
 
     <TextView
         android:id="@+id/activeLabel"
         style="@style/MenuFont"
-
+		android:text="Active Games"
         android:textSize="35sp" />  
 
     <TextView
@@ -23,7 +28,7 @@
         style="@style/MenuFont"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/createView"        
+        android:layout_below="@+id/joinView"        
         android:background="@drawable/border"
         android:text="Your Turn"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -33,7 +38,7 @@
     <ListView
         android:id="@+id/yourLayout"
         android:layout_width="match_parent"
-        android:layout_height="70dip"
+        android:layout_height="100dip"
         android:layout_below="@+id/yourLabel"
         android:background="@drawable/border"
         android:orientation="vertical"
@@ -55,7 +60,7 @@
     <ListView
         android:id="@+id/theirLayout"
         android:layout_width="match_parent"
-        android:layout_height="70dip"
+        android:layout_height="100dip"
         android:layout_below="@+id/theirLabel"
         android:background="@drawable/border"
         android:orientation="vertical">
@@ -77,7 +82,7 @@
     <ListView
         android:id="@+id/overLayout"
         android:layout_width="match_parent"
-        android:layout_height="70dip"
+        android:layout_height="100dip"
         android:layout_below="@+id/overLabel"
         android:background="@drawable/border"
         android:orientation="vertical" >
@@ -92,6 +97,18 @@
         android:onClick="onClick"
         android:text="Start A New Game"
         android:textSize="24dip" />
+    
+    <TextView
+        android:id="@+id/joinView"
+        style="@style/MenuFont"
+        android:layout_alignLeft="@+id/activeLabel"
+        android:layout_below="@+id/createView"
+        android:background="@drawable/border"
+        android:onClick="onClick"
+        android:text="Join a Game"
+        android:layout_marginTop="20dp"
+        android:textSize="24dip" />
 
 </RelativeLayout>
 </RelativeLayout>
+</ScrollView>

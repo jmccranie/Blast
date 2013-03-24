@@ -100,7 +100,7 @@ public class GameActivity extends SimpleBaseGameActivity {
 			}
 		};
 		
-		final Sprite tankTop = new Sprite(centerX, CAMERA_HEIGHT/2 - 100, this.mFaceTextureRegion2, this.getVertexBufferObjectManager()) {
+		final Sprite tankTop = new Sprite(centerX, centerY, this.mFaceTextureRegion2, this.getVertexBufferObjectManager()) {
 			@Override
 			public boolean onAreaTouched(final TouchEvent pSceneTouchEvent, final float pTouchAreaLocalX, final float pTouchAreaLocalY) {
 				float posY = pSceneTouchEvent.getY() - this.getHeight() / 2;
