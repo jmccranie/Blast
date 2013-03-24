@@ -19,5 +19,21 @@ public class HelpMenuActivity extends Activity {
         getMenuInflater().inflate(R.menu.options_menu, menu);
         return true;
     }
-
+    
+    @Override
+    protected void onPause(){
+    	super.onPause();
+    	if(MainMenuActivity.music){
+    		MainMenuActivity.mp.pause();
+    	}
+    }
+    
+    @Override
+    protected void onResume(){
+    	super.onResume();
+    	
+    	if (MainMenuActivity.music) {
+    		MainMenuActivity.mp.start();
+    	}
+    }
 }

@@ -3,16 +3,13 @@ package com.cen3031.blast;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.webkit.WebView;
 import android.widget.Button;
 
 //final class GifViewUtil extends WebView {
@@ -25,26 +22,28 @@ import android.widget.Button;
 //"file:///res/drawable/explosion.gif"
 public class MainMenuActivity extends Activity {
 	Animation a;
-	MediaPlayer mp;
+	static MediaPlayer mp;
+	static boolean music;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState); 
+        super.onCreate(savedInstanceState);
+        
         a = AnimationUtils.loadAnimation(this, R.anim.alpha);
         a.reset();
-        if (mp == null){
+        
+        SharedPreferences settings = getSharedPreferences(SettingsMenuActivity.PREFS_NAME, Context.MODE_PRIVATE);
+        music = settings.getBoolean("music", false);
+        
+        if (mp == null) {
         	mp = MediaPlayer.create(this, R.raw.bg);
-            mp.start();
             mp.setLooping(true);
         }
-//        mp.setOnCompletionListener(new OnCompletionListener() {
-//
-//            @Override
-//            public void onCompletion(MediaPlayer mp) {
-//                mp.release();
-//            }
-//
-//        });   
+        
+        if (music) {
+        	mp.start();
+        }
+        
         setContentView(R.layout.activity_main_menu);
     }
 
@@ -78,7 +77,7 @@ public class MainMenuActivity extends Activity {
     @Override
     protected void onPause(){
     	super.onPause();
-    	if(mp.isPlaying()){
+    	if(music) {
     		mp.pause();
     	}
     }
@@ -86,7 +85,10 @@ public class MainMenuActivity extends Activity {
     @Override
     protected void onResume(){
     	super.onResume();
-    	mp.start();
+    	
+    	if (music) {
+    		mp.start();
+    	}
     }
     
     @Override

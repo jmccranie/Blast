@@ -17,6 +17,7 @@ import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import android.util.DisplayMetrics;
+import android.widget.Toast;
 
 /**
  * (c) 2010 Nicolas Gramlich
@@ -126,7 +127,24 @@ public class GameActivity extends SimpleBaseGameActivity {
 
 		return scene;  
 	}
-
+    
+    @Override
+    public void onResume() {
+    	super.onResume();
+    	
+    	if (MainMenuActivity.music) {
+    		MainMenuActivity.mp.start();
+    	}
+    }
+    
+    @Override
+    public void onPause() {
+    	super.onPause();
+    	
+    	if (MainMenuActivity.music) {
+    		MainMenuActivity.mp.pause();
+    	}
+    }
 	// ===========================================================
 	// Methods
 	// ===========================================================

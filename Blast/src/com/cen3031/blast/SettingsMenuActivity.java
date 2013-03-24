@@ -34,6 +34,24 @@ public class SettingsMenuActivity extends Activity {
     }
     
     @Override
+    protected void onPause(){
+    	super.onPause();
+    	
+    	if(MainMenuActivity.music){
+    		MainMenuActivity.mp.pause();
+    	}
+    }
+    
+    @Override
+    protected void onResume(){
+    	super.onResume();
+    	
+    	if (MainMenuActivity.music) {
+    		MainMenuActivity.mp.start();
+    	}
+    }
+    
+    @Override
     protected void onStop() {
         super.onStop();
 
@@ -47,8 +65,19 @@ public class SettingsMenuActivity extends Activity {
      }
     
     //turn music on or off
-    private void setMusic(boolean onOff) {
-        //TODO turn music on or off
+    private void setMusic(boolean music) {
+        if (!music) {
+        	if (MainMenuActivity.mp.isPlaying()) {
+        		MainMenuActivity.mp.pause();
+        		MainMenuActivity.music = false;
+        	}
+        }
+        else {
+        	if (!MainMenuActivity.mp.isPlaying()) {
+        		MainMenuActivity.mp.start();
+        		MainMenuActivity.music = true;
+        	}
+        }
     }
     
     //turn SFX on or off
