@@ -39,8 +39,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 
 	private BitmapTextureAtlas mBitmapTextureAtlas;
 	private BitmapTextureAtlas mBitmapTextureAtlas2;
+	private TextureRegion mBarricadeTextureRegion;
 	private TextureRegion mFaceTextureRegion;
-	private TextureRegion mFaceTextureRegion2;
 	private TextureRegion explosion;
 	private Sprite barricade;
 	private RepeatingSpriteBackground mGrassBackground;
@@ -71,7 +71,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(),512, 512, TextureOptions.BILINEAR);
 		this.mBitmapTextureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(),1024, 512, TextureOptions.BILINEAR);
 		this.mFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "tank.png", 0, 0);
-		this.mFaceTextureRegion2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "barricade.png", 0, 10);
+		this.mBarricadeTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "barricade.png", 0, 10);
 		this.explosion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "explosion.png", 25, 0);
 		this.mGrassBackground = new RepeatingSpriteBackground(CAMERA_WIDTH, CAMERA_HEIGHT, this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), "gfx/background_grass.png"), this.getVertexBufferObjectManager());
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
@@ -87,10 +87,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		scene.setTouchAreaBindingOnActionDownEnabled(true);
 		scene.setOnSceneTouchListener(this);
 		
-		final float centerX = (CAMERA_WIDTH - this.mFaceTextureRegion2.getWidth()) / 2;
-        final float centerY = (CAMERA_HEIGHT - this.mFaceTextureRegion2.getHeight()) / 2;
+		final float centerX = (CAMERA_WIDTH - this.mBarricadeTextureRegion.getWidth()) / 2;
+        final float centerY = (CAMERA_HEIGHT - this.mBarricadeTextureRegion.getHeight()) / 2;
 
-        this.barricade = new Sprite(centerX, centerY, this.mFaceTextureRegion2, this.mEngine.getVertexBufferObjectManager());
+        this.barricade = new Sprite(centerX, centerY, this.mBarricadeTextureRegion, this.mEngine.getVertexBufferObjectManager());
         scene.attachChild(this.barricade);
 		
 		return scene;
@@ -204,50 +204,84 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			scene.attachChild(explo);
 		}
 	}
-	
+	class Tank extends Sprite {
+		float originX, originY;
+		boolean removed,isSelected, validMove;
+		Rectangle outline;
+		public Tank(float pX, float pY, float pWidth, float pHeight,
+				ITextureRegion mFaceTextureRegion, VertexBufferObjectManager  vbom) {
+			super(pX, pY, pWidth, pHeight, mFaceTextureRegion, vbom);
+			originX = pX;
+			originY = pY;
+			removed = false;
+			validMove = false;
+			outline = new Rectangle (pX-2,pY-2,pWidth+4,pHeight+4, vbom);
+			outline.setVisible(false);
+			outline.setColor(1,1,0);
+			UnitAllocationActivity.scene.attachChild(outline);
+		}
+
+		public Tank(float centerX, int i, ITextureRegion mFaceTextureRegion,
+				VertexBufferObjectManager vertexBufferObjectManager) {
+			super(centerX,i,mFaceTextureRegion,vertexBufferObjectManager);
+			// TODO Auto-generated constructor stub
+		}
+		@Override
+		public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+			float posY = pSceneTouchEvent.getY() - this.getHeight() / 2;
+	        float posX = pSceneTouchEvent.getX() - this.getWidth() / 2;
+			  
+			  if(pSceneTouchEvent.isActionDown()){
+				  this.originX = posX;
+			      this.originY = posY;
+			      validMove = true;
+				  
+				  //Selects the Tank and highlights it
+				  if(isSelected){
+					  this.removed = true;
+					  scene.detachChild(outline);
+					  this.detachSelf();
+					  
+				  }else{
+					  UnitAllocationActivity.checkOthersSelected();
+					  isSelected = true;
+					  outline.setVisible(true);
+				  }
+			  }
+			  else if (pSceneTouchEvent.isActionMove()) {
+				  if (validMove) {
+					  for (int i = 0; i < tankList.size(); i++) {
+						  if (this != tankList.get(i)) {
+							  if (this.collidesWith(tankList.get(i))) {
+								  this.setPosition(this.originX, this.originY);
+								  this.outline.setPosition(this.originX - 2, this.originY - 2);
+								  validMove = false;
+								  return true;
+							  }
+						  }
+					  }
+					  
+					  if  (posY < ( (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2))) {
+					      posY = (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2);
+					  }
+
+				      this.setPosition(posX, posY);
+				      
+				      outline.setPosition(posX - 2, posY - 2);
+				  }
+				  else {
+					  return true;
+				  }
+			  }
+			  else if (pSceneTouchEvent.isActionUp()) {
+				  if (validMove) {
+					  this.originX = posX;
+				      this.originY = posY;
+				  }
+			  }
+			  
+	          return true;
+	        }
+	};	
 
 }
-
-
-class Tank extends Sprite {
-	float x,y;
-	boolean removed,isSelected;
-	Rectangle outline;
-	public Tank(float pX, float pY, float pWidth, float pHeight,
-			ITextureRegion mFaceTextureRegion, VertexBufferObjectManager  vbom) {
-		super(pX, pY, pWidth, pHeight, mFaceTextureRegion, vbom);
-		x = pX;
-		y = pY;
-		removed = false;
-		outline = new Rectangle (pX-2,pY-2,pWidth+4,pHeight+4, vbom);
-		outline.setVisible(false);
-		outline.setColor(1,1,0);
-		UnitAllocationActivity.scene.attachChild(outline);
-	}
-
-	public Tank(float centerX, int i, ITextureRegion mFaceTextureRegion,
-			VertexBufferObjectManager vertexBufferObjectManager) {
-		super(centerX,i,mFaceTextureRegion,vertexBufferObjectManager);
-		// TODO Auto-generated constructor stub
-	}
-	@Override
-	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) { 
-		  if(pSceneTouchEvent.isActionDown()){
-			 //Selects the Tank and highlights it
-			  if(isSelected){
-				  this.removed = true;
-				  UnitAllocationActivity.scene.detachChild(outline);
-				  this.detachSelf();
-				  
-			  }else{
-				  UnitAllocationActivity.checkOthersSelected();
-				  isSelected = true;
-				  outline.setVisible(true);
-			  }
-		  }	
-          return true;
-        }
-	  
-	
-};
-
