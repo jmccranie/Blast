@@ -50,7 +50,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	float touchY;
 	static Scene scene;
 	static LinkedList<Tank> tankList = new LinkedList<Tank>();
-	private static final int MAX_TANKS = 5;
+	static final int MAX_TANKS = 5;
 
 
 	@Override
@@ -155,7 +155,26 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		
 		return false;
 	}
-
+	
+	@Override
+	protected void onPause() {
+	        if (mEngine.isRunning()) {
+	        	mEngine.stop();
+	        }
+	    super.onPause();
+	}
+	
+	@Override
+	public void onResumeGame() {
+		super.onResumeGame();
+		//mEngine.start(); //apparently it automatically starts it anyway.
+	}
+	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		tankList.clear(); //clear list
+	}
 
 	// ===========================================================
 	// Methods
@@ -185,6 +204,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			scene.attachChild(explo);
 		}
 	}
+	
 
 }
 
