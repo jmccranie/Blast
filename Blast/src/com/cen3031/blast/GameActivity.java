@@ -19,13 +19,6 @@ import org.andengine.ui.activity.SimpleBaseGameActivity;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
-/**
- * (c) 2010 Nicolas Gramlich
- * (c) 2011 Zynga
- *
- * @author Nicolas Gramlich
- * @since 15:13:46 - 15.06.2010
- */
 public class GameActivity extends SimpleBaseGameActivity {
 	// ===========================================================
 	// Constants
@@ -145,11 +138,4 @@ public class GameActivity extends SimpleBaseGameActivity {
     		MainMenuActivity.mp.pause();
     	}
     }
-	// ===========================================================
-	// Methods
-	// ===========================================================
-
-	// ===========================================================
-	// Inner and Anonymous Classes
-	// ===========================================================
 }
