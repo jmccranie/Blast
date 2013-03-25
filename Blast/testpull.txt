@@ -1,4 +1,4 @@
 Testing pull from eclipse
 test test
-Pull Pull
-Pull test
+PUSH PUSH
+PUSH test
