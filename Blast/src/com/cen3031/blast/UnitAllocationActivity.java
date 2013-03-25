@@ -24,13 +24,6 @@ import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import android.util.DisplayMetrics;
 
-/**
- * (c) 2010 Nicolas Gramlich
- * (c) 2011 Zynga
- *
- * @author Nicolas Gramlich
- * @since 15:13:46 - 15.06.2010
- */
 public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener {
 	// ===========================================================
 	// Constants
@@ -51,7 +44,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private RepeatingSpriteBackground mGrassBackground;
 	
 	Tank tank;
-	float touchX; 
+	float touchX;
 	float touchY;
 	static Scene scene;
 	static LinkedList<Tank> tankList = new LinkedList<Tank>();
