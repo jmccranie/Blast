@@ -23,6 +23,7 @@ import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import android.util.DisplayMetrics;
+import android.util.Log;
 
 public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener {
 	// ===========================================================
@@ -40,6 +41,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private BitmapTextureAtlas mBitmapTextureAtlas2;
 	private TextureRegion mFaceTextureRegion;
 	private TextureRegion mFaceTextureRegion2;
+	private TextureRegion explosion;
 	private Sprite barricade;
 	private RepeatingSpriteBackground mGrassBackground;
 	
@@ -66,10 +68,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	@Override
 	public void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(),32, 32, TextureOptions.BILINEAR);
+		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(),512, 512, TextureOptions.BILINEAR);
 		this.mBitmapTextureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(),1024, 512, TextureOptions.BILINEAR);
 		this.mFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "tank.png", 0, 0);
 		this.mFaceTextureRegion2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "barricade.png", 0, 10);
+		this.explosion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "explosion.png", 25, 0);
 		this.mGrassBackground = new RepeatingSpriteBackground(CAMERA_WIDTH, CAMERA_HEIGHT, this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), "gfx/background_grass.png"), this.getVertexBufferObjectManager());
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas2);
@@ -103,13 +106,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			    	tankList.remove(i);
 			    }
 		   }
-		
 		//Checks if any other tanks are selected 
 		//If they are deselect them
-		checkOthersSelected();
+		//checkOthersSelected();
 		
 		//Max tanks = 5
 		if(tankList.size()<MAX_TANKS){
+	    checkOthersSelected();
 		boolean crash = false;
 		if (pSceneTouchEvent.isActionDown()) {
 			touchX = pSceneTouchEvent.getX();
@@ -127,6 +130,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		   return false;
 		}
 		}else{
+			if (pSceneTouchEvent.isActionDown()) {
+				touchX = pSceneTouchEvent.getX();
+		        touchY = pSceneTouchEvent.getY();
+			}
+			reflect(touchX,touchY);
+			checkOthersSelected();
 			// CREATE POP UP DIALOG TO SUBMIT
 		}
 		
@@ -158,6 +167,23 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			    	tankList.get(i).outline.setVisible(false);
 			    }
 		   }
+	}
+	
+	public void reflect(float fireXPos, float fireYPos){
+		//check if a tank is selected
+		Tank aTankSelected = null;
+		for(int i = 0; i < tankList.size(); i++){
+		    if(tankList.get(i).isSelected){
+		    	aTankSelected = tankList.get(i);
+		    }
+	    }
+		//tank selected
+		if((aTankSelected != null) && (aTankSelected.isSelected == true)){
+			Log.d("DEBUG","Reflect fired!" + fireXPos + " " + fireYPos);
+			float refYPos = (CAMERA_HEIGHT/2) - (fireYPos - (CAMERA_HEIGHT/2));
+			Sprite explo = new Sprite(fireXPos, refYPos, this.explosion, this.mEngine.getVertexBufferObjectManager());
+			scene.attachChild(explo);
+		}
 	}
 
 }
