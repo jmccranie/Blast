@@ -55,11 +55,14 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private BitmapTextureAtlas mBitmapTextureAtlas;
 	private BitmapTextureAtlas mBitmapTextureAtlas2;
 	private TextureRegion mFaceTextureRegion;
-	private TextureRegion mFaceTextureRegion2;
+	static TextureRegion mBarricadeTextureRegion;
 	private TextureRegion mCircleTextureRegion;
 	private TextureRegion mExplosionTextureRegion;
+	private TextureRegion mPlayer1TextureRegion;
+	private TextureRegion mPlayer2TextureRegion;
 	private Sprite barricade;
 	private RepeatingSpriteBackground mGrassBackground;
+	Camera camera;
 	
 	Tank tank;
 	float touchX; 
@@ -86,7 +89,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		CAMERA_WIDTH = metrics.widthPixels;
 		CAMERA_HEIGHT = metrics.heightPixels;
 
-		final Camera camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
+		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 
 		return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
 	}
@@ -97,9 +100,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(),32, 32, TextureOptions.BILINEAR);
 		this.mBitmapTextureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(),1024, 1024, TextureOptions.BILINEAR);
 		this.mFaceTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "tank.png", 0, 0);
-		this.mFaceTextureRegion2 = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "barricade.png", 0, 0);
+		this.mBarricadeTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "barricade.png", 0, 0);
 		this.mExplosionTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "explosion.png", 0, 50);
-		this.mCircleTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "small_circle.png", 0, 50);
+		this.mCircleTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "small_circle.png", 20, 50);
+		this.mPlayer1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "player1.png", 10, 25);
+		this.mPlayer2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "player2.png", 10, 100);
 		this.mGrassBackground = new RepeatingSpriteBackground(CAMERA_WIDTH, CAMERA_HEIGHT, this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), "gfx/background_grass.png"), this.getVertexBufferObjectManager());
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas2);
@@ -113,8 +118,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	}
 	@Override
 	public Scene onCreateScene() {
-		
-		
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 		
 		scene = new Scene();
@@ -122,18 +125,27 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		scene.setTouchAreaBindingOnActionDownEnabled(true);
 		scene.setOnSceneTouchListener(this);
 		
-		final float centerX = (CAMERA_WIDTH - this.mFaceTextureRegion2.getWidth()) / 2;
-        final float centerY = (CAMERA_HEIGHT - this.mFaceTextureRegion2.getHeight()) / 2;
-
-        this.barricade = new Sprite(centerX, centerY, this.mFaceTextureRegion2, this.mEngine.getVertexBufferObjectManager());
-        scene.attachChild(this.barricade);
+		final float centerX = (CAMERA_WIDTH - this.mBarricadeTextureRegion.getWidth()) / 2;
+        final float centerY = (CAMERA_HEIGHT - this.mBarricadeTextureRegion.getHeight()) / 2;
+        final float textCenterX =(CAMERA_WIDTH - this.mPlayer1TextureRegion.getWidth()) / 2;
         
+        this.barricade = new Sprite(centerX, centerY, this.mBarricadeTextureRegion, this.mEngine.getVertexBufferObjectManager());
+        Sprite player1text= new Sprite(textCenterX , CAMERA_HEIGHT-30, this.mPlayer1TextureRegion, this.mEngine.getVertexBufferObjectManager());
+        Sprite player2text = new Sprite(textCenterX , 10, this.mPlayer2TextureRegion, this.mEngine.getVertexBufferObjectManager());
+        
+        scene.attachChild(this.barricade);
+        player1text.setScale(4);
+        scene.attachChild(player1text);
+        player2text.setScale(4);
+        player2text.setRotation(180);
+        scene.attachChild(player2text);
         player1 = true;
     	gameStart = false;
     	
 
 
 		this.gameToast("Tap screen to place Units");
+		
 		return scene;
 		}
 	 
@@ -159,6 +171,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        		  alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
 		        			  public void onClick(DialogInterface dialog, int whichButton) {  		        			
 		        				  gameToast("Player2 Turn to place Units");
+		        				  registerItems(tankList2);
+		        				  camera.setRotation(180f);
 		        				  return;                  
 		        			  }  
 		        		  });  
@@ -183,6 +197,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  gameToast("Game Started!");
 		        				  gameToast("Player1 turn");
 		        				  gameDialog(3);
+		        				  registerItems(tankList);
+		        				  camera.setRotation(0f);
 		        				  return;                  
 		        			  }  
 		        		  });  
@@ -202,6 +218,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        			  public void onClick(DialogInterface dialog, int whichButton) {  
 		        				      fire = true;
 		        				      move = false;
+		        				      
 		        			  }  
 		        		  });  
 
@@ -231,6 +248,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			checkRemove(tankList);
 			//Checks if any other tanks are selected 
 			//If they are deselect them
+			unregisterItems(tankList2);
 			checkOthersSelected(tankList);
 			if(tankList.size()<MAX_TANKS){
 				if (pSceneTouchEvent.isActionDown()) {
@@ -241,7 +259,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 
 					float posY = touchY - tank.getHeight() / 2;
 		   
-					if(posY >= (CAMERA_HEIGHT / 2) + 1.6*tank.getHeight()){
+					if(posY > (CAMERA_HEIGHT / 2) + 5 ){
 						tankList.add(tank);
 						scene.registerTouchArea(tank); // register touch area , so this allows you to drag it
 						scene.attachChild(tank); //add it to the scene
@@ -263,6 +281,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				checkRemove(tankList2);
 				//Checks if any other tanks are selected 
 				//If they are deselect them
+				unregisterItems(tankList);
 				checkOthersSelected(tankList2);
 				if (pSceneTouchEvent.isActionDown()) {
 					touchX = pSceneTouchEvent.getX();
@@ -270,9 +289,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	      
 					tank = new Tank(touchX ,touchY,50,50, this.mFaceTextureRegion, this.getVertexBufferObjectManager());
 
-					float posY = touchY - tank.getHeight() / 2;
+					float posY = touchY + tank.getHeight() / 2;
 		   
-					if(posY <= (CAMERA_HEIGHT / 2) + 1.6*tank.getHeight() ){
+					if(posY < (CAMERA_HEIGHT - this.mBarricadeTextureRegion.getHeight()) / 2 - 20){
 						tankList2.add(tank);
 						tank.setRotation(180);
 						scene.registerTouchArea(tank); // register touch area , so this allows you to drag it
@@ -290,9 +309,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			if(player1){
 				if(turn1mes){
 					gameToast("Player1 turn");
+					registerItems(tankList);
+					unregisterItems(tankList2);
 					turn1mes = false;
 					turn2mes = true;
 					gameDialog(3);
+				}else{
+					camera.setRotation(0f);
 				}
 				//User selects fire on dialog
 				if(fire){
@@ -312,7 +335,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						touchY = pSceneTouchEvent.getY();
 						float posY = touchY - tank.getHeight() / 2;
 						   
-						if(posY >= (CAMERA_HEIGHT / 2)){
+						if(posY > (CAMERA_HEIGHT / 2)){
 							Sprite circle = new Sprite(touchX, touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
 							scene.attachChild(circle);
 							Sprite circle2 = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
@@ -343,14 +366,19 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				}
 				//IF USER PICKS MOVE
 				else if(move){
-					
+					player1 = false;
+					turn2mes = true;
 					move = false;
 				}
 			}else{
 				if(turn2mes){
+					camera.setRotation(180f);
+					unregisterItems(tankList);
+					registerItems(tankList2);
 					gameToast("Player2 turn");
 					turn2mes = false;
 					gameDialog(3);
+					
 				}
 					
 					//IF USER SELECTS FIRE
@@ -401,7 +429,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					}
 					//IF USER SELECTS MOVE
 					else if(move){
-						
+						player1 = true;
+						turn1mes = true;
 						move = false;
 					}
 			
@@ -467,105 +496,126 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		}
 		return false;
 	}
-}
+
 /*****************************************************
 * Tank Class when selected is highlighted by
 * a rectangle object
 ******************************************************/
-class Tank extends Sprite {
-	float x,y;
-	boolean removed,isSelected;
-	boolean fire,move;
-	Rectangle outline;
-	public Tank(float pX, float pY, float pWidth, float pHeight,
-			ITextureRegion mFaceTextureRegion, VertexBufferObjectManager  vbom) {
-		super(pX, pY, pWidth, pHeight, mFaceTextureRegion, vbom);
-		x = pX;
-		y = pY;
-		removed = false;
-		fire = true;
-		move = true;
-		outline = new Rectangle (pX-2,pY-2,pWidth+4,pHeight+4, vbom);
-		outline.setVisible(false);
-		outline.setColor(1,1,0);
-		UnitAllocationActivity.scene.attachChild(outline);
-	}
+	class Tank extends Sprite {
+		float originX, originY;
+		boolean removed,isSelected, validMove;
+		Rectangle outline;
+		public Tank(float pX, float pY, float pWidth, float pHeight,
+				ITextureRegion mFaceTextureRegion, VertexBufferObjectManager  vbom) {
+			super(pX, pY, pWidth, pHeight, mFaceTextureRegion, vbom);
+			originX = pX;
+			originY = pY;
+			removed = false;
+			validMove = false;
+			outline = new Rectangle (pX-2,pY-2,pWidth+4,pHeight+4, vbom);
+			outline.setVisible(false);
+			outline.setColor(1,1,0);
+			UnitAllocationActivity.scene.attachChild(outline);
+		}
 
-	public Tank(float centerX, int i, ITextureRegion mFaceTextureRegion,
-			VertexBufferObjectManager vertexBufferObjectManager) {
-		super(centerX,i,mFaceTextureRegion,vertexBufferObjectManager);
-		// TODO Auto-generated constructor stub
-	}
-	@Override
-	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) { 
-         
-		if(pSceneTouchEvent.isActionDown()){
-			 //Selects the Tank and highlights it
-			 if(fire){
-				// if(isSelected){
-					 //this.removed = true;
-					 //UnitAllocationActivity.scene.detachChild(outline);
-					 //this.detachSelf();
-			//	 }else{
-					 if(UnitAllocationActivity.player1){
-						 UnitAllocationActivity.checkOthersSelected(UnitAllocationActivity.tankList);
+		public Tank(float centerX, int i, ITextureRegion mFaceTextureRegion,
+				VertexBufferObjectManager vertexBufferObjectManager) {
+			super(centerX,i,mFaceTextureRegion,vertexBufferObjectManager);
+			// TODO Auto-generated constructor stub
+		}
+		@Override
+		public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+			float posY = pSceneTouchEvent.getY() - this.getHeight() / 2;
+			float posX = pSceneTouchEvent.getX() - this.getWidth() / 2;
+		if(fire){
+			if(UnitAllocationActivity.player1){
+				 checkOthersSelected(tankList);
+			 }else{
+				 checkOthersSelected(tankList2);
+			 }	 
+			 isSelected = true;
+			 outline.setVisible(true);
+			 if(gameStart){
+				 unregisterItems(tankList);
+				 unregisterItems(tankList2);
+			 }  
+		}else{
+			if(pSceneTouchEvent.isActionDown()){
+				 this.originX = posX;
+				 this.originY = posY;
+	             validMove = true;
+				 if(UnitAllocationActivity.player1){
+						 checkOthersSelected(tankList);
 					 }else{
-						 UnitAllocationActivity.checkOthersSelected(UnitAllocationActivity.tankList2);
-					 }	 
-					 isSelected = true;
-					 outline.setVisible(true);
-					 if(UnitAllocationActivity.gameStart){
-						 UnitAllocationActivity.unregisterItems(UnitAllocationActivity.tankList);
-						 UnitAllocationActivity.unregisterItems(UnitAllocationActivity.tankList2);
+						 checkOthersSelected(tankList2);
 					 }
-			 // }	  
-				  
-			  }else{
-			  }
-		  }	
-          return true;
-        }
-	  
-	
-};
+				 	isSelected = true;
+					 outline.setVisible(true);
+					 return true;
+			}
+			else if(pSceneTouchEvent.isActionMove()){
+				 if(player1){
+					 checkOthersSelected(tankList);
+				 }else{
+					 checkOthersSelected(tankList2);
+				 }
+				 isSelected = true;
+				if (validMove) {
+					if(player1){
+						for (int i = 0; i < tankList.size(); i++) {
+							if (this != tankList.get(i)) {
+								if (this.collidesWith(tankList.get(i))) {
+									this.setPosition(this.originX, this.originY);
+									this.outline.setPosition(this.originX - 2, this.originY - 2);
+									validMove = false;
+									return true;
+								}
+							}
+						}
+						if  (posY < ( (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2))) {
+							posY = (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2);
+						}
 
-//scene.registerUpdateHandler(new IUpdateHandler() {
-//@Override
-//public void reset() { }
-//
-//@Override
-//public void onUpdate(final float pSecondsElapsed) {
-//for(int i = 0; i < tankList.size();i++){  
-//	
-//	for(int j = 0; j < tankList.size(); j++){
-//     if (i!=j){	
-//		if(tankList.get(j).collidesWith(tankList.get(i))) {
-//  		tankList.get(j).setX(tankList.get(j).x);
-//          tankList.get(j).setY(tankList.get(j).y);
-//          
-//      }else{
-//      	tankList.get(j).x = tankList.get(j).getX();
-//          tankList.get(j).y = tankList.get(j).getY();
-//          tankList.get(j).setX(tankList.get(j).x);
-//          tankList.get(j).setY(tankList.get(j).y);
-//      }
-//     }
-//  }
-//}
-//}
-//});
-//this.setPosition(pSceneTouchEvent.getX(), pSceneTouchEvent.getY());
-//for(int i = 0; i < UnitAllocationActivity.tankList.size();i++){  
-//	 if(this.x != UnitAllocationActivity.tankList.get(i).x && this.y != UnitAllocationActivity.tankList.get(i).y ){
-//	  if( this.collidesWith(UnitAllocationActivity.tankList.get(i)) ){
-//		 this.setX(this.x);
-//     this.setY(this.y);
-//     
-//	 }else{
-//		this.x = this.getX();
-//     this.y = this.getY();
-//     this.setX(this.x);
-//     this.setY(this.y);
-//	 }
-// }
-//}
+					}else{
+						for (int i = 0; i < tankList2.size(); i++) {
+							if (this != tankList2.get(i)) {
+								if (this.collidesWith(tankList2.get(i))) {
+									this.setPosition(this.originX, this.originY);
+									this.outline.setPosition(this.originX - 2, this.originY - 2);
+									validMove = false;
+									return true;
+								}
+							}
+						}
+						if  (posY > ( (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2))) {
+							posY = (barricade.getY()-barricade.getHeight()*2);
+						}
+					}
+					
+					
+				    this.setPosition(posX, posY);
+				    outline.setPosition(posX - 2, posY - 2);
+				}else{
+					return true;
+				}
+          
+        } 
+		else if (pSceneTouchEvent.isActionUp()) {
+			 if(UnitAllocationActivity.player1){
+				 checkOthersSelected(tankList);
+			 }else{
+				 checkOthersSelected(tankList2);
+			 }
+			 isSelected = true;
+			if (validMove) {
+				this.originX = posX;
+			    this.originY = posY;
+
+			    
+			}
+		}
+	 }
+	  return true;
+	}
+};
+}
