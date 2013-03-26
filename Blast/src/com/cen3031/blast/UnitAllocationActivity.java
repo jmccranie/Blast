@@ -180,6 +180,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        		  alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 		        			  public void onClick(DialogInterface dialog, int which) {
 		     	        	 	player1 = true;
+		     	        	 	registerItems(tankList);
 		     	        	 	return;   
 		     	         }
 		     	     });
