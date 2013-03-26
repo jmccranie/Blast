@@ -26,6 +26,7 @@ import org.andengine.ui.activity.SimpleBaseGameActivity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -141,7 +142,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         scene.attachChild(player2text);
         player1 = true;
     	gameStart = false;
-    	
+
 
 
 		this.gameToast("Tap screen to place Units");
@@ -231,7 +232,33 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		     	         }
 		     	     });
 		        		  alert3.show(); 
-		        		  break;	
+		        		  break;
+		        	
+		        	  case 4:
+		        		  AlertDialog.Builder alert4 = new AlertDialog.Builder(UnitAllocationActivity.this);                 
+		        		  if(player1win()){
+		        			  alert4.setTitle("Player1 WINS!!");
+		        		  }else{
+		        			  alert4.setTitle("Player2 WINS!!");
+		        		  }
+		        		  
+		        		  alert4.setMessage("Would You Like to Play Again?");                
+		        		  alert4.setPositiveButton("YES", new DialogInterface.OnClickListener() {  
+		        			  public void onClick(DialogInterface dialog, int whichButton) {  
+		        				  Intent intent = getIntent();
+		        				  finish();
+		        			      startActivity(intent);    
+		        			  }  
+		        		  });  
+
+		        		  alert4.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+		        			  public void onClick(DialogInterface dialog, int which) {
+		        				  finish();
+		     	        	 	return;   
+		     	         }
+		     	     });
+		        		  alert4.show(); 
+		        		  break;
 		     	   }
 		        	
 		        }
@@ -353,7 +380,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 							}
 							if(player1win()){
 								turn2mes = false;
-								gameToast("Player1 WINS!!");
+								gameDialog(4);
 							}else{
 								turn2mes = true;
 							}
@@ -414,9 +441,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 										scene.attachChild(explosion);
 									}
 								}
-								if(player1win()){
+								if(player2win()){
 									turn1mes = false;
-									gameToast("Player2 WINS!!");
+									gameDialog(4);
 								}else{
 									turn1mes = true;
 								}
@@ -494,6 +521,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	
 	public boolean player1win(){
 		if(tankList2.isEmpty()){
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean player2win(){
+		if(tankList.isEmpty()){
 			return true;
 		}
 		return false;
