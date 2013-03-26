@@ -309,6 +309,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			//Game Started Player 1 turn
 			if(player1){
 				if(turn1mes){
+					camera.setRotation(0f);
 					gameToast("Player1 turn");
 					registerItems(tankList);
 					unregisterItems(tankList2);
