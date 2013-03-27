@@ -228,6 +228,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  fire = true;
 		        				  move = false;
 		        				  viewMap = false;
+		        				  if(player1){
+		        					  registerItems(tankList);
+		        				  }else{
+		        					  registerItems(tankList2);
+		        				  }
 		        				  return;
 		        			  }  
 		        		  });  
@@ -236,6 +241,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  fire = false;
 	        				      move = false;
 	        				      viewMap = true;
+	        				      unregisterItems(tankList);
+	        				      unregisterItems(tankList2);
 		        				  return;   
 		        	     }
 		        		  });
@@ -244,6 +251,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  fire = false;
 	        				      move = true;
 	        				      viewMap = false;
+	        				      if(player1){
+		        					  registerItems(tankList);
+		        				  }else{
+		        					  registerItems(tankList2);
+		        				  }
 		     	        	 	return;   
 		     	         }
 		     	     });
