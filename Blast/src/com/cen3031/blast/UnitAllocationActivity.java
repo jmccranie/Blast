@@ -445,8 +445,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						float posY = touchY - tank.getHeight() / 2;
 						   
 						if(posY > (CAMERA_HEIGHT / 2)){
-							Sprite circle = new Sprite(touchX, touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
-							scene.attachChild(circle);
+							//Sprite circle = new Sprite(touchX, touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
+							//scene.attachChild(circle);
 							Sprite circle2 = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
 							scene.attachChild(circle2);
 							//If hits other TANK
@@ -531,8 +531,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 							touchY = pSceneTouchEvent.getY();
 							float posY = touchY - tank.getHeight() / 2;  
 							if(posY <= (CAMERA_HEIGHT / 2)){
-								Sprite circle = new Sprite(touchX, touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
-								scene.attachChild(circle);
+								//Sprite circle = new Sprite(touchX, touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
+								//scene.attachChild(circle);
 								Sprite circle2 = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
 								scene.attachChild(circle2);
 								for(int i = 0; i < UnitAllocationActivity.tankList.size();i++){  
