@@ -257,7 +257,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        		  }else{
 		        			  alert4.setTitle("Player2 WINS!!");
 		        		  }
-		        		  
 		        		  alert4.setMessage("Would You Like to Play Again?");                
 		        		  alert4.setPositiveButton("YES", new DialogInterface.OnClickListener() {  
 		        			  public void onClick(DialogInterface dialog, int whichButton) {  
@@ -325,11 +324,15 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						tankList.add(tank);
 						scene.registerTouchArea(tank); // register touch area , so this allows you to drag it
 						scene.attachChild(tank); //add it to the scene
+						if(tankList.size()==MAX_TANKS){
+							gameToast("Place Mines");
+						}
 					}
+				
 				return false;
 				} 
 			}else if(mineList.size() < MAX_MINES){
-				gameToast("Place Mines");
+				
 				if(pSceneTouchEvent.isActionDown()){
 				mine = new Sprite(touchX ,touchY,50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
 					float posY = touchY - mine.getHeight() / 2;
@@ -371,12 +374,15 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						tank.setRotation(180);
 						scene.registerTouchArea(tank); // register touch area , so this allows you to drag it
 						scene.attachChild(tank); //add it to the scene
+						if(tankList2.size()==MAX_TANKS){
+							gameToast("Place Mines");
+						}
 					}
+					
 				return false;
 				} 
 			}else if(mineList2.size() < MAX_MINES){
 				//PLACE MINES
-				gameToast("Place Mines");
 				if(pSceneTouchEvent.isActionDown()){
 				mine = new Sprite(touchX ,touchY,50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
 					
