@@ -10,16 +10,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 public class PlayMenuActivity extends Activity {
     private static final int REQUEST_ENABLE_BT = 1;
+    Animation a;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_play_menu);
+        a = AnimationUtils.loadAnimation(this, R.anim.alpha);
+        a.reset();
     }
 
     @Override
@@ -59,37 +65,77 @@ public class PlayMenuActivity extends Activity {
     	}
     }
     
-    public void onClick(View v) {
-    	Intent intent;
-    	
-        switch (v.getId()) {
-        case R.id.tv_pass_n_play:
-            intent = new Intent(this, UnitAllocationActivity.class);
-            startActivity(intent);
-            break;
-        case R.id.tv_bluetooth:
-            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            
-            if (mBluetoothAdapter == null) {
-                // Device does not support Bluetooth
-                Toast.makeText(getApplicationContext(), "This device does not support bluetooth", Toast.LENGTH_SHORT).show();
+    public void btn_pnp(View v){
+    	Button btn = (Button) findViewById(R.id.tv_pass_n_play);
+    	btn.startAnimation(a);
+        Intent intent = new Intent(this, UnitAllocationActivity.class);
+        startActivity(intent);
+    }
+    
+    public void btn_bluetooth(View v){
+    	Button btn = (Button) findViewById(R.id.tv_bluetooth);
+    	btn.startAnimation(a);
+        BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        
+        if (mBluetoothAdapter == null) {
+            // Device does not support Bluetooth
+            Toast.makeText(getApplicationContext(), "This device does not support bluetooth", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            if (!mBluetoothAdapter.isEnabled()) {
+                Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+                startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
             }
             else {
-                if (!mBluetoothAdapter.isEnabled()) {
-                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-                }
-                else {
-                    Intent btIntent = new Intent(this, BluetoothChat.class);
-                    startActivity(btIntent);
-                }
+                Intent btIntent = new Intent(this, BluetoothChat.class);
+                startActivity(btIntent);
             }
-            break;
-        case R.id.tv_online:
-            enterIP();
-            break;
         }
     }
+    
+    public void btn_online(View v){
+    	Button btn = (Button) findViewById(R.id.tv_online);
+    	btn.startAnimation(a);
+        enterIP();
+    }
+    
+//    public void onClick(View v) {
+//    	Intent intent;
+//    	Button btn;
+//        switch (v.getId()) {
+//        case R.id.tv_pass_n_play:
+//        	btn = (Button) findViewById(R.id.tv_pass_n_play);
+//        	btn.startAnimation(a);
+//            intent = new Intent(this, UnitAllocationActivity.class);
+//            startActivity(intent);
+//            break;
+//        case R.id.tv_bluetooth:
+//        	btn = (Button) findViewById(R.id.tv_bluetooth);
+//        	btn.startAnimation(a);
+//            BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+//            
+//            if (mBluetoothAdapter == null) {
+//                // Device does not support Bluetooth
+//                Toast.makeText(getApplicationContext(), "This device does not support bluetooth", Toast.LENGTH_SHORT).show();
+//            }
+//            else {
+//                if (!mBluetoothAdapter.isEnabled()) {
+//                    Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+//                    startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+//                }
+//                else {
+//                    Intent btIntent = new Intent(this, BluetoothChat.class);
+//                    startActivity(btIntent);
+//                }
+//            }
+//            break;
+//        case R.id.tv_online:
+//        	btn = (Button) findViewById(R.id.tv_online);
+//        	btn.startAnimation(a);
+//            enterIP();
+//            break;
+//        }
+//    }
     
     private void enterIP()
 	 {

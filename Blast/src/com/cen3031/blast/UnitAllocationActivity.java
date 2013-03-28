@@ -44,7 +44,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
-
 /**
  * (c) 2010 Nicolas Gramlich
  * (c) 2011 Zynga
@@ -53,6 +52,7 @@ import android.widget.Toast;
  * @since 15:13:46 - 15.06.2010
  */
 public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener {
+
 	// ===========================================================
 	// Constants
 	// ===========================================================
