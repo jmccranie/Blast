@@ -196,12 +196,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		
     	hud = new HUD();
     	
-        tankButton = new ButtonSprite(CAMERA_WIDTH/2-75, CAMERA_HEIGHT-75, this.mTankButton1TextureRegion,this.mTankButton2TextureRegion, this.getVertexBufferObjectManager(),this);
+    	//TANK and MINE buttons
+        tankButton = new ButtonSprite(0, CAMERA_HEIGHT-75, this.mTankButton1TextureRegion,this.mTankButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         tankButton.setSize(75,75);
         tankText =  new Text(0, 0, this.mFont, Integer.toString(MAX_TANKS), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
 
         
-        mineButton = new ButtonSprite(CAMERA_WIDTH/2, CAMERA_HEIGHT-75, this.mMineButton1TextureRegion,this.mMineButton2TextureRegion, this.getVertexBufferObjectManager(),this);
+        mineButton = new ButtonSprite(75, CAMERA_HEIGHT-75, this.mMineButton1TextureRegion,this.mMineButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         mineButton.setSize(75,75);
         mineText =  new Text(0, 0, this.mFont, Integer.toString(MAX_MINES), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         
@@ -215,6 +216,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         hud.setTouchAreaBindingOnActionDownEnabled(true);
         this.camera.setHUD(hud);
         
+        //FIRE AND MOVE BUTTONS
         fireButton =  new ButtonSprite(0, CAMERA_HEIGHT-75, this.mButton1TextureRegion,this.mButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         fireButton.setSize(CAMERA_WIDTH/3-5,75);
         mapButton =  new ButtonSprite(CAMERA_WIDTH/3, CAMERA_HEIGHT-75, this.mButton1TextureRegion,this.mButton2TextureRegion, this.getVertexBufferObjectManager(),this);
@@ -717,7 +719,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 									turn1mes = true;
 								}
 								tankList2.get(index).isSelected = false;
-								registerItems(tankList);
+								unregisterItems(tankList2);
 								player1 = true;
 								fire = false;
 							}else{
