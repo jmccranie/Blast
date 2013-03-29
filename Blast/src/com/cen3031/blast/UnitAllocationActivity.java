@@ -197,12 +197,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
     	hud = new HUD();
     	
     	//TANK and MINE buttons
-        tankButton = new ButtonSprite(0, CAMERA_HEIGHT-75, this.mTankButton1TextureRegion,this.mTankButton2TextureRegion, this.getVertexBufferObjectManager(),this);
+        tankButton = new ButtonSprite(0, 0, this.mTankButton1TextureRegion,this.mTankButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         tankButton.setSize(75,75);
         tankText =  new Text(0, 0, this.mFont, Integer.toString(MAX_TANKS), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
 
         
-        mineButton = new ButtonSprite(75, CAMERA_HEIGHT-75, this.mMineButton1TextureRegion,this.mMineButton2TextureRegion, this.getVertexBufferObjectManager(),this);
+        mineButton = new ButtonSprite(75, 0, this.mMineButton1TextureRegion,this.mMineButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         mineButton.setSize(75,75);
         mineText =  new Text(0, 0, this.mFont, Integer.toString(MAX_MINES), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         
@@ -324,6 +324,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        		  alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
 		        			  public void onClick(DialogInterface dialog, int whichButton) {  		        			
 		        				  gameToast("Player2 Turn to place Units");
+		        				  unregisterItems(tankList);
 		        				  registerItems(tankList2);
 		        				  camera.setRotation(180f);
 		        			      updateTankText(tankList2);
@@ -356,6 +357,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  camera.setRotation(0f);
 		        				  hud.detachChild(tankButton);
 		        				  hud.detachChild(mineButton);
+		        				  hud.clearTouchAreas();
 		        				  updateHUD();
 		        				  return;                  
 		        			  }  
