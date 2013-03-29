@@ -312,15 +312,27 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		    });
 		}
 	 
+	 @Override
+	 public void onBackPressed() {
+		 finish();
+	 }
+	 public void onCancel(DialogInterface dialog) {
+	        // if from activity
+	        finish();
+	        // if activity is a field
+	        //activity.finish();
+	    }
 	 public void gameDialog(final int id) {
 		    this.runOnUiThread(new Runnable() {
 		        @Override
 		        public void run() {
+		        	
 		        	switch (id) {
 		        	  case 1:
 		        		  AlertDialog.Builder alert = new AlertDialog.Builder(UnitAllocationActivity.this);                 
 		        		  alert.setTitle("Player1 Submit Side");  
-		        		  alert.setMessage("Are you finished setting your side?");                
+		        		  alert.setMessage("Are you finished setting your side?");   
+		        		  alert.setCancelable(false);
 		        		  alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
 		        			  public void onClick(DialogInterface dialog, int whichButton) {  		        			
 		        				  gameToast("Player2 Turn to place Units");
@@ -340,12 +352,16 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		     	        	 	return;   
 		     	         }
 		     	     });
+		        		  
+		        		  
 		     	             alert.show(); 
+		     	             
 		     	             break;
 		        	  case 2: 
 		        		  AlertDialog.Builder alert2 = new AlertDialog.Builder(UnitAllocationActivity.this);                 
 		        		  alert2.setTitle("Player2 Submit Side");  
-		        		  alert2.setMessage("Are you finished setting your side?");                
+		        		  alert2.setMessage("Are you finished setting your side?");        
+		        		  alert2.setCancelable(false);
 		        		  alert2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
 		        			  public void onClick(DialogInterface dialog, int whichButton) {  
 		        				  gameStart = true;
@@ -369,6 +385,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		     	        	 	return;   
 		     	         }
 		     	     });
+		        		 
+		        		  
 		     	             alert2.show(); 
 		     	             break;
 		        	  case 3:
@@ -420,6 +438,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        		  }else{
 		        			  alert4.setTitle("Player2 WINS!!");
 		        		  }
+		        		  alert4.setCancelable(false);
 		        		  alert4.setMessage("Would You Like to Play Again?");                
 		        		  alert4.setPositiveButton("YES", new DialogInterface.OnClickListener() {  
 		        			  public void onClick(DialogInterface dialog, int whichButton) {  
@@ -447,7 +466,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	        				  	"-Tap Tanks to Fire/ Drag to Move \n" +
 	        		  			"-Tapping Area on Screen to Submit \n" +
 	        				  	"-Striking Enemy Mines Will Result in Damage \n" +
-	        		  			"-Last Player with Tanks will Win");                
+	        		  			"-Last Player with Tanks will Win");
+	        		  alert5.setCancelable(false);
 	        		  alert5.setPositiveButton("START GAME", new DialogInterface.OnClickListener() {  
 	        			  public void onClick(DialogInterface dialog, int whichButton) {  
 	        				 gameToast("Tap screen to place Units");  
