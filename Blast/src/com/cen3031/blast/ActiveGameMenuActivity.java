@@ -107,7 +107,7 @@ public class ActiveGameMenuActivity extends Activity{
   	    	 EditText createText;
 	         createText = (EditText) textEntryView.findViewById(R.id.user_name);
 	         String username = createText.getText().toString();
-  	         GameState game = new GameState(username,"Waiting for Challenger");
+  	         GameState game = new GameState(username,"Waiting for Challenger",1);
   	         tv_games.add(game);
   	         adapter.notifyDataSetChanged();
   	         return;                  

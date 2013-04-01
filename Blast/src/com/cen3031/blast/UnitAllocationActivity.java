@@ -1,13 +1,17 @@
 package com.cen3031.blast;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 
+import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
+import org.andengine.entity.IEntity;
+import org.andengine.entity.modifier.MoveByModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -56,7 +60,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	// ===========================================================
 	// Constants
 	// ===========================================================
-
 	private static int CAMERA_WIDTH;
 	private static int CAMERA_HEIGHT;
 	 private BitmapTextureAtlas mFontTexture;
@@ -70,7 +73,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private TextureRegion mTankTextureRegion;
 	static TextureRegion mBarricadeTextureRegion;
 	private TextureRegion mCircleTextureRegion;
-	private TextureRegion mExplosionTextureRegion;
+	private static TextureRegion mExplosionTextureRegion;
 	private TextureRegion mPlayer1TextureRegion;
 	private TextureRegion mPlayer2TextureRegion;
 	private TextureRegion mMineTextureRegion;
@@ -80,6 +83,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private TextureRegion mMineButton2TextureRegion;
 	private TextureRegion mButton1TextureRegion;
 	private TextureRegion mButton2TextureRegion;
+	private TextureRegion mBulletTextureRegion;
 	private Sprite barricade;
 	private RepeatingSpriteBackground mGrassBackground;
 	Camera camera;
@@ -116,7 +120,14 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	ButtonSprite fireButton;
 	ButtonSprite mapButton;
 	ButtonSprite moveButton;
-
+	Sprite bullet;
+	int bulletSpeed = 500;
+	Sprite circle;
+	boolean animOver;
+	GameState gameState;
+	boolean isOnline = true;
+	
+	
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		DisplayMetrics metrics = new DisplayMetrics();
@@ -147,6 +158,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		this.mMineButton2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "mineButton2.png", 375, 375);
 		this.mButton1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "button1.png", 450, 450);
 		this.mButton2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "button2.png", 550, 550);
+		this.mBulletTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "bullet.png", 650, 650);
 		this.mGrassBackground = new RepeatingSpriteBackground(CAMERA_WIDTH, CAMERA_HEIGHT, this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), "gfx/background_grass.png"), this.getVertexBufferObjectManager());
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas2);
@@ -197,12 +209,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
     	hud = new HUD();
     	
     	//TANK and MINE buttons
-        tankButton = new ButtonSprite(0, 0, this.mTankButton1TextureRegion,this.mTankButton2TextureRegion, this.getVertexBufferObjectManager(),this);
+        tankButton = new ButtonSprite(0, barricade.getY()-75, this.mTankButton1TextureRegion,this.mTankButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         tankButton.setSize(75,75);
         tankText =  new Text(0, 0, this.mFont, Integer.toString(MAX_TANKS), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
 
         
-        mineButton = new ButtonSprite(75, 0, this.mMineButton1TextureRegion,this.mMineButton2TextureRegion, this.getVertexBufferObjectManager(),this);
+        mineButton = new ButtonSprite(75, barricade.getY()-75, this.mMineButton1TextureRegion,this.mMineButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         mineButton.setSize(75,75);
         mineText =  new Text(0, 0, this.mFont, Integer.toString(MAX_MINES), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         
@@ -219,18 +231,18 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         //FIRE AND MOVE BUTTONS
         fireButton =  new ButtonSprite(0, CAMERA_HEIGHT-75, this.mButton1TextureRegion,this.mButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         fireButton.setSize(CAMERA_WIDTH/3-5,75);
-        mapButton =  new ButtonSprite(CAMERA_WIDTH/3, CAMERA_HEIGHT-75, this.mButton1TextureRegion,this.mButton2TextureRegion, this.getVertexBufferObjectManager(),this);
-        mapButton.setSize(CAMERA_WIDTH/3-5,75);
+       // mapButton =  new ButtonSprite(CAMERA_WIDTH/3, CAMERA_HEIGHT-75, this.mButton1TextureRegion,this.mButton2TextureRegion, this.getVertexBufferObjectManager(),this);
+       // mapButton.setSize(CAMERA_WIDTH/3-5,75);
         moveButton =  new ButtonSprite(CAMERA_WIDTH/3*2, CAMERA_HEIGHT-75, this.mButton1TextureRegion,this.mButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         moveButton.setSize(CAMERA_WIDTH/3,75);
         
         
         Text fireButtonText = new Text(fireButton.getWidth()/4,fireButton.getHeight()/4, this.mFont, "FIRE", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
-        Text mapButtonText = new Text(mapButton.getWidth()/4, mapButton.getHeight()/4, this.mFont, "View Map", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+       // Text mapButtonText = new Text(mapButton.getWidth()/4, mapButton.getHeight()/4, this.mFont, "View Map", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         Text moveButtonText = new Text(moveButton.getWidth()/4, moveButton.getHeight()/4, this.mFont, "MOVE", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         
         fireButton.attachChild(fireButtonText);
-        mapButton.attachChild(mapButtonText);
+        //mapButton.attachChild(mapButtonText);
         moveButton.attachChild(moveButtonText);
         
         
@@ -251,7 +263,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 							gameToast("No Tanks Left");
 						}else{
 						tankSel = true;
-						hud.setVisible(false);
+						
 						}
 					}
 				}
@@ -264,7 +276,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 							gameToast("No Mines Left");
 						}else{
 						mineSel = true;
-						hud.setVisible(false);
+						
 						}
 					 
 					}
@@ -461,7 +473,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	        		  AlertDialog.Builder alert5 = new AlertDialog.Builder(UnitAllocationActivity.this);                 
 	        		  alert5.setTitle("Helpful Tips");
 	        		 
-	        		  alert5.setMessage("-Each Player Places 5 Tanks then 2 Mines \n" +
+	        		  alert5.setMessage("-Each Player Places 5 Tanks and 2 Mines \n" +
 	        		  			"-Each turn a Player Selects Fire or Move \n" +
 	        				  	"-Tap Tanks to Fire/ Drag to Move \n" +
 	        		  			"-Tapping Area on Screen to Submit \n" +
@@ -507,7 +519,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						tankList.add(tank);
 						scene.registerTouchArea(tank); // register touch area , so this allows you to drag it
 						scene.attachChild(tank); //add it to the scene
-						hud.setVisible(true); //set hud visible
 						tankSel = false;
 						updateTankText(tankList); //Update tank count
 						
@@ -523,7 +534,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						mineList.add(mine);
 						scene.registerTouchArea(mine); // register touch area , so this allows you to drag it
 						scene.attachChild(mine); //add it to the scene
-						hud.setVisible(true); //set hud visible
 						mineSel = false;
 						updateMineText(mineList); //update mine count
 					}
@@ -560,7 +570,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						tank.setRotation(180);
 						scene.registerTouchArea(tank); // register touch area , so this allows you to drag it
 						scene.attachChild(tank); //add it to the scene
-						hud.setVisible(true); //set hud visible
 						tankSel = false;
 						updateTankText(tankList2);
 					}
@@ -577,7 +586,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						mineList2.add(mine);
 						scene.registerTouchArea(mine); // register touch area , so this allows you to drag it
 						scene.attachChild(mine); //add it to the scene
-						hud.setVisible(true); //set hud visible
 						mineSel = false;
 						updateMineText(mineList2);
 					}
@@ -591,8 +599,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		}else{
 			//GAME STARTED Player 1 turn
 			if(player1){
-				if(turn1mes){
-					camera.setRotation(0f);
+				if(turn1mes ){
+					
 					gameToast("Player1 turn");
 					unregisterItems(tankList2);
 					turn1mes = false;
@@ -619,47 +627,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						touchX = pSceneTouchEvent.getX();
 						touchY = pSceneTouchEvent.getY();
 						float posY = touchY - tank.getHeight() / 2;
-						   
+						 
 						if(posY > (CAMERA_HEIGHT / 2)){
-							//Sprite circle = new Sprite(touchX, touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
-							//scene.attachChild(circle);
-							Sprite circle2 = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
-							scene.attachChild(circle2);
-							//If hits other TANK
-							for(int i = 0; i < UnitAllocationActivity.tankList2.size();i++){  
-								if( circle2.collidesWith(tankList2.get(i)) ){
-									scene.detachChild(tankList2.get(i));
-									scene.detachChild(circle2);
-									tankList2.remove(i);
-									Sprite explosion = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mExplosionTextureRegion, this.mEngine.getVertexBufferObjectManager());
-									scene.attachChild(explosion);
-								}
-							}
-							//if hits mine
-							//find selected tank and destroy it
-							for(int i = 0; i < UnitAllocationActivity.mineList2.size();i++){  
-								if( circle2.collidesWith(mineList2.get(i)) ){
-									scene.detachChild(tankList.get(index));
-									scene.detachChild(mineList2.get(i));
-									scene.detachChild(circle2);
-									Sprite explosion = new Sprite(tankList.get(index).originX,tankList.get(index).originY, this.mExplosionTextureRegion, this.mEngine.getVertexBufferObjectManager());
-									scene.attachChild(explosion);
-									Sprite explosion1 = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mExplosionTextureRegion, this.mEngine.getVertexBufferObjectManager());
-									scene.attachChild(explosion1);
-									tankList.remove(tankList.get(index));
-									mineList2.remove(i);
-								}
-							}
-							if(player1win()){
-								turn2mes = false;
-								gameDialog(4);
-							}else{
-								turn2mes = true;
-							}
-							tankList.get(index).isSelected = false;
-							unregisterItems(tankList);
-							player1 = false;
-							fire = false;
+							tankFire(tankList,tankList2,mineList2,touchX,touchY,index,mEngine);
+							
+							
+							
+							
 						}else{
 							registerItems(tankList);
 						}
@@ -679,12 +653,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				}
 			}else{
 				if(turn2mes){
-					camera.setRotation(180f);
+					
 					unregisterItems(tankList);
 					gameToast("Player2 turn");
 					turn2mes = false;
 					hud.setVisible(true);
-					
 				}
 					
 					//IF USER SELECTS FIRE
@@ -706,44 +679,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 							touchY = pSceneTouchEvent.getY();
 							float posY = touchY - tank.getHeight() / 2;  
 							if(posY <= (CAMERA_HEIGHT / 2)){
-								//Sprite circle = new Sprite(touchX, touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
-								//scene.attachChild(circle);
-								Sprite circle2 = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
-								scene.attachChild(circle2);
-								for(int i = 0; i < UnitAllocationActivity.tankList.size();i++){  
-									if( circle2.collidesWith(tankList.get(i)) ){
-										scene.detachChild(tankList.get(i));
-										scene.detachChild(circle2);
-										tankList.remove(i);
-										Sprite explosion = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mExplosionTextureRegion, this.mEngine.getVertexBufferObjectManager());
-										scene.attachChild(explosion);
-									}
-								}
-								//if hits mine
-								//find selected tank and destroy it
-								for(int i = 0; i < mineList.size();i++){  
-									if( circle2.collidesWith(mineList.get(i)) ){
-										scene.detachChild(tankList2.get(index));
-										scene.detachChild(mineList.get(i));
-										scene.detachChild(circle2);
-										Sprite explosion = new Sprite(tankList2.get(index).originX,tankList2.get(index).originY, this.mExplosionTextureRegion, this.mEngine.getVertexBufferObjectManager());
-										scene.attachChild(explosion);
-										Sprite explosion1 = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mExplosionTextureRegion, this.mEngine.getVertexBufferObjectManager());
-										scene.attachChild(explosion1);
-										tankList.remove(tankList2.get(index));
-										mineList.remove(i);
-									}
-								}
-								if(player2win()){
-									turn1mes = false;
-									gameDialog(4);
-								}else{
-									turn1mes = true;
-								}
-								tankList2.get(index).isSelected = false;
-								unregisterItems(tankList2);
-								player1 = true;
-								fire = false;
+								tankFire(tankList2,tankList,mineList,touchX,touchY,index,mEngine);
+								
 							}else{
 								registerItems(tankList2);
 							}
@@ -877,11 +814,116 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		hud.registerTouchArea(moveButton);
 	}
 	
+	void fireBullet(float targetX,float targetY,float tx,float ty){
+        
+        
+	}
+
+	void tankFire(final LinkedList<Tank> myTanks, final LinkedList<Tank> oppTanks,final LinkedList<Sprite> oppMines,final float touchX, final float touchY,final int index, final Engine mEngine){
+		circle = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
+		scene.attachChild(circle);
+		//Shoots bullet
+		final Tank selTank = myTanks.get(index);
+		final float targetX = touchX;
+		final float targetY = CAMERA_HEIGHT-touchY;
+		float tx = selTank.originX;
+		float ty = selTank.originY;
+		bullet  = new Sprite(tx,ty, 10, 10, mBulletTextureRegion,this.mEngine.getVertexBufferObjectManager() );
+        
+        float gY =  targetY -  bullet.getY(); // some calu about how far the bullet can go, in this case up to the enemy
+        float gX =  targetX - bullet.getX();
+        if(player1){
+        	player1 = false;
+        }else{
+        	player1 = true;
+		}
+        MoveByModifier moveBullet = new MoveByModifier(0.5f, gX,  gY){
+        		
+        	
+			@Override
+			protected void onModifierFinished(IEntity pItem) {
+				super.onModifierFinished(pItem);
+        		//Collision detection
+        		for(int i = 0; i < oppTanks.size();i++){  
+					if( circle.collidesWith(oppTanks.get(i)) ){
+						scene.detachChild(oppTanks.get(i));
+						scene.detachChild(circle);
+						oppTanks.remove(i);
+						Sprite explosion = new Sprite(touchX,CAMERA_HEIGHT-touchY, UnitAllocationActivity.mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
+						scene.attachChild(explosion);
+
+					}
+				}
+				//if hits mine
+				//find selected tank and destroy it
+				for(int i = 0; i < oppMines.size();i++){  
+					if( circle.collidesWith(oppMines.get(i)) ){
+						scene.detachChild(myTanks.get(index));
+						scene.detachChild(oppMines.get(i));
+						scene.detachChild(circle);
+						Sprite explosion = new Sprite(myTanks.get(index).originX,myTanks.get(index).originY, UnitAllocationActivity.mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
+						scene.attachChild(explosion);
+						Sprite explosion2 = new Sprite(touchX,CAMERA_HEIGHT-touchY, UnitAllocationActivity.mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
+						scene.attachChild(explosion2);
+						myTanks.remove(myTanks.get(index));
+						oppMines.remove(i);
+					}
+				}
+				//Switch turns and check winner
+				if(!player1){
+					tankList.get(index).isSelected = false;
+					unregisterItems(tankList);
+					//player1 = false;
+					fire = false;
+					if(player1win()){
+						turn2mes = false;
+						gameDialog(4);
+					}else{
+						turn2mes = true;
+					}
+				}else{
+					
+					tankList2.get(index).isSelected = false;
+					unregisterItems(tankList2);
+					//player1 = true;
+					fire = false;
+					if(player2win()){
+						turn1mes = false;
+						gameDialog(4);
+					}else{
+						turn1mes = true;
+					}
+					
+				}
+				if(!player1){
+					camera.setRotation(180f);
+				}else{
+					camera.setRotation(0f);
+				}
+				scene.detachChild(bullet);
+				boolean turn = !player1;
+				if(isOnline){
+					sendData(tankList,tankList2,mineList,mineList2,selTank,targetX,targetY,turn,1);
+				}
+			}
+        };
+        bullet.registerEntityModifier(moveBullet);
+        scene.attachChild(bullet);
+       
+        
+     }       
+	void sendData(LinkedList <Tank> p1Tanks, LinkedList <Tank> p2Tanks,LinkedList <Sprite> p1Mines,LinkedList <Sprite> p2Mines,
+  			Tank selTank,float targetX,float targetY, boolean p1turn,int gameID){
+		
+		gameState = new GameState(p1Tanks,p2Tanks,p1Mines,p2Mines,selTank, targetX, targetY,p1turn,gameID);
+		
+	}
+	
 /*****************************************************
 * Tank Class when selected is highlighted by
 * a rectangle object
 ******************************************************/
-	class Tank extends Sprite {
+	class Tank extends Sprite implements Serializable {
 		float originX, originY;
 		boolean removed,isSelected, validMove;
 		Rectangle outline;
@@ -1015,7 +1057,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	}
 };
 /*****************************************************
-* Tank Class when selected is highlighted by
+* Soldier Class when selected is highlighted by
 * a rectangle object
 ******************************************************/
 	class Soldier extends Sprite {
