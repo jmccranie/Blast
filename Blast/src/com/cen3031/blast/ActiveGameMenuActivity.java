@@ -1,16 +1,12 @@
 package com.cen3031.blast;
 
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,9 +30,6 @@ public class ActiveGameMenuActivity extends Activity{
 	 static final int SERVER_PORT = 8000;
 	 String SERVER_IP;
 	 Handler handler = new Handler();
-	 static Socket socket = null;
-     PrintWriter printWriter;
-     ObjectInputStream in; 
 	 public ListView listView;
 	 public List<GameState> tv_games =  new ArrayList<GameState>();
 	 GameStateArrayAdaptor adapter;
@@ -128,97 +121,35 @@ public class ActiveGameMenuActivity extends Activity{
 
 	@Override
 	protected void onStart() {
-	    super.onStart();
-	    
+		super.onStart();
 	    Intent intent = getIntent();
 	    SERVER_IP = intent.getStringExtra("ipAddr");
-	    Thread clientThread = new Thread(new ClientThread());
-	    clientThread.start();
+	    Thread client = new Thread(new ClientThread(getBaseContext(),SERVER_IP));
+	    client.start();
+	    try{
+	    	client.join();
+			File file2 = getBaseContext().getFileStreamPath("tcpaftertest.txt");
+    	    Toast.makeText(getApplicationContext(), "tcpaftertest", Toast.LENGTH_LONG).show();
+    	    FileInputStream fis = new FileInputStream(file2);
+		    DataInputStream dataIO = new DataInputStream(fis);
+		    String strLine = dataIO.readLine();
+		    dataIO.close();
+		    fis.close();
+		    Toast.makeText(getApplicationContext(), strLine, Toast.LENGTH_LONG).show();
+		    if(file2.exists()){
+	    	   	file2.delete();
+	    	}
+        } catch (Exception e) { Log.d("test2", "IP addr : ");
+        	//finish();
+    	}
 	}
 		
 	 @Override
 	    protected void onStop() {
 	        super.onStop();
-	        try {
-	        	Log.d("test1", "Stop Connection");
-	        	socket.shutdownInput();
-	        	socket.close();
-	        } catch (SocketException e) {
-	        	Log.d("test2", e.toString());
-	        	
-	        } catch (Exception e) {
-				// TODO Auto-generated catch block
-	        	Log.d("test3", e.toString()); 
-				e.printStackTrace();
-				finish();
-			}
 	        return;
 	    } 	 
 
-	 class ClientThread implements Runnable {
-	        public void run() {
-	            try {
-	                try {
-						InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
-					} catch (UnknownHostException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-	                String textIn = null;
-	                String textOut = null;
-	                // TODO Auto-generated method stub
-	                Socket socket = null;
-	                DataOutputStream dataOutputStream = null;
-	                DataInputStream dataInputStream = null;
 
-	                try {
-	                 socket = new Socket(SERVER_IP, SERVER_PORT);
-	                 dataOutputStream = new DataOutputStream(socket.getOutputStream());
-	                 dataInputStream = new DataInputStream(socket.getInputStream());
-	                 dataOutputStream.writeUTF(textOut);
-	                 textIn= (dataInputStream.readUTF());
-	                 Toast.makeText(getApplicationContext(), textIn, Toast.LENGTH_LONG).show();
-	                } catch (UnknownHostException e) {
-	                 // TODO Auto-generated catch block
-	                 e.printStackTrace();
-	                } catch (IOException e) {
-	                 // TODO Auto-generated catch block
-	                 e.printStackTrace();
-	                }
-	                finally{
-	                 if (socket != null){
-	                  try {
-	                   socket.close();
-	                  } catch (IOException e) {
-	                   // TODO Auto-generated catch block
-	                   e.printStackTrace();
-	                  }
-	                 }
-
-	                 if (dataOutputStream != null){
-	                  try {
-	                   dataOutputStream.close();
-	                  } catch (IOException e) {
-	                   // TODO Auto-generated catch block
-	                   e.printStackTrace();
-	                  }
-	                 }
-
-	                 if (dataInputStream != null){
-	                  try {
-	                   dataInputStream.close();
-	                  } catch (IOException e) {
-	                   // TODO Auto-generated catch block
-	                   e.printStackTrace();
-	                  }
-	                 }
-	                }
-	               }finally{
-	            	   
-	               };
-	               }
-
-	                
-	            } 
 	        
 	    }

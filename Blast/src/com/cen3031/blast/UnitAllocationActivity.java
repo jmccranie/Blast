@@ -916,6 +916,18 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
   			Tank selTank,float targetX,float targetY, boolean p1turn,int gameID){
 		
 		gameState = new GameState(p1Tanks,p2Tanks,p1Mines,p2Mines,selTank, targetX, targetY,p1turn,gameID);
+		System.out.println("test sendData1");
+		Thread client = new Thread(new ClientThread(getBaseContext(),gameState));
+		System.out.println("test sendData2");
+	    client.start();
+	    System.out.println("test sendData3");
+	    try{
+	    	client.join();
+	    	System.out.println("test sendData4");
+	    }
+	    catch(Exception e){
+	    	
+	    }
 		
 	}
 	
