@@ -9,7 +9,11 @@ import com.cen3031.blast.UnitAllocationActivity.Tank;
 
 public class GameState implements Serializable  {
 
-  public String user1;
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+public String user1;
   public String user2;
   public int gameID;
   LinkedList <Tank> p1Tanks;

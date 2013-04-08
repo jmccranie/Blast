@@ -924,6 +924,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 * a rectangle object
 ******************************************************/
 	class Tank extends Sprite implements Serializable {
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 		float originX, originY;
 		boolean removed,isSelected, validMove;
 		Rectangle outline;
