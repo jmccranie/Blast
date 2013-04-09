@@ -1,11 +1,10 @@
 package com.cen3031.blast;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.ObjectInputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
@@ -31,9 +30,6 @@ public class ActiveGameMenuActivity extends Activity{
 	 static final int SERVER_PORT = 8000;
 	 String SERVER_IP;
 	 Handler handler = new Handler();
-	 static Socket socket = null;
-     PrintWriter printWriter;
-     ObjectInputStream in; 
 	 public ListView listView;
 	 public List<GameState> tv_games =  new ArrayList<GameState>();
 	 GameStateArrayAdaptor adapter;
@@ -104,7 +100,7 @@ public class ActiveGameMenuActivity extends Activity{
   	    	 EditText createText;
 	         createText = (EditText) textEntryView.findViewById(R.id.user_name);
 	         String username = createText.getText().toString();
-  	         GameState game = new GameState(username,"Waiting for Challenger");
+  	         GameState game = new GameState(username,"Waiting for Challenger",1);
   	         tv_games.add(game);
   	         adapter.notifyDataSetChanged();
   	         return;                  
@@ -125,117 +121,35 @@ public class ActiveGameMenuActivity extends Activity{
 
 	@Override
 	protected void onStart() {
-	    super.onStart();
-	    
+		super.onStart();
 	    Intent intent = getIntent();
 	    SERVER_IP = intent.getStringExtra("ipAddr");
-	    Thread clientThread = new Thread(new ClientThread());
-	    clientThread.start();
+	    Thread client = new Thread(new ClientThread(getBaseContext(),SERVER_IP));
+	    client.start();
+	    try{
+	    	client.join();
+			File file2 = getBaseContext().getFileStreamPath("tcpaftertest.txt");
+    	    Toast.makeText(getApplicationContext(), "tcpaftertest", Toast.LENGTH_LONG).show();
+    	    FileInputStream fis = new FileInputStream(file2);
+		    DataInputStream dataIO = new DataInputStream(fis);
+		    String strLine = dataIO.readLine();
+		    dataIO.close();
+		    fis.close();
+		    Toast.makeText(getApplicationContext(), strLine, Toast.LENGTH_LONG).show();
+		    if(file2.exists()){
+	    	   	file2.delete();
+	    	}
+        } catch (Exception e) { Log.d("test2", "IP addr : ");
+        	//finish();
+    	}
 	}
 		
 	 @Override
 	    protected void onStop() {
 	        super.onStop();
-	        try {
-	        	Log.d("test1", "Stop Connection");
-	        	socket.shutdownInput();
-	        	socket.close();
-	        } catch (SocketException e) {
-	        	Log.d("test2", e.toString());
-	        	
-	        } catch (Exception e) {
-				// TODO Auto-generated catch block
-	        	Log.d("test3", e.toString()); 
-				e.printStackTrace();
-				finish();
-			}
 	        return;
 	    } 	 
 
-	 class ClientThread implements Runnable {
-	        public void run() {
-	            try {
-	                InetAddress serverAddr = InetAddress.getByName(SERVER_IP);
 
-	                handler.post(new Runnable() {
-	                    @Override
-	                    public void run() {
-	                    	//Toast.makeText(getApplicationContext(), "Connecting to the Sever", Toast.LENGTH_LONG).show();
-	                    }
-	                });
-
-	                socket = new Socket(serverAddr, SERVER_PORT);
-	                
-	                try {
-	                    printWriter = new PrintWriter(new BufferedWriter(
-	                            new OutputStreamWriter(socket.getOutputStream())),
-	                            true);
-
-	                    //---get an InputStream object to read from the server---
-	                    in = new ObjectInputStream(socket.getInputStream());
-	                    final String strReceived = (String)in.readObject();
-	                    try {
-
-	                    	 ActiveGameMenuActivity.this.runOnUiThread(new Runnable() {
-		                    	    public void run() {
-		                    	    	Toast.makeText(ActiveGameMenuActivity.this, strReceived, Toast.LENGTH_SHORT).show();
-		                    	    }
-		                    	});
-	                        //}
-
-	                        //---disconnected from the server---
-	                        handler.post(new Runnable() {
-	                            @Override
-	                            public void run() {
-	                            	//Toast.makeText(getApplicationContext(), SERVER_IP, Toast.LENGTH_LONG).show();
-	                            }
-	                        });
-
-	                    } catch (Exception e) {
-	                        final String error = e.getLocalizedMessage();
-	                        handler.post(new Runnable() {
-	                            @Override
-	                            public void run() {
-	                            	Log.d("test2", "IP addr : " + error);
-	                            	Toast.makeText(getApplicationContext(), error, Toast.LENGTH_LONG).show();
-	                               // textView1.setText(textView1.getText() + "\n" + error);
-	                            }
-	                        });
-	                    }
-
-	                } catch (Exception e) {
-	                    final String error = e.getLocalizedMessage();
-	                    handler.post(new Runnable() {
-	                        @Override
-	                        public void run() {
-	                        	Log.d("test2", "IP addr : " + error);
-	                        }
-	                    });
-	                }
-
-	                handler.post(new Runnable() {
-	                    @Override
-	                    public void run() {
-	                      //  textView1.setText(textView1.getText() + "\n" + "Connection closed.");
-	                    	Log.d("test2", "IP addr : " );
-	                    }
-	                });
-
-	                
-	            } catch (Exception e) {
-	                final String error = e.getLocalizedMessage();
-	                handler.post(new Runnable() {
-	                    @Override
-	                    public void run() {
-	                    	Log.d("test2", "IP addr : " + error);
-	                    	Toast.makeText(getApplicationContext(), "Sorry, Could not connect to Server",
-		        	    			Toast.LENGTH_LONG).show();
-	                    	finish();
-	                    }
-
-	                });
-
-	            }
-	        }
+	        
 	    }
-}

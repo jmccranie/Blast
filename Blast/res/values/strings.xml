@@ -25,7 +25,7 @@
     <!-- PlayMenuActivity -->
     <string name="bluetooth">Bluetooth</string>
     <string name="online">Online</string>
-    <string name="pass_n_play">Demo</string>
+    <string name="pass_n_play">&quot;Pass n' Play&quot;</string>
     <string name="title_activity_gif_view">GifView</string>
 
     <!-- BluetoothChat -->

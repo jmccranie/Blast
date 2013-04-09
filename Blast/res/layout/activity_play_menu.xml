@@ -2,32 +2,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#666"
+    android:background="@drawable/menu_background_tank"
     tools:context=".PlayMenuActivity" >
-    
-    <LinearLayout android:id="@+id/ll_play_menu"
-        android:orientation="vertical"
-        android:layout_below="@id/menu_icon"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_centerHorizontal="true" >
 
-        <TextView android:id="@+id/tv_pass_n_play"
-	        android:text="@string/pass_n_play"
-	        android:onClick="onClick"
-	        style="@style/MenuFont" />
+    <Button
+        android:id="@+id/tv_online"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_bluetooth"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/btn"
+        android:onClick="btn_online"
+        android:text="Online"
+        android:textColor="@android:color/white" />
 
-	    <TextView android:id="@+id/tv_bluetooth"
-	        android:text="@string/bluetooth"
-	        android:onClick="onClick"
-	        style="@style/MenuFont" />
+    <Button
+        android:id="@+id/tv_bluetooth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_pass_n_play"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/btn"
+        android:onClick="btn_bluetooth"
+        android:text="Bluetooth"
+        android:textColor="@android:color/white" />
 
-	    <TextView android:id="@+id/tv_online"
-	        android:text="@string/online"
-	        android:onClick="onClick"
-	        style="@style/MenuFont" />
-        
-    </LinearLayout>
+    <Button
+        android:id="@+id/tv_pass_n_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="135dp"
+        android:background="@drawable/btn"
+        android:onClick="btn_pnp"
+        android:text="Pass N Play"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>
