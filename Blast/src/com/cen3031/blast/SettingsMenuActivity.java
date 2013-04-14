@@ -88,15 +88,15 @@ public class SettingsMenuActivity extends Activity {
     public void onClick(View v) {
         boolean checked = ((CheckBox) v).isChecked();
         
-        switch (v.getId()) {
-        case R.id.cb_music:
-            mMusic.setChecked(checked);
-            setMusic(checked);
-            break;
-        case R.id.cb_sfx:
-            mSFX.setChecked(checked);
-            setSFX(checked);
-            break;
-        }
+//        switch (v.getId()) {
+//        case R.id.cb_music:
+//            mMusic.setChecked(checked);
+//            setMusic(checked);
+//            break;
+//        case R.id.cb_sfx:
+//            mSFX.setChecked(checked);
+//            setSFX(checked);
+//            break;
+//        }
     }
 }

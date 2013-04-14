@@ -329,22 +329,22 @@ public class BluetoothChat extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent serverIntent = null;
-        switch (item.getItemId()) {
-        case R.id.secure_connect_scan:
-            // Launch the DeviceListActivity to see devices and do scan
-            serverIntent = new Intent(this, DeviceListActivity.class);
-            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
-            return true;
-        case R.id.insecure_connect_scan:
-            // Launch the DeviceListActivity to see devices and do scan
-            serverIntent = new Intent(this, DeviceListActivity.class);
-            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
-            return true;
-        case R.id.discoverable:
-            // Ensure this device is discoverable by others
-            ensureDiscoverable();
-            return true;
-        }
+//        switch (item.getItemId()) {
+//        case R.id.secure_connect_scan:
+//            // Launch the DeviceListActivity to see devices and do scan
+//            serverIntent = new Intent(this, DeviceListActivity.class);
+//            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_SECURE);
+//            return true;
+//        case R.id.insecure_connect_scan:
+//            // Launch the DeviceListActivity to see devices and do scan
+//            serverIntent = new Intent(this, DeviceListActivity.class);
+//            startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE_INSECURE);
+//            return true;
+//        case R.id.discoverable:
+//            // Ensure this device is discoverable by others
+//            ensureDiscoverable();
+//            return true;
+//        }
         return false;
     }
 
