@@ -40,6 +40,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
@@ -125,8 +126,18 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	boolean animOver;
 	GameState gameState;
 	boolean isOnline = true;
-	
-	
+	Rectangle balanceLabel;
+	Rectangle unitAllocLabel;
+	Text moneyText;
+	int MONEY = 6;
+	int balance1 = MONEY;
+	int balance2 = MONEY;
+	String user1;
+	String user2;
+	String pIDturn = null;
+	String phoneID1;
+	String phoneID2;
+	int turn = 0;
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		DisplayMetrics metrics = new DisplayMetrics();
@@ -167,6 +178,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 
         this.mEngine.getTextureManager().loadTexture(this.mFontTexture);
         this.getFontManager().loadFont(this.mFont);
+        
 	}
 	
 	@Override
@@ -200,8 +212,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         player2text.setScale(4);
         player2text.setRotation(180);
         scene.attachChild(player2text);
+       
         player1 = true;
     	gameStart = false;
+    	pIDturn = phoneID1;
     	
     	gameDialog(5);
 		
@@ -210,16 +224,32 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
     	//TANK and MINE buttons
         tankButton = new ButtonSprite(0, barricade.getY()-75, this.mTankButton1TextureRegion,this.mTankButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         tankButton.setSize(75,75);
-        tankText =  new Text(0, 0, this.mFont, Integer.toString(MAX_TANKS), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        tankText =  new Text(5, 0, this.mFont, Integer.toString(1), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
 
         
         mineButton = new ButtonSprite(75, barricade.getY()-75, this.mMineButton1TextureRegion,this.mMineButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         mineButton.setSize(75,75);
-        mineText =  new Text(0, 0, this.mFont, Integer.toString(MAX_MINES), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        mineText =  new Text(5, 0, this.mFont, Integer.toString(1), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        
+        balanceLabel = new Rectangle(150,barricade.getY()-75,75,75,this.getVertexBufferObjectManager());
+        balanceLabel.setColor(0,0,0);
+        Text balanceText =  new Text(-20, -10, this.mFont, "Balance", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        balanceText.setScale(.5f);
+        moneyText = new Text(30, 30, this.mFont,Integer.toString(MONEY), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+		balanceLabel.attachChild(moneyText);
+        
+        unitAllocLabel = new Rectangle(0,tankButton.getY()-45,225,45,this.getVertexBufferObjectManager());
+        unitAllocLabel.setColor(0,0,0);
+        Text unitAllocText =  new Text(0, 0, this.mFont, "Unit Allocation", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        unitAllocText.setScale(.9f);
         
         tankButton.attachChild(tankText);
         mineButton.attachChild(mineText);
+        balanceLabel.attachChild(balanceText);
+        unitAllocLabel.attachChild(unitAllocText);
         
+        hud.attachChild(balanceLabel);
+        hud.attachChild(unitAllocLabel);
         hud.attachChild(tankButton);
         hud.attachChild(mineButton);
         hud.registerTouchArea(tankButton);
@@ -255,28 +285,28 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			public void run() {
 				if(pButtonSprite == tankButton){
 					if(!gameStart){
-						if(player1 && tankList.size()==MAX_TANKS){
-							gameToast("No Tanks Left");
-						}
-						else if(!player1 && tankList2.size()==MAX_TANKS){
-							gameToast("No Tanks Left");
-						}else{
+//						if(player1 && tankList.size()==MAX_TANKS){
+//							gameToast("No Tanks Left");
+//						}
+//						else if(!player1 && tankList2.size()==MAX_TANKS){
+//							gameToast("No Tanks Left");
+//						}else{
 						tankSel = true;
 						
-						}
+						//}
 					}
 				}
 				else if(pButtonSprite == mineButton){
 					if(!gameStart){
-						if(player1 && mineList.size()==MAX_MINES){
-							gameToast("No Mines Left");
-						}
-						else if(!player1 && mineList2.size()==MAX_MINES){
-							gameToast("No Mines Left");
-						}else{
+//						if(player1 && mineList.size()==MAX_MINES){
+//							gameToast("No Mines Left");
+//						}
+//						else if(!player1 && mineList2.size()==MAX_MINES){
+//							gameToast("No Mines Left");
+//						}else{
 						mineSel = true;
 						
-						}
+						//}
 					 
 					}
 				}
@@ -350,8 +380,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  unregisterItems(tankList);
 		        				  registerItems(tankList2);
 		        				  camera.setRotation(180f);
-		        			      updateTankText(tankList2);
-		        			      updateMineText(mineList2);
+		        			      //updateTankText(tankList2);
+		        			      //updateMineText(mineList2);
+		        			      updateMoneyText(MONEY);
 		        				  return;                  
 		        			  }  
 		        		  });  
@@ -384,6 +415,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  camera.setRotation(0f);
 		        				  hud.detachChild(tankButton);
 		        				  hud.detachChild(mineButton);
+		        				  hud.detachChild(balanceLabel);
+		        				  hud.detachChild(unitAllocLabel);
 		        				  hud.clearTouchAreas();
 		        				  updateHUD();
 		        				  return;                  
@@ -506,7 +539,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			//If they are deselect them
 			unregisterItems(tankList2);
 			checkOthersSelected(tankList);
-			if(tankList.size()<MAX_TANKS && tankSel){
+			
+			if(0<balance1 && tankSel){
 				if (pSceneTouchEvent.isActionDown()) {
 					
 	      
@@ -519,13 +553,15 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						scene.registerTouchArea(tank); // register touch area , so this allows you to drag it
 						scene.attachChild(tank); //add it to the scene
 						tankSel = false;
-						updateTankText(tankList); //Update tank count
+						//updateTankText(tankList); //Update tank count
+						balance1--;
+						updateMoneyText(balance1);
 						
 					}
 					
 				return false;
 				} 
-			}else if(mineList.size() < MAX_MINES && mineSel){
+			}else if(0 < balance1 && mineSel){
 				if(pSceneTouchEvent.isActionDown()){
 				mine = new Sprite(touchX ,touchY,50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
 					float posY = touchY - mine.getHeight() / 2;
@@ -534,11 +570,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						scene.registerTouchArea(mine); // register touch area , so this allows you to drag it
 						scene.attachChild(mine); //add it to the scene
 						mineSel = false;
-						updateMineText(mineList); //update mine count
+						balance1--;
+						updateMoneyText(balance1);
 					}
 					return false;
 				}
-			}else if(!(tankList.size()<MAX_TANKS)&&!(mineList.size() < MAX_MINES)){
+			}else if(balance1 == 0){
 				player1 = false;
 				gameDialog(1);
 				
@@ -548,7 +585,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		else if(!player1 && !gameStart){
 			// CREATE POP UP DIALOG TO SUBMIT
 			//Player 2 turn
-			if(tankList2.size()<MAX_TANKS && tankSel){
+			if(0<balance2 && tankSel){
 				//Checks each touch if the tank has been removed from the screen
 				//Removes it from Linked List
 				checkRemove(tankList2);
@@ -570,12 +607,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						scene.registerTouchArea(tank); // register touch area , so this allows you to drag it
 						scene.attachChild(tank); //add it to the scene
 						tankSel = false;
-						updateTankText(tankList2);
+						balance2--;
+						updateMoneyText(balance2);
 					}
 					
 				return false;
 				} 
-			}else if(mineList2.size() < MAX_MINES && mineSel){
+			}else if(0 < balance2 && mineSel){
 				//PLACE MINES
 				if(pSceneTouchEvent.isActionDown()){
 				mine = new Sprite(touchX ,touchY,50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
@@ -586,11 +624,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						scene.registerTouchArea(mine); // register touch area , so this allows you to drag it
 						scene.attachChild(mine); //add it to the scene
 						mineSel = false;
-						updateMineText(mineList2);
+						balance2--;
+						updateMoneyText(balance2);
 					}
 					return false;
 				}
-			}else if(!(tankList2.size()<MAX_TANKS)&&!(mineList2.size() < MAX_MINES)){
+			}else if(balance2 == 0){
 				gameStart = true;
 				gameDialog(2);
 			}
@@ -804,6 +843,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		mineButton.attachChild(mineText);
 	}
 	
+	void updateMoneyText(int balance){
+		balanceLabel.detachChild(moneyText);
+		moneyText = new Text(30, 30, this.mFont, Integer.toString(balance), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+		balanceLabel.attachChild(moneyText);
+	}
+	
 	void updateHUD(){
 		hud.attachChild(fireButton);
 		hud.registerTouchArea(fireButton);
@@ -900,11 +945,16 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					camera.setRotation(0f);
 				}
 				scene.detachChild(bullet);
-				boolean turn = !player1;
+				//boolean pturn = !player1;
+				if(player1){
+					pIDturn = phoneID1;
+				}else{
+					pIDturn = phoneID2;
+				}
 				if(isOnline){
 					setTankXYList(tankList,tankList2);
 					setMineXYList(mineList,mineList2);
-					sendData(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,selTank,targetX,targetY,turn,1);
+					sendData(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,selTank,targetX,targetY);
 				}
 			}
         };
@@ -915,9 +965,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
      }       
 	void sendData(LinkedList <Integer> p1TanksX,LinkedList <Integer> p1TanksY,LinkedList <Integer> p2TanksX,LinkedList <Integer> p2TanksY,
 				LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
-				Tank selTank,float targetX,float targetY, boolean p1turn,int gameID){
+				Tank selTank,float targetX,float targetY){
 		
-		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY,selTank, targetX, targetY,p1turn,gameID);
+		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY,selTank, targetX, targetY,user1,user2,pIDturn);
 		System.out.println("test sendData1");
 		Thread client = new Thread(new ClientThread(this,gameState));
 	    client.start();
@@ -958,6 +1008,33 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		for(int i = 0; i < list2.size(); i++){
 			mineXList2.set(i, (int) list2.get(i).getX());
 			mineYList2.set(i, (int) list2.get(i).getY());
+		}
+	}
+	
+	public void setNewTankList(LinkedList<Integer> listX,LinkedList<Integer> listY,LinkedList<Integer> listX2,LinkedList<Integer> listY2){
+		tankList.clear();
+		for(int i = 0; i < listX.size(); i++){
+			tank = new Tank(listX.get(i) ,listY.get(i),50,50, this.mTankTextureRegion, this.getVertexBufferObjectManager());
+			tankList.add(tank);
+		}
+		tankList2.clear();
+		for(int i = 0; i < listX2.size(); i++){
+			tank = new Tank(listX2.get(i) ,listY2.get(i),50,50, this.mTankTextureRegion, this.getVertexBufferObjectManager());
+			tankList2.add(tank);
+		}
+	}
+	
+	public void setNewMineList(LinkedList<Integer> listX,LinkedList<Integer> listY,LinkedList<Integer> listX2,LinkedList<Integer> listY2){
+		mineList.clear();
+		for(int i = 0; i < listX.size(); i++){
+			mine = new Sprite(listX.get(i),listY.get(i),50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
+			mineList.add(mine);
+		}
+		
+		mineList2.clear();
+		for(int i = 0; i < listX2.size(); i++){
+			mine = new Sprite(listX2.get(i),listY2.get(i),50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
+			mineList2.add(mine);
 		}
 	}
 /*****************************************************

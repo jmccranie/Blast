@@ -13,7 +13,7 @@ public class GameState implements Serializable  {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-public String user1;
+	public String user1;
   public String user2;
   public int gameID;
   LinkedList <Integer> p1TanksX;
@@ -27,7 +27,8 @@ public String user1;
   Tank selTank;
   float targetX;
   float targetY;
-  boolean p1turn;
+  String pIDturn;
+  int turn;
   public GameState(String user1, String user2,int gameID){
 	  this.user1 = user1;
 	  this.user2 = user2;
@@ -36,7 +37,7 @@ public String user1;
   
   public GameState(  LinkedList <Integer> p1TanksX,LinkedList <Integer> p1TanksY,LinkedList <Integer> p2TanksX,LinkedList <Integer> p2TanksY,
 		  				LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
-		  				Tank selTank,float targetX,float targetY, boolean p1turn,int gameID){
+		  				Tank selTank,float targetX,float targetY, String user1, String user2,String pIDturn){
 	  this.p1TanksX = p1TanksX;
 	  this.p1TanksY = p1TanksY;
 	  this.p2TanksX = p2TanksX;
@@ -48,8 +49,9 @@ public String user1;
 	  this.selTank = selTank;
 	  this.targetX = targetX;
 	  this.targetY = targetY;
-	  this.p1turn = p1turn;
-	  this.gameID = gameID;
+	  this.user1 = user1;
+	  this.user2 = user2;
+	  this.pIDturn = pIDturn;
   }
   
 

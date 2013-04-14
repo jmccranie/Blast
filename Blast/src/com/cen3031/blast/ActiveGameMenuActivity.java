@@ -6,10 +6,12 @@ import java.util.List;
 import oracle.jdbc.rowset.OracleCachedRowSet;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,12 +30,16 @@ public class ActiveGameMenuActivity extends Activity implements GameReceiver {
 	 public ListView listView;
 	 public List<GameState> tv_games =  new ArrayList<GameState>();
 	 GameStateArrayAdaptor adapter;
+	 String phoneID;
+	 TelephonyManager telephonyManager;
 	/** Called when the activity is first created. */
 
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    
 	    setContentView(R.layout.activity_active_game_menu);
+	    telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+	    phoneID = telephonyManager.getDeviceId(); 
 	    Intent intent = getIntent();
 		SERVER_IP = intent.getStringExtra("ipAddr");
 		 final TextView createButton = (TextView) findViewById(R.id.createView);
