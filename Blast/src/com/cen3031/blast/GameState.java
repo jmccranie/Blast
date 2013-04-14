@@ -16,10 +16,14 @@ public class GameState implements Serializable  {
 public String user1;
   public String user2;
   public int gameID;
-  LinkedList <Tank> p1Tanks;
-  LinkedList <Tank> p2Tanks;
-  LinkedList <Sprite> p1Mines;
-  LinkedList <Sprite> p2Mines;
+  LinkedList <Integer> p1TanksX;
+  LinkedList <Integer> p1TanksY;
+  LinkedList <Integer> p2TanksX;
+  LinkedList <Integer> p2TanksY;
+  LinkedList <Integer> p1MinesX;
+  LinkedList <Integer> p1MinesY;
+  LinkedList <Integer> p2MinesX;
+  LinkedList <Integer> p2MinesY;
   Tank selTank;
   float targetX;
   float targetY;
@@ -30,12 +34,17 @@ public String user1;
 	  this.gameID = gameID;
   }
   
-  public GameState(LinkedList <Tank> p1Tanks, LinkedList <Tank> p2Tanks,LinkedList <Sprite> p1Mines,LinkedList <Sprite> p2Mines,
-		  			Tank selTank,float targetX,float targetY, boolean p1turn,int gameID){
-	  this.p1Tanks = p1Tanks;
-	  this.p2Tanks = p2Tanks;
-	  this.p1Mines = p1Mines;
-	  this.p2Mines = p2Mines;
+  public GameState(  LinkedList <Integer> p1TanksX,LinkedList <Integer> p1TanksY,LinkedList <Integer> p2TanksX,LinkedList <Integer> p2TanksY,
+		  				LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
+		  				Tank selTank,float targetX,float targetY, boolean p1turn,int gameID){
+	  this.p1TanksX = p1TanksX;
+	  this.p1TanksY = p1TanksY;
+	  this.p2TanksX = p2TanksX;
+	  this.p2TanksY = p2TanksY;
+	  this.p1MinesX = p1MinesX;
+	  this.p1MinesY = p1MinesY;
+	  this.p2MinesX = p2MinesX;
+	  this.p2MinesY = p2MinesY;
 	  this.selTank = selTank;
 	  this.targetX = targetX;
 	  this.targetY = targetY;

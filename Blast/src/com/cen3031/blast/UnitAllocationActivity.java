@@ -87,11 +87,19 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	HUD hud;
 	static LinkedList<Tank> tankList = new LinkedList<Tank>();
 	static LinkedList<Tank> tankList2 = new LinkedList<Tank>();
+	static LinkedList<Integer> tankXList = new LinkedList<Integer>();
+	static LinkedList<Integer> tankYList = new LinkedList<Integer>();
+	static LinkedList<Integer> tankXList2 = new LinkedList<Integer>();
+	static LinkedList<Integer> tankYList2 = new LinkedList<Integer>();
 	static LinkedList<Soldier> soldList = new LinkedList<Soldier>();
 	static LinkedList<Soldier> soldList2 = new LinkedList<Soldier>();
 	static LinkedList<Sprite> circleList = new LinkedList<Sprite>();
 	static LinkedList<Sprite> mineList = new LinkedList<Sprite>();
 	static LinkedList<Sprite> mineList2 = new LinkedList<Sprite>();
+	static LinkedList<Integer> mineXList = new LinkedList<Integer>();
+	static LinkedList<Integer> mineYList = new LinkedList<Integer>();
+	static LinkedList<Integer> mineXList2 = new LinkedList<Integer>();
+	static LinkedList<Integer> mineYList2 = new LinkedList<Integer>();
 	private static final int MAX_TANKS = 5;
 	private static final int MAX_MINES= 2;
 	static boolean player1 ;
@@ -786,13 +794,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	
 	void updateTankText(LinkedList<Tank> list){
 		tankButton.detachChild(tankText);
-		tankText = new Text(0, 0, this.mFont, Integer.toString(5-list.size()), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+		tankText = new Text(0, 0, this.mFont, Integer.toString(MAX_TANKS-list.size()), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
 		tankButton.attachChild(tankText);
 	}
 	
 	void updateMineText(LinkedList <Sprite> list){
 		mineButton.detachChild(mineText);
-		mineText = new Text(0, 0, this.mFont, Integer.toString(2-list.size()), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+		mineText = new Text(0, 0, this.mFont, Integer.toString(MAX_MINES-list.size()), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
 		mineButton.attachChild(mineText);
 	}
 	
@@ -894,7 +902,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				scene.detachChild(bullet);
 				boolean turn = !player1;
 				if(isOnline){
-					sendData(tankList,tankList2,mineList,mineList2,selTank,targetX,targetY,turn,1);
+					setTankXYList(tankList,tankList2);
+					setMineXYList(mineList,mineList2);
+					sendData(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,selTank,targetX,targetY,turn,1);
 				}
 			}
         };
@@ -903,10 +913,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
        
         
      }       
-	void sendData(LinkedList <Tank> p1Tanks, LinkedList <Tank> p2Tanks,LinkedList <Sprite> p1Mines,LinkedList <Sprite> p2Mines,
-  			Tank selTank,float targetX,float targetY, boolean p1turn,int gameID){
+	void sendData(LinkedList <Integer> p1TanksX,LinkedList <Integer> p1TanksY,LinkedList <Integer> p2TanksX,LinkedList <Integer> p2TanksY,
+				LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
+				Tank selTank,float targetX,float targetY, boolean p1turn,int gameID){
 		
-		gameState = new GameState(p1Tanks,p2Tanks,p1Mines,p2Mines,selTank, targetX, targetY,p1turn,gameID);
+		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY,selTank, targetX, targetY,p1turn,gameID);
 		System.out.println("test sendData1");
 		Thread client = new Thread(new ClientThread(this,gameState));
 	    client.start();
@@ -924,6 +935,31 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		
 	}
 	
+	//Convert TanKList to XandY lists
+	public void setTankXYList(LinkedList<Tank> list,LinkedList<Tank> list2){
+		
+		for(int i = 0; i < list.size(); i++){
+			tankXList.set(i, (int) list.get(i).getX());
+			tankYList.set(i, (int) list.get(i).getY());
+		}
+		
+		for(int i = 0; i < list2.size(); i++){
+			tankXList2.set(i, (int) list2.get(i).getX());
+			tankYList2.set(i, (int) list2.get(i).getY());
+		}
+	}
+	
+	public void setMineXYList(LinkedList<Sprite> list,LinkedList<Sprite> list2){
+		for(int i = 0; i < list.size(); i++){
+			mineXList.set(i, (int) list.get(i).getX());
+			mineYList.set(i, (int) list.get(i).getY());
+		}
+		
+		for(int i = 0; i < list2.size(); i++){
+			mineXList2.set(i, (int) list2.get(i).getX());
+			mineYList2.set(i, (int) list2.get(i).getY());
+		}
+	}
 /*****************************************************
 * Tank Class when selected is highlighted by
 * a rectangle object
