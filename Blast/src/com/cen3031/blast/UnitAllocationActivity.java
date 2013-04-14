@@ -3,10 +3,11 @@ package com.cen3031.blast;
 import java.io.Serializable;
 import java.util.LinkedList;
 
+import oracle.jdbc.rowset.OracleCachedRowSet;
+
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
-import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
@@ -23,13 +24,13 @@ import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.entity.util.FPSLogger;
 import org.andengine.input.touch.TouchEvent;
+import org.andengine.opengl.font.Font;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
 import org.andengine.opengl.texture.atlas.bitmap.source.AssetBitmapTextureAtlasSource;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.TextureRegion;
-import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.opengl.vbo.VertexBufferObjectManager;
 import org.andengine.ui.activity.SimpleBaseGameActivity;
 import org.andengine.util.HorizontalAlign;
@@ -39,23 +40,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.os.Looper;
-import org.andengine.opengl.font.Font;
-import org.andengine.opengl.font.FontFactory;
-
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.Toast;
-/**
- * (c) 2010 Nicolas Gramlich
- * (c) 2011 Zynga
- *
- * @author Nicolas Gramlich
- * @since 15:13:46 - 15.06.2010
- */
-public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener {
+
+import com.cen3031.blast.ClientThread.GameUpdateReceiver;
+
+public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener,GameUpdateReceiver {
 
 	// ===========================================================
 	// Constants
@@ -917,10 +907,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		
 		gameState = new GameState(p1Tanks,p2Tanks,p1Mines,p2Mines,selTank, targetX, targetY,p1turn,gameID);
 		System.out.println("test sendData1");
-		Thread client = new Thread(new ClientThread(getBaseContext(),gameState));
-		System.out.println("test sendData2");
+		Thread client = new Thread(new ClientThread(this,gameState));
 	    client.start();
-	    System.out.println("test sendData3");
 	    try{
 	    	client.join();
 	    	System.out.println("test sendData4");
@@ -928,6 +916,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	    catch(Exception e){
 	    	
 	    }
+		
+	}
+	
+	public void updateGame(OracleCachedRowSet cset){
 		
 	}
 	

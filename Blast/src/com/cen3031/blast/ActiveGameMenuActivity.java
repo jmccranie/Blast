@@ -1,22 +1,15 @@
 package com.cen3031.blast;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
-import java.io.PrintWriter;
-import java.net.Socket;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
 
+import oracle.jdbc.rowset.OracleCachedRowSet;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,7 +19,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ActiveGameMenuActivity extends Activity{
+import com.cen3031.blast.ClientThread.GameReceiver;
+
+public class ActiveGameMenuActivity extends Activity implements GameReceiver {
 	 static final int SERVER_PORT = 8000;
 	 String SERVER_IP;
 	 Handler handler = new Handler();
@@ -41,7 +36,6 @@ public class ActiveGameMenuActivity extends Activity{
 	    setContentView(R.layout.activity_active_game_menu);
 	    Intent intent = getIntent();
 		SERVER_IP = intent.getStringExtra("ipAddr");
-	   // Toast.makeText(getApplicationContext(), SERVER_IP, Toast.LENGTH_LONG).show();
 		 final TextView createButton = (TextView) findViewById(R.id.createView);
 		    
 		 	adapter = new GameStateArrayAdaptor(this,tv_games );
@@ -87,6 +81,7 @@ public class ActiveGameMenuActivity extends Activity{
 	   
 		
 	}
+	
 	public void startGame(){
 		LayoutInflater factory = LayoutInflater.from(this);
   	     final View textEntryView = factory.inflate(R.layout.create_game_dialog, null);
@@ -124,24 +119,18 @@ public class ActiveGameMenuActivity extends Activity{
 		super.onStart();
 	    Intent intent = getIntent();
 	    SERVER_IP = intent.getStringExtra("ipAddr");
-	    Thread client = new Thread(new ClientThread(getBaseContext(),SERVER_IP));
+	    Thread client = new Thread(new ClientThread(this,SERVER_IP));
 	    client.start();
 	    try{
 	    	client.join();
-			File file2 = getBaseContext().getFileStreamPath("tcpaftertest.txt");
-    	    Toast.makeText(getApplicationContext(), "tcpaftertest", Toast.LENGTH_LONG).show();
-    	    FileInputStream fis = new FileInputStream(file2);
-		    DataInputStream dataIO = new DataInputStream(fis);
-		    String strLine = dataIO.readLine();
-		    dataIO.close();
-		    fis.close();
-		    Toast.makeText(getApplicationContext(), strLine, Toast.LENGTH_LONG).show();
-		    if(file2.exists()){
-	    	   	file2.delete();
-	    	}
-        } catch (Exception e) { Log.d("test2", "IP addr : ");
-        	//finish();
+        }
+	    catch (Exception e) {
+        	
     	}
+	}
+	
+	public void getActiveGames(OracleCachedRowSet cset){
+		
 	}
 		
 	 @Override
