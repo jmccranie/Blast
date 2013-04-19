@@ -27,7 +27,7 @@ public class GameStateArrayAdaptor extends ArrayAdapter<GameState>{
 		gameView = inflater.inflate(R.layout.gamestate, parent, false);
 		GameState game = games.get(position);
 	    TextView textView = (TextView) gameView.findViewById(R.id.text);
-	    textView.setText(game.user1 + " vs. " +game.user2);
+	    textView.setText(game.user1name + " vs. " +game.user2name);
 	    textView.setTextSize(20);
 	    textView.setGravity(Gravity.CENTER);
 	    gameView.setTag(game);
