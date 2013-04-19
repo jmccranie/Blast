@@ -990,27 +990,34 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	
 	//Convert TanKList to XandY lists
 	public void setTankXYList(LinkedList<Tank> list,LinkedList<Tank> list2){
-		
+		tankXList.clear();
+		tankYList.clear();
+		tankXList2.clear();
+		tankYList2.clear();
 		for(int i = 0; i < list.size(); i++){
-			tankXList.set(i, (int) list.get(i).getX());
-			tankYList.set(i, (int) list.get(i).getY());
+			tankXList.add((int) list.get(i).getX());
+			tankYList.add((int) list.get(i).getY());
 		}
 		
 		for(int i = 0; i < list2.size(); i++){
-			tankXList2.set(i, (int) list2.get(i).getX());
-			tankYList2.set(i, (int) list2.get(i).getY());
+			tankXList2.add((int) list2.get(i).getX());
+			tankYList2.add((int) list2.get(i).getY());
 		}
 	}
 	
 	public void setMineXYList(LinkedList<Sprite> list,LinkedList<Sprite> list2){
+		mineXList.clear();
+		mineYList.clear();
+		mineXList2.clear();
+		mineYList2.clear();
 		for(int i = 0; i < list.size(); i++){
-			mineXList.set(i, (int) list.get(i).getX());
-			mineYList.set(i, (int) list.get(i).getY());
+			mineXList.add((int) list.get(i).getX());
+			mineYList.add((int) list.get(i).getY());
 		}
 		
 		for(int i = 0; i < list2.size(); i++){
-			mineXList2.set(i, (int) list2.get(i).getX());
-			mineYList2.set(i, (int) list2.get(i).getY());
+			mineXList2.add((int) list2.get(i).getX());
+			mineYList2.add((int) list2.get(i).getY());
 		}
 	}
 	
