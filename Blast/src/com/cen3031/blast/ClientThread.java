@@ -42,6 +42,7 @@ class ClientThread extends Thread {
         try {
             InetAddress serverAddr = InetAddress.getByName("10.137.87.236");
             this.socket = new Socket(serverAddr, 8000);
+            System.out.println("test Friday1");
                 	    
             try {
                 //---get an InputStream object to read from the server---

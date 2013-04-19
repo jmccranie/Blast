@@ -29,7 +29,7 @@ public class GameState implements Serializable  {
   Tank selTank;
   float targetX;
   float targetY;
-  String pIDturn;
+  public String pIDturn;
   int turn;
   public GameState(String user1, String user2,int gameID){
 	  this.user1ID = user1;

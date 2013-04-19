@@ -129,7 +129,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	Rectangle balanceLabel;
 	Rectangle unitAllocLabel;
 	Text moneyText;
-	int MONEY = 6;
+	int MONEY = 1;
 	int balance1 = MONEY;
 	int balance2 = MONEY;
 	String user1;
@@ -953,7 +953,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				}
 				if(isOnline){
 					setTankXYList(tankList,tankList2);
+					System.out.println("test Friday3");
 					setMineXYList(mineList,mineList2);
+					System.out.println("test Friday4");
+					System.out.println("test Friday2");
 					sendData(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,selTank,targetX,targetY);
 				}
 			}
