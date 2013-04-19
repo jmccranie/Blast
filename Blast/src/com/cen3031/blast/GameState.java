@@ -3,8 +3,6 @@ package com.cen3031.blast;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import org.andengine.entity.sprite.Sprite;
-
 import com.cen3031.blast.UnitAllocationActivity.Tank;
 
 public class GameState implements Serializable  {
@@ -26,7 +24,6 @@ public class GameState implements Serializable  {
   LinkedList <Integer> p1MinesY;
   LinkedList <Integer> p2MinesX;
   LinkedList <Integer> p2MinesY;
-  Tank selTank;
   float targetX;
   float targetY;
   public String pIDturn;
@@ -39,7 +36,7 @@ public class GameState implements Serializable  {
   
   public GameState(  LinkedList <Integer> p1TanksX,LinkedList <Integer> p1TanksY,LinkedList <Integer> p2TanksX,LinkedList <Integer> p2TanksY,
 		  				LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
-		  				Tank selTank,float targetX,float targetY, String user1ID, String user2ID, String user1name, String user2name,String pIDturn){
+		  				float targetX,float targetY, String user1ID, String user2ID, String user1name, String user2name,String pIDturn){
 	  this.p1TanksX = p1TanksX;
 	  this.p1TanksY = p1TanksY;
 	  this.p2TanksX = p2TanksX;
@@ -48,7 +45,6 @@ public class GameState implements Serializable  {
 	  this.p1MinesY = p1MinesY;
 	  this.p2MinesX = p2MinesX;
 	  this.p2MinesY = p2MinesY;
-	  this.selTank = selTank;
 	  this.targetX = targetX;
 	  this.targetY = targetY;
 	  this.user1ID = user1ID;

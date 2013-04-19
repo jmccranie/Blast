@@ -40,7 +40,7 @@ class ClientThread extends Thread {
 	}
     public void run() {
         try {
-            InetAddress serverAddr = InetAddress.getByName("10.137.87.236");
+            InetAddress serverAddr = InetAddress.getByName("10.228.11.237");
             this.socket = new Socket(serverAddr, 8000);
             System.out.println("test Friday1");
                 	    
@@ -63,7 +63,6 @@ class ClientThread extends Thread {
             	switch(option){
                 case 1:                     //create new game
                     try{
-                    	out = new ObjectOutputStream(socket.getOutputStream());
                     	out.writeObject(gs);
                     	out.flush();
                     }
@@ -74,7 +73,6 @@ class ClientThread extends Thread {
                     
                 case 2:         //update active game
                     try{
-                    	out = new ObjectOutputStream(socket.getOutputStream());
                     	out.writeObject(gs);
                     	out.flush();
                     }

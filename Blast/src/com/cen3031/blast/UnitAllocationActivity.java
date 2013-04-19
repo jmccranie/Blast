@@ -970,7 +970,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
 				Tank selTank,float targetX,float targetY){
 		
-		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY,selTank, targetX, targetY,"RandomID",null,"Pedro",null,null);
+		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,"RandomID",null,"Pedro",null,null);
 		System.out.println("test sendData1");
 		Thread client = new Thread(new ClientThread(this,gameState));
 	    client.start();
