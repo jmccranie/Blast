@@ -28,6 +28,7 @@ public class ActiveGameMenuActivity extends Activity {
 	 public ListView myListView;
 	 public ListView theirListView;
 	 public ListView overListView;
+	 GameState gs;
 	 public List<GameState> my_games =  new ArrayList<GameState>();
 	 GameStateArrayAdaptor myadapter;
 	 public List<GameState> their_games =  new ArrayList<GameState>();
@@ -69,9 +70,11 @@ public class ActiveGameMenuActivity extends Activity {
 	    theirListView.setOnItemClickListener(new OnItemClickListener() {
 	    	public void onItemClick(AdapterView<?> parent, View view,
 	    		int position, long id) {
-		            
-		       		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
-		         
+	    			gs = myTurn.get(position);	
+	    			Intent intent = new Intent(getBaseContext(), UnitAllocationActivity.class);
+			    	intent.putExtra("activity", "FullGame");
+			    	intent.putExtra("GameState", gs);  
+			    	startActivity(intent);
 		       	  }
 	    });
 		    

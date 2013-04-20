@@ -218,6 +218,15 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
       				setGameState(gs);
       				player1 = false;
       				camera.setRotation(180f);
+      			}else if(activity.equals("FullGame")){
+      				GameState gs = (GameState) getIntent().getSerializableExtra("GameState");
+      				System.out.println(gs.user1name+","+gs.user1ID+","+gs.user2name+","+gs.user2ID);
+      				setGameState(gs);
+      				if(pIDturn.equals(phoneID1)){
+      					camera.setRotation(0);
+      				}else{
+      					camera.setRotation(180f);
+      				}
       			}
       				isOnline = true;
       			
@@ -482,6 +491,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  hud.detachChild(unitAllocLabel);
 		        				  hud.clearTouchAreas();
 		        				  updateHUD();
+		        				  if(balance1 == 0 && isOnline){
+		        						setTankXYList(tankList,tankList2);
+		        						setMineXYList(mineList,mineList2);
+		        						pIDturn = phoneID1;
+		        						sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);
+		        					}
 		        				  return;                  
 		        			  }  
 		        		  });  
@@ -759,6 +774,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					turn2mes = true;
 					move = false;
 					unregisterItems(tankList);
+					if(isOnline){
+						setTankXYList(tankList,tankList2);
+						setMineXYList(mineList,mineList2);
+						sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);	
+					}
 				//Player1 selects View Map
 				}else if(viewMap){
 					viewMap = false;
@@ -805,7 +825,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						player1 = true;
 						turn1mes = true;
 						move = false;
-					
+						if(isOnline){
+							setTankXYList(tankList,tankList2);
+							setMineXYList(mineList,mineList2);
+							sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);	
+						}
 					//Player1 selects View Map
 					}else if(viewMap){
 						viewMap = false;
@@ -1029,8 +1053,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				if(isOnline){
 					setTankXYList(tankList,tankList2);
 					setMineXYList(mineList,mineList2);
-					sendData(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,targetX,targetY);
-				}
+					sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);				}
 			}
         };
         bullet.registerEntityModifier(moveBullet);
@@ -1184,13 +1207,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		setNewTankList(gs.p1TanksX,gs.p1TanksY,gs.p2TanksX,gs.p2TanksY);
 		setNewMineList(gs.p2MinesX,gs.p2MinesY,gs.p2MinesX,gs.p2MinesY);
 		
-		System.out.println("NULL fuck1");
 		user1 = gs.user1name;
 		phoneID1 = gs.user1ID;
 		user2 = gs.user2name;
 		phoneID2 = gs.user2ID;
 		pIDturn = gs.pIDturn;
-		System.out.println("NULL fuck2");
 	}
 /********************************************************************************************************************/	
 	
