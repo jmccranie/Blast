@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
 
-import oracle.jdbc.rowset.OracleCachedRowSet;
 import android.content.Context;
 
 class ClientThread extends Thread {
@@ -95,13 +94,13 @@ class ClientThread extends Thread {
                     try{
                         
                         //the players turn
-                    	OracleCachedRowSet myturn = (OracleCachedRowSet)in.readObject();
+                    	ArrayList<GameState> myTurn = (ArrayList<GameState>)in.readObject();
                         
                         //not the player's turn
-                    	OracleCachedRowSet notmyturn = (OracleCachedRowSet)in.readObject();
+                    	ArrayList<GameState> theirTurn = (ArrayList<GameState>)in.readObject();
                     	
                         //finished games
-                    	OracleCachedRowSet finished = (OracleCachedRowSet)in.readObject();
+                    	ArrayList<GameState> finishedGames = (ArrayList<GameState>)in.readObject();
                     }
                     catch(Exception e){
                         
