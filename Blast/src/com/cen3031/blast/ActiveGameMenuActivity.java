@@ -58,8 +58,12 @@ public class ActiveGameMenuActivity extends Activity {
 	    myListView.setOnItemClickListener(new OnItemClickListener() {
 	        public void onItemClick(AdapterView<?> parent, View view,
 	            int position, long id) {
-	            
-	        		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
+	        	gs = myTurn.get(position);	
+    			Intent intent = new Intent(getBaseContext(), UnitAllocationActivity.class);
+		    	intent.putExtra("activity", "FullGame");
+		    	intent.putExtra("GameState", gs);  
+		    	startActivity(intent);
+	        		
 	         
 	        	  }
 	      });
@@ -70,11 +74,7 @@ public class ActiveGameMenuActivity extends Activity {
 	    theirListView.setOnItemClickListener(new OnItemClickListener() {
 	    	public void onItemClick(AdapterView<?> parent, View view,
 	    		int position, long id) {
-	    			gs = myTurn.get(position);	
-	    			Intent intent = new Intent(getBaseContext(), UnitAllocationActivity.class);
-			    	intent.putExtra("activity", "FullGame");
-			    	intent.putExtra("GameState", gs);  
-			    	startActivity(intent);
+	    		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
 		       	  }
 	    });
 		    
@@ -213,7 +213,7 @@ public class ActiveGameMenuActivity extends Activity {
 	    client.start();
 	    try{
 	    	client.join();
-//	    	System.out.println(availableGames.get(0).user1ID);
+	    	System.out.println("test");
 	    	 popGamesList();
         }
 	    catch (Exception e) {
