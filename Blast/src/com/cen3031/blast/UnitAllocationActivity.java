@@ -232,6 +232,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
       				GameState gs = (GameState) getIntent().getSerializableExtra("GameState");
       				System.out.println(gs.user1name+","+gs.user1ID+","+gs.user2name+","+gs.user2ID);
       				setGameState(gs);
+      				gameStart = true;
       				if(pIDturn.equals(phoneID1)){
       					camera.setRotation(0);
       				}else{
@@ -285,10 +286,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	        		player1 = false;
 	        		gameStart = true;
 	        	}
+	        	
+	        	
         	}else{
         		gameStart = false;
         	}
-        System.out.println("NULL test2");
+        System.out.println(gameStart);
         }else{
         	player1 = true;
         	gameStart = false;
@@ -333,6 +336,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         hud.setTouchAreaBindingOnActionDownEnabled(true);
         this.camera.setHUD(hud);
         
+        
         //FIRE AND MOVE BUTTONS
         fireButton =  new ButtonSprite(0, CAMERA_HEIGHT-75, this.mButton1TextureRegion,this.mButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         fireButton.setSize(CAMERA_WIDTH/3-5,75);
@@ -351,6 +355,14 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         moveButton.attachChild(moveButtonText);
         
         System.out.println("NULL test4");
+        if(isOnline && gameStart){
+        	  hud.detachChild(tankButton);
+			  hud.detachChild(mineButton);
+			  hud.detachChild(balanceLabel);
+			  hud.detachChild(unitAllocLabel);
+			  hud.clearTouchAreas();
+			  updateHUD();
+        }
         return scene;
 		}
 	 
@@ -361,28 +373,17 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			public void run() {
 				if(pButtonSprite == tankButton){
 					if(!gameStart){
-//						if(player1 && tankList.size()==MAX_TANKS){
-//							gameToast("No Tanks Left");
-//						}
-//						else if(!player1 && tankList2.size()==MAX_TANKS){
-//							gameToast("No Tanks Left");
-//						}else{
+
 						tankSel = true;
 						
-						//}
+		
 					}
 				}
 				else if(pButtonSprite == mineButton){
 					if(!gameStart){
-//						if(player1 && mineList.size()==MAX_MINES){
-//							gameToast("No Mines Left");
-//						}
-//						else if(!player1 && mineList2.size()==MAX_MINES){
-//							gameToast("No Mines Left");
-//						}else{
+
 						mineSel = true;
 						
-						//}
 					 
 					}
 				}
@@ -456,8 +457,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  unregisterItems(tankList);
 		        				  registerItems(tankList2);
 		        				  camera.setRotation(180f);
-		        			      //updateTankText(tankList2);
-		        			      //updateMineText(mineList2);
 		        			      updateMoneyText(MONEY);
 		        			    //SUMBIT PLAYER1 SIDE	
 		        			      if(balance1 == 0 && isOnline){
@@ -501,7 +500,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  hud.detachChild(unitAllocLabel);
 		        				  hud.clearTouchAreas();
 		        				  updateHUD();
-		        				  if(balance1 == 0 && isOnline){
+		        				  if(balance2 == 0 && isOnline){
 		        						setTankXYList(tankList,tankList2);
 		        						setMineXYList(mineList,mineList2);
 		        						pIDturn = phoneID1;
@@ -1116,7 +1115,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	void sendData3(LinkedList <Integer> p1TanksX,LinkedList <Integer> p1TanksY,LinkedList <Integer> p2TanksX,LinkedList <Integer> p2TanksY,
 			LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
 			float targetX,float targetY){
-	
+	pIDturn = phoneID1;
 	gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);
 	System.out.println(gameState.user1name + "," + gameState.user1ID);
 	System.out.println(gameState.user2name + "," + gameState.user2ID);
@@ -1193,6 +1192,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			for(int i = 0; i < listX.size(); i++){
 				tank = new Tank(listX.get(i) ,listY.get(i),50,50, this.mTankTextureRegion, this.getVertexBufferObjectManager());
 				tankList.add(tank);
+				
 				scene.attachChild(tank);
 			}
 			
@@ -1203,6 +1203,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			for(int i = 0; i < listX2.size(); i++){
 				tank = new Tank(listX2.get(i) ,listY2.get(i),50,50, this.mTankTextureRegion, this.getVertexBufferObjectManager());
 				tankList2.add(tank);
+				tank.setRotation(180);
 				scene.attachChild(tank);
 			}
 		}
