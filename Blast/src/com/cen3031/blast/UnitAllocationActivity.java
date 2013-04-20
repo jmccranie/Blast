@@ -495,7 +495,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        						setTankXYList(tankList,tankList2);
 		        						setMineXYList(mineList,mineList2);
 		        						pIDturn = phoneID1;
-		        						sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);
+		        						sendData3(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);
 		        					}
 		        				  return;                  
 		        			  }  
@@ -1103,6 +1103,22 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	
 }
 	
+	void sendData3(LinkedList <Integer> p1TanksX,LinkedList <Integer> p1TanksY,LinkedList <Integer> p2TanksX,LinkedList <Integer> p2TanksY,
+			LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
+			float targetX,float targetY){
+	
+	gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);
+	System.out.println(gameState.user1name + "," + gameState.user1ID);
+	System.out.println(gameState.user2name + "," + gameState.user2ID);
+	Thread client = new Thread(new ClientThread(this,gameState,5));
+    client.start();
+    try{
+    	client.join();
+    }
+    catch(Exception e){
+    	
+    }
+	}
 	//Convert TanKList to XandY lists
 	public void setTankXYList(LinkedList<Tank> list,LinkedList<Tank> list2){
 		tankXList.clear();
