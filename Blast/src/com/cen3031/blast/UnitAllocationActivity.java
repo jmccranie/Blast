@@ -40,12 +40,13 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 import com.cen3031.blast.ClientThread.GameUpdateReceiver;
+import com.cen3031.blast.UnitAllocationActivity.Soldier;
+import com.cen3031.blast.UnitAllocationActivity.Tank;
 
 public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener,GameUpdateReceiver {
 
@@ -94,6 +95,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	static LinkedList<Integer> tankYList2 = new LinkedList<Integer>();
 	static LinkedList<Soldier> soldList = new LinkedList<Soldier>();
 	static LinkedList<Soldier> soldList2 = new LinkedList<Soldier>();
+	static LinkedList<Integer> soldXList = new LinkedList<Integer>();
+	static LinkedList<Integer> soldYList = new LinkedList<Integer>();
+	static LinkedList<Integer> soldXList2 = new LinkedList<Integer>();
+	static LinkedList<Integer> soldYList2 = new LinkedList<Integer>();
 	static LinkedList<Sprite> circleList = new LinkedList<Sprite>();
 	static LinkedList<Sprite> mineList = new LinkedList<Sprite>();
 	static LinkedList<Sprite> mineList2 = new LinkedList<Sprite>();
@@ -125,7 +130,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	Sprite circle;
 	boolean animOver;
 	GameState gameState;
-	boolean isOnline = true;
+	boolean isOnline = false;
 	Rectangle balanceLabel;
 	Rectangle unitAllocLabel;
 	Text moneyText;
@@ -991,14 +996,16 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		tankYList.clear();
 		tankXList2.clear();
 		tankYList2.clear();
-		for(int i = 0; i < list.size(); i++){
-			tankXList.add((int) list.get(i).getX());
-			tankYList.add((int) list.get(i).getY());
-		}
-		
-		for(int i = 0; i < list2.size(); i++){
-			tankXList2.add((int) list2.get(i).getX());
-			tankYList2.add((int) list2.get(i).getY());
+		if(list != null && list2 != null){
+			for(int i = 0; i < list.size(); i++){
+				tankXList.add((int) list.get(i).getX());
+				tankYList.add((int) list.get(i).getY());
+			}
+			
+			for(int i = 0; i < list2.size(); i++){
+				tankXList2.add((int) list2.get(i).getX());
+				tankYList2.add((int) list2.get(i).getY());
+			}
 		}
 	}
 	
@@ -1007,14 +1014,34 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		mineYList.clear();
 		mineXList2.clear();
 		mineYList2.clear();
-		for(int i = 0; i < list.size(); i++){
-			mineXList.add((int) list.get(i).getX());
-			mineYList.add((int) list.get(i).getY());
+		if(list != null && list2 != null){
+			for(int i = 0; i < list.size(); i++){
+				mineXList.add((int) list.get(i).getX());
+				mineYList.add((int) list.get(i).getY());
+			}
+			
+			for(int i = 0; i < list2.size(); i++){
+				mineXList2.add((int) list2.get(i).getX());
+				mineYList2.add((int) list2.get(i).getY());
+			}
 		}
-		
-		for(int i = 0; i < list2.size(); i++){
-			mineXList2.add((int) list2.get(i).getX());
-			mineYList2.add((int) list2.get(i).getY());
+	}
+	
+	public void setSoldierXYList(LinkedList<Soldier> list,LinkedList<Soldier> list2){
+		soldXList.clear();
+		soldYList.clear();
+		soldXList2.clear();
+		soldYList2.clear();
+		if(list != null && list2 != null){
+			for(int i = 0; i < list.size(); i++){
+				soldXList.add((int) list.get(i).getX());
+				soldYList.add((int) list.get(i).getY());
+			}
+			
+			for(int i = 0; i < list2.size(); i++){
+				soldXList2.add((int) list2.get(i).getX());
+				soldYList2.add((int) list2.get(i).getY());
+			}
 		}
 	}
 	
@@ -1044,6 +1071,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			mineList2.add(mine);
 		}
 	}
+	
+/********************************************************************************************************************/	
+	
+	
+	
 /*****************************************************
 * Tank Class when selected is highlighted by
 * a rectangle object
