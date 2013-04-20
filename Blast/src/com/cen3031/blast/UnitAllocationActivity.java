@@ -192,7 +192,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         this.mEngine.getTextureManager().loadTexture(this.mFontTexture);
         this.getFontManager().loadFont(this.mFont);
         
-        SoundFactory.setAssetBasePath("sounds");
+        SoundFactory.setAssetBasePath("sounds/");
         try
         {
          snd_explosion = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
