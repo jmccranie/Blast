@@ -147,10 +147,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	int turn = 0;
 	@Override
 	public EngineOptions onCreateEngineOptions() {
-		DisplayMetrics metrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		CAMERA_WIDTH = metrics.widthPixels;
-		CAMERA_HEIGHT = metrics.heightPixels;
+//		DisplayMetrics metrics = new DisplayMetrics();
+//		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		CAMERA_WIDTH = 480;
+		CAMERA_HEIGHT = 800;
 
 		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 	     
