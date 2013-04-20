@@ -154,8 +154,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 
 		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 	     
-        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
-	}
+		EngineOptions en = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
+		en.getAudioOptions().setNeedsSound(true);
+		return en;	
+		}
 
 	@Override
 	public void onCreateResources() {
