@@ -30,6 +30,7 @@ public class AvailGamesActivity extends Activity {
 	 static final int SERVER_PORT = 8000;
 	 String SERVER_IP;
 	 Handler handler = new Handler();
+	 GameState gs = null;
 	 public ListView listView;
 	 public List<GameState> tv_games =  new ArrayList<GameState>();
 	 GameStateArrayAdaptor adapter;
@@ -47,7 +48,7 @@ public class AvailGamesActivity extends Activity {
 		//GET phone ID for player2
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
-			phoneID2 = extras.getString("phoneID");
+			phoneID2 = extras.getString("phoneID2");
 			user2 = extras.getString("user2");
 			if (phoneID2 != null) {
 				System.out.println(phoneID2);
@@ -63,10 +64,33 @@ public class AvailGamesActivity extends Activity {
 		    listView.setOnItemClickListener(new OnItemClickListener() {
 		        public void onItemClick(AdapterView<?> parent, View view,
 		            int position, long id) {
-		            
-		        		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
+		             gs = availableGames.get(position);	
+		        	 AlertDialog.Builder alert = new AlertDialog.Builder(AvailGamesActivity.this);                 
+		      	     alert.setTitle("Join this Game");  
+		      	     alert.setMessage("Join " + gs.user1name+"?");                
+		      	     
+		      	     //GO TO UNIT ALLOC when starting new game
+		      	     alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
+		      	    	 public void onClick(DialogInterface dialog, int whichButton) {  
+		      	    		Intent intent = new Intent(getBaseContext(), UnitAllocationActivity.class);
+		      	    		gs.user2name = user2;
+		      	    		gs.user2ID = phoneID2;
+					    	intent.putExtra("activity", "StartedGame");
+					    	intent.putExtra("GameState", gs);  
+					    	startActivity(intent);
+		      	        }  
+		      	      });  
+		      	    
+
+		      	     alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+		      	         public void onClick(DialogInterface dialog, int which) {
+		      	             return;   
+		      	         }
+		      	     });
+		      	             alert.show();  
+		      	  }
 		         
-		        	  }
+		        	  
 		      });
 	}
 

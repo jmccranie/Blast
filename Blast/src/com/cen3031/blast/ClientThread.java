@@ -87,7 +87,7 @@ class ClientThread extends Thread {
                     	ArrayList<GameState> available = (ArrayList<GameState>)in.readObject();
                     	
                     	if (!available.isEmpty()) {
-                    		menuAct.availableGames=available;
+                    		gamesAct.availableGames=available;
 //							System.out.println(available.get(0).user1ID);
 						}
                     }

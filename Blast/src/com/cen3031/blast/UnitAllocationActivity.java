@@ -199,6 +199,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	}
 	@Override
 	public Scene onCreateScene() {
+		scene = new Scene();
+		scene.setBackground(this.mGrassBackground);
+		scene.setTouchAreaBindingOnActionDownEnabled(true);
+		scene.setOnSceneTouchListener(this);
 		//ONLINE GAME SETUPS
       	Bundle extras = getIntent().getExtras();
       		if (extras != null) {
@@ -207,18 +211,20 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
       			if(activity.equals("NewGame")){
 	      			phoneID1 = extras.getString("phoneID");
 	      			user1 = extras.getString("user");
-	      			if (phoneID1 != null && user1 != null) {
-	      				isOnline = true;
-	      			} 
+	      			player1 = true;
+      			}else if(activity.equals("StartedGame")){
+      				GameState gs = (GameState) getIntent().getSerializableExtra("GameState");
+      				System.out.println(gs.user1name+","+gs.user1ID+","+gs.user2name+","+gs.user2ID);
+      				setGameState(gs);
+      				player1 = false;
+      				camera.setRotation(180f);
       			}
+      				isOnline = true;
+      			
       		}
-        
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 		
-		scene = new Scene();
-		scene.setBackground(this.mGrassBackground);
-		scene.setTouchAreaBindingOnActionDownEnabled(true);
-		scene.setOnSceneTouchListener(this);
+		
 		
 		final float centerX = (CAMERA_WIDTH - this.mBarricadeTextureRegion.getWidth()) / 2;
         final float centerY = (CAMERA_HEIGHT - this.mBarricadeTextureRegion.getHeight()) / 2;
@@ -241,7 +247,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
     	//PASS AND PLAY Player2 NAME
     		user2Text =  new Text(textCenterX, 10, this.mFont, "PLAYER2", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
     	}
-    	
+    	System.out.println("NULL test0-1");
     	//SET USER1 and 2 text
     	user1Text.setScale(2);
         scene.attachChild(user1Text);
@@ -249,13 +255,29 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         user2Text.setRotation(180);
         scene.attachChild(user2Text);
         
-        player1 = true;
-    	gameStart = false;
-    	
+        System.out.println("NULL test1");
+        //Set turn
+        if(isOnline){
+        	if(pIDturn != null){
+	        	if(pIDturn.equals(phoneID1)){
+	        		player1 = true;
+	        		gameStart = true;
+	        	}else if(pIDturn.equals(phoneID2)){
+	        		player1 = false;
+	        		gameStart = true;
+	        	}
+        	}else{
+        		gameStart = false;
+        	}
+        System.out.println("NULL test2");
+        }else{
+        	player1 = true;
+        	gameStart = false;
+        }
     	gameDialog(5);
 		
     	hud = new HUD();
-    	
+    	System.out.println("NULL test3");
     	//TANK and MINE buttons
         tankButton = new ButtonSprite(0, barricade.getY()-75, this.mTankButton1TextureRegion,this.mTankButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         tankButton.setSize(75,75);
@@ -309,7 +331,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         //mapButton.attachChild(mapButtonText);
         moveButton.attachChild(moveButtonText);
         
-        
+        System.out.println("NULL test4");
         return scene;
 		}
 	 
@@ -810,7 +832,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		
 		return false;
 	}
-
+	
 
 	// ===========================================================
 	// Methods
@@ -1094,32 +1116,62 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	}
 	
 	public void setNewTankList(LinkedList<Integer> listX,LinkedList<Integer> listY,LinkedList<Integer> listX2,LinkedList<Integer> listY2){
-		tankList.clear();
-		for(int i = 0; i < listX.size(); i++){
-			tank = new Tank(listX.get(i) ,listY.get(i),50,50, this.mTankTextureRegion, this.getVertexBufferObjectManager());
-			tankList.add(tank);
+		
+		if(listX != null && listY != null){
+			tankList.clear();
+			for(int i = 0; i < listX.size(); i++){
+				tank = new Tank(listX.get(i) ,listY.get(i),50,50, this.mTankTextureRegion, this.getVertexBufferObjectManager());
+				tankList.add(tank);
+				scene.attachChild(tank);
+			}
+			
 		}
-		tankList2.clear();
-		for(int i = 0; i < listX2.size(); i++){
-			tank = new Tank(listX2.get(i) ,listY2.get(i),50,50, this.mTankTextureRegion, this.getVertexBufferObjectManager());
-			tankList2.add(tank);
+		
+		if(listX2 != null && listY2 != null){
+			tankList2.clear();
+			for(int i = 0; i < listX2.size(); i++){
+				tank = new Tank(listX2.get(i) ,listY2.get(i),50,50, this.mTankTextureRegion, this.getVertexBufferObjectManager());
+				tankList2.add(tank);
+				scene.attachChild(tank);
+			}
 		}
 	}
 	
 	public void setNewMineList(LinkedList<Integer> listX,LinkedList<Integer> listY,LinkedList<Integer> listX2,LinkedList<Integer> listY2){
-		mineList.clear();
-		for(int i = 0; i < listX.size(); i++){
-			mine = new Sprite(listX.get(i),listY.get(i),50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
-			mineList.add(mine);
+		
+		if(listX != null && listY != null){
+			mineList.clear();
+			for(int i = 0; i < listX.size(); i++){
+				mine = new Sprite(listX.get(i),listY.get(i),50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
+				mineList.add(mine);
+				scene.attachChild(mine);
+			}
 		}
 		
-		mineList2.clear();
-		for(int i = 0; i < listX2.size(); i++){
-			mine = new Sprite(listX2.get(i),listY2.get(i),50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
-			mineList2.add(mine);
+		if(listX2 != null && listY2 != null){
+			mineList2.clear();
+			for(int i = 0; i < listX2.size(); i++){
+				mine = new Sprite(listX2.get(i),listY2.get(i),50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
+				mineList2.add(mine);
+				scene.attachChild(mine);
+
+			}
 		}
+		
 	}
-	
+	//creates game state
+	public void setGameState(GameState gs){
+		setNewTankList(gs.p1TanksX,gs.p1TanksY,gs.p2TanksX,gs.p2TanksY);
+		setNewMineList(gs.p2MinesX,gs.p2MinesY,gs.p2MinesX,gs.p2MinesY);
+		
+		System.out.println("NULL fuck1");
+		user1 = gs.user1name;
+		phoneID1 = gs.user1ID;
+		user2 = gs.user2name;
+		phoneID2 = gs.user2ID;
+		pIDturn = gs.pIDturn;
+		System.out.println("NULL fuck2");
+	}
 /********************************************************************************************************************/	
 	
 	

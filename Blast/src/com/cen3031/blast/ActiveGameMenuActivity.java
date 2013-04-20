@@ -31,7 +31,6 @@ public class ActiveGameMenuActivity extends Activity {
 	 public ArrayList<GameState> availableGames=null;
 	 String phoneID;
 	 TelephonyManager telephonyManager;
-	 boolean isStartGame = false;
 	/** Called when the activity is first created. */
 
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,7 +57,6 @@ public class ActiveGameMenuActivity extends Activity {
 		    //Creating a game
 	        createButton.setOnClickListener(new View.OnClickListener() {
 	        	public void onClick(View v) {
-	        		isStartGame = true;
 	        		startGame();
 	        		
 	        	}
@@ -68,8 +66,7 @@ public class ActiveGameMenuActivity extends Activity {
 	     final TextView joinButton = (TextView) findViewById(R.id.joinView);
 	        joinButton.setOnClickListener(new View.OnClickListener() {
 	        	public void onClick(View v) {
-			    	isStartGame = false;
-	        		startGame();
+	        		joinGame();
 	        	}
 	        });
 	    
@@ -106,25 +103,18 @@ public class ActiveGameMenuActivity extends Activity {
   		        createText = (EditText) textEntryView.findViewById(R.id.user_name);
   		        String username = createText.getText().toString();
   		        if(!username.equals("")){
-	 	    		if(isStartGame){
-	 	    			isStartGame = false;
-	  		        	Intent intent = new Intent(getBaseContext(), UnitAllocationActivity.class);
-				    	intent.putExtra("phoneID", phoneID);
-				    	intent.putExtra("user",username);
-				    	intent.putExtra("activity", "NewGame");
-				    	startActivity(intent);
-	 	    		}else{
-	 	    			Intent intent = new Intent(getBaseContext(), AvailGamesActivity.class);
-				    	intent.putExtra("phoneID2", phoneID);
-				    	intent.putExtra("user2",username);
-				    	startActivity(intent);
-	 	    		}
+  		        	Intent intent = new Intent(getBaseContext(), UnitAllocationActivity.class);
+			    	intent.putExtra("phoneID", phoneID);
+			    	intent.putExtra("user",username);
+			    	intent.putExtra("activity", "NewGame");
+			    	startActivity(intent);
   		        }else{
 	        		Toast.makeText(getApplicationContext(), "Please Enter a Username", Toast.LENGTH_LONG).show();
 	        		return;
   		        }
   	        }  
   	      });  
+  	    
 
   	     alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 
@@ -135,7 +125,46 @@ public class ActiveGameMenuActivity extends Activity {
   	         }
   	     });
   	             alert.show();   }
+	
+	public void joinGame(){
+		LayoutInflater factory = LayoutInflater.from(this);
+  	     final View textEntryView = factory.inflate(R.layout.create_game_dialog, null);
+  	     AlertDialog.Builder alert = new AlertDialog.Builder(this);                 
+  	     alert.setTitle("Join a Game");  
+  	     alert.setMessage("Enter Username:");                
+  	     alert.setView(textEntryView);
+  	     
+  	     //GO TO UNIT ALLOC when starting new game
+  	     alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
+  	    	 public void onClick(DialogInterface dialog, int whichButton) {  
+  	    		EditText createText;
+  		        createText = (EditText) textEntryView.findViewById(R.id.user_name);
+  		        String username = createText.getText().toString();
+  		        if(!username.equals("")){
+  		        	Intent intent = new Intent(getBaseContext(), AvailGamesActivity.class);
+			    	intent.putExtra("phoneID2", phoneID);
+			    	intent.putExtra("user2",username);
+			    	startActivity(intent);
+  		        }else{
+	        		Toast.makeText(getApplicationContext(), "Please Enter a Username", Toast.LENGTH_LONG).show();
+	        		return;
+  		        }
+  	        }  
+  	      });  
+  	    
+
+  	     alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+  	         public void onClick(DialogInterface dialog, int which) {
+  	             // TODO Auto-generated method stub
+  	        	 
+  	             return;   
+  	         }
+  	     });
+  	             alert.show();   
+  	   }
    	
+	
 
 
 	@Override
