@@ -10,7 +10,6 @@ import android.content.Context;
 
 class ClientThread extends Thread {
 	
-	
 	ActiveGameMenuActivity menuAct=null;
 	UnitAllocationActivity unitAct=null;
 	AvailGamesActivity gamesAct = null;
@@ -22,15 +21,15 @@ class ClientThread extends Thread {
 	ObjectOutputStream out=null;
 	int option;
 	
-	public ClientThread(UnitAllocationActivity unitAct, GameState gs){
+	public ClientThread(UnitAllocationActivity unitAct, GameState gs, int option){
 		this.unitAct=unitAct;
 		this.gs=gs;
-		this.option=1;
+		this.option=option;
 	}
 	public ClientThread(ActiveGameMenuActivity menuAct,String SERVER_IP){
 		this.menuAct=menuAct;
 		this.SERVER_IP=SERVER_IP;
-		this.option=3;
+		this.option=4;
 	}
 	public ClientThread(AvailGamesActivity gamesAct,String SERVER_IP){
 		this.gamesAct=gamesAct;
@@ -82,14 +81,9 @@ class ClientThread extends Thread {
                     
                 case 3:            	 //retrieve available games
                     try{
-                    	out.writeObject("RandomID");
+                    	out.writeObject(gamesAct.phoneID2);
                     	out.flush();
-                    	ArrayList<GameState> available = (ArrayList<GameState>)in.readObject();
-                    	
-                    	if (!available.isEmpty()) {
-                    		menuAct.availableGames=available;
-//							System.out.println(available.get(0).user1ID);
-						}
+                    	gamesAct.availableGames = (ArrayList<GameState>)in.readObject();
                     }
                     catch(Exception e){
                         
@@ -98,15 +92,16 @@ class ClientThread extends Thread {
                     
                 case 4:             //retrieve active games
                     try{
-                        
+                    	out.writeObject(menuAct.phoneID);
+                    	out.flush();
                         //the players turn
-                    	ArrayList<GameState> myTurn = (ArrayList<GameState>)in.readObject();
+                    	menuAct.myTurn = (ArrayList<GameState>)in.readObject();
                         
                         //not the player's turn
-                    	ArrayList<GameState> theirTurn = (ArrayList<GameState>)in.readObject();
+                    	menuAct.theirTurn = (ArrayList<GameState>)in.readObject();
                     	
                         //finished games
-                    	ArrayList<GameState> finishedGames = (ArrayList<GameState>)in.readObject();
+                    	menuAct.finGames = (ArrayList<GameState>)in.readObject();
                     }
                     catch(Exception e){
                         
@@ -118,17 +113,6 @@ class ClientThread extends Thread {
             catch(Exception e){
             	System.out.println(e.toString());
             }
-//            try{
-//
-//                osw.write("IP addr : "+gs.getUser1());
-//                osw.flush();
-//                osw.close();
-//                fos.close();
-//            } 
-//            catch (Exception e) {
-//                final String error = e.getLocalizedMessage();
-//                Log.d("test2", "IP addr : " + error);
-//            }
 
         } 
         catch (Exception e) {
@@ -138,7 +122,7 @@ class ClientThread extends Thread {
         finally{
             //Close connections
             try{
-                    //in.close();
+                    in.close();
                     out.close();
                     socket.close();
             }

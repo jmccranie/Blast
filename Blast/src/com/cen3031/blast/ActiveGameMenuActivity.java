@@ -25,10 +25,18 @@ public class ActiveGameMenuActivity extends Activity {
 	 static final int SERVER_PORT = 8000;
 	 String SERVER_IP;
 	 Handler handler = new Handler();
-	 public ListView listView;
-	 public List<GameState> tv_games =  new ArrayList<GameState>();
-	 GameStateArrayAdaptor adapter;
-	 public ArrayList<GameState> availableGames=null;
+	 public ListView myListView;
+	 public ListView theirListView;
+	 public ListView overListView;
+	 public List<GameState> my_games =  new ArrayList<GameState>();
+	 GameStateArrayAdaptor myadapter;
+	 public List<GameState> their_games =  new ArrayList<GameState>();
+	 GameStateArrayAdaptor theiradapter;
+	 public List<GameState> over_games =  new ArrayList<GameState>();
+	 GameStateArrayAdaptor overadapter;
+ 	 public ArrayList<GameState> myTurn = null;
+ 	 public ArrayList<GameState> theirTurn = null;
+ 	 public ArrayList<GameState> finGames = null;
 	 String phoneID;
 	 TelephonyManager telephonyManager;
 	 boolean isStartGame = false;
@@ -42,19 +50,44 @@ public class ActiveGameMenuActivity extends Activity {
 	    phoneID = telephonyManager.getDeviceId(); 
 	    Intent intent = getIntent();
 		SERVER_IP = intent.getStringExtra("ipAddr");
-		 final TextView createButton = (TextView) findViewById(R.id.createView);
+		final TextView createButton = (TextView) findViewById(R.id.createView);
 		    
-		 	adapter = new GameStateArrayAdaptor(this,tv_games );
-		    listView = (ListView)findViewById(R.id.theirLayout);
-		    listView.setAdapter(adapter);
-		    listView.setOnItemClickListener(new OnItemClickListener() {
-		        public void onItemClick(AdapterView<?> parent, View view,
-		            int position, long id) {
+		myadapter = new GameStateArrayAdaptor(this,my_games );
+	    myListView = (ListView)findViewById(R.id.yourLayout);
+	    myListView.setAdapter(myadapter);
+	    myListView.setOnItemClickListener(new OnItemClickListener() {
+	        public void onItemClick(AdapterView<?> parent, View view,
+	            int position, long id) {
+	            
+	        		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
+	         
+	        	  }
+	      });
+	    
+	    theiradapter = new GameStateArrayAdaptor(this,their_games );
+	    theirListView = (ListView)findViewById(R.id.theirLayout);
+	    theirListView.setAdapter(theiradapter);
+	    theirListView.setOnItemClickListener(new OnItemClickListener() {
+	    	public void onItemClick(AdapterView<?> parent, View view,
+	    		int position, long id) {
 		            
-		        		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
+		       		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
 		         
-		        	  }
-		      });
+		       	  }
+	    });
+		    
+	    overadapter = new GameStateArrayAdaptor(this,over_games );
+	    overListView = (ListView)findViewById(R.id.overLayout);
+	    overListView.setAdapter(overadapter);
+	    overListView.setOnItemClickListener(new OnItemClickListener() {
+	    	public void onItemClick(AdapterView<?> parent, View view,
+	    		int position, long id) {
+		            
+		       		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
+		         
+		       	  }
+	    });
+		    
 		    //Creating a game
 	        createButton.setOnClickListener(new View.OnClickListener() {
 	        	public void onClick(View v) {
@@ -148,7 +181,7 @@ public class ActiveGameMenuActivity extends Activity {
 	    client.start();
 	    try{
 	    	client.join();
-	    	System.out.println(availableGames.get(0).user1ID);
+//	    	System.out.println(availableGames.get(0).user1ID);
 	    	 popGamesList();
         }
 	    catch (Exception e) {
@@ -168,11 +201,29 @@ public class ActiveGameMenuActivity extends Activity {
 	    } 	 
 	 
 	 void popGamesList(){
-		 for(int i = 0; i < availableGames.size(); i++){
-			 String username = availableGames.get(i).user1name;
-  	         GameState game = new GameState(username,"Waiting for Challenger");
-			 tv_games.add(game);
-			 adapter.notifyDataSetChanged();
+		 for(int i = 0; i < myTurn.size(); i++){
+			 String username = myTurn.get(i).user1name;
+			 String username2 = myTurn.get(i).user2name;
+			 
+  	         GameState game = new GameState(username,username2);
+			 my_games.add(game);
+			 myadapter.notifyDataSetChanged();
+		 }
+		 for(int i = 0; i < theirTurn.size(); i++){
+			 String username = theirTurn.get(i).user1name;
+			 String username2 = theirTurn.get(i).user2name;
+			 
+  	         GameState game = new GameState(username,username2);
+			 their_games.add(game);
+			 theiradapter.notifyDataSetChanged();
+		 }
+		 for(int i = 0; i < finGames.size(); i++){
+			 String username = finGames.get(i).user1name;
+			 String username2 = finGames.get(i).user2name;
+			 
+  	         GameState game = new GameState(username,username2);
+			 over_games.add(game);
+			 overadapter.notifyDataSetChanged();
 		 }
 	 }
 
