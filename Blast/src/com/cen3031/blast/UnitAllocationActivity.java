@@ -1,10 +1,12 @@
 
 package com.cen3031.blast;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-
+import org.andengine.audio.sound.Sound;
+import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
@@ -45,10 +47,6 @@ import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 
-import com.cen3031.blast.UnitAllocationActivity.Soldier;
-import com.cen3031.blast.UnitAllocationActivity.Tank;
-
-
 public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener {
 
 	// ===========================================================
@@ -80,6 +78,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private TextureRegion mBulletTextureRegion;
 	private Sprite barricade;
 	private RepeatingSpriteBackground mGrassBackground;
+	private Sound snd_explosion;
 	Camera camera;
 	
 	Tank tank;
@@ -187,7 +186,16 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         this.mEngine.getTextureManager().loadTexture(this.mFontTexture);
         this.getFontManager().loadFont(this.mFont);
         
-	}
+        SoundFactory.setAssetBasePath("sounds/");
+        try
+        {
+        	snd_explosion = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
+           "Hit.ogg");
+        } catch (IOException e)
+        {
+         e.printStackTrace();
+        }
+       	}
 	
 	@Override
 	public void onPause(){
