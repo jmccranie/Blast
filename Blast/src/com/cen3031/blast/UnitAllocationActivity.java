@@ -134,7 +134,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	Rectangle balanceLabel;
 	Rectangle unitAllocLabel;
 	Text moneyText;
-	int MONEY = 1;
+	int MONEY = 2;
 	int balance1 = MONEY;
 	int balance2 = MONEY;
 	String user1;
@@ -548,7 +548,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			if(0<balance1 && tankSel){
 				if (pSceneTouchEvent.isActionDown()) {
 					
-	      
 					tank = new Tank(touchX ,touchY,50,50, this.mTankTextureRegion, this.getVertexBufferObjectManager());
 
 					float posY = touchY - tank.getHeight() / 2;
@@ -567,18 +566,24 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				return false;
 				} 
 			}else if(0 < balance1 && mineSel){
-				if(pSceneTouchEvent.isActionDown()){
-				mine = new Sprite(touchX ,touchY,50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
-					float posY = touchY - mine.getHeight() / 2;
-					if(posY > (CAMERA_HEIGHT / 2) + 5 && canPlace(mine,mineList,tankList)){
-						mineList.add(mine);
-						scene.registerTouchArea(mine); // register touch area , so this allows you to drag it
-						scene.attachChild(mine); //add it to the scene
-						mineSel = false;
-						balance1--;
-						updateMoneyText(balance1);
+				//Check if player has only mines on side
+				if(mineList.size() != MONEY-1){
+					if(pSceneTouchEvent.isActionDown()){
+					mine = new Sprite(touchX ,touchY,50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
+						float posY = touchY - mine.getHeight() / 2;
+						if(posY > (CAMERA_HEIGHT / 2) + 5 && canPlace(mine,mineList,tankList)){
+							mineList.add(mine);
+							scene.registerTouchArea(mine); // register touch area , so this allows you to drag it
+							scene.attachChild(mine); //add it to the scene
+							mineSel = false;
+							balance1--;
+							updateMoneyText(balance1);
+						}
+						return false;
 					}
-					return false;
+				}else{
+					//dont allow having only mines
+					gameToast("Please Select Atleast One Firing Unit");
 				}
 			}else if(balance1 == 0){
 				player1 = false;
@@ -620,19 +625,25 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				} 
 			}else if(0 < balance2 && mineSel){
 				//PLACE MINES
-				if(pSceneTouchEvent.isActionDown()){
-				mine = new Sprite(touchX ,touchY,50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
-					
-					float posY = touchY - mine.getHeight() / 2;
-					if(posY < (CAMERA_HEIGHT - this.mBarricadeTextureRegion.getHeight()) / 2 - 20 && canPlace(mine,mineList2,tankList2)){
-						mineList2.add(mine);
-						scene.registerTouchArea(mine); // register touch area , so this allows you to drag it
-						scene.attachChild(mine); //add it to the scene
-						mineSel = false;
-						balance2--;
-						updateMoneyText(balance2);
+				//Check if player has only mines on side
+				if(mineList2.size() != MONEY-1){
+					if(pSceneTouchEvent.isActionDown()){
+					mine = new Sprite(touchX ,touchY,50,50, this.mMineTextureRegion, this.getVertexBufferObjectManager());
+						
+						float posY = touchY - mine.getHeight() / 2;
+						if(posY < (CAMERA_HEIGHT - this.mBarricadeTextureRegion.getHeight()) / 2 - 20 && canPlace(mine,mineList2,tankList2)){
+							mineList2.add(mine);
+							scene.registerTouchArea(mine); // register touch area , so this allows you to drag it
+							scene.attachChild(mine); //add it to the scene
+							mineSel = false;
+							balance2--;
+							updateMoneyText(balance2);
+						}
+						return false;
 					}
-					return false;
+				}else{
+					//dont allow having only mines
+					gameToast("Please Select Atleast One Firing Unit");
 				}
 			}else if(balance2 == 0){
 				gameStart = true;

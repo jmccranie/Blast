@@ -55,18 +55,21 @@ public class ActiveGameMenuActivity extends Activity implements GameReceiver {
 		         
 		        	  }
 		      });
+		    //Creating a game
 	        createButton.setOnClickListener(new View.OnClickListener() {
 	        	public void onClick(View v) {
 	        		startGame();
 	        		
 	        	}
 	        });
-	        
+	     
+	     //Go to Availible games
 	     final TextView joinButton = (TextView) findViewById(R.id.joinView);
-		    
 	        joinButton.setOnClickListener(new View.OnClickListener() {
 	        	public void onClick(View v) {
-	        		
+	        		Intent intent = new Intent(getBaseContext(), AvailGamesActivity.class);
+			    	  intent.putExtra("phoneID", phoneID);
+			    	  startActivity(intent);
 	        	}
 	        });
 	    
@@ -131,6 +134,8 @@ public class ActiveGameMenuActivity extends Activity implements GameReceiver {
 	    	client.join();
         }
 	    catch (Exception e) {
+    		Toast.makeText(getApplicationContext(), "Sorry, Could not connect to Server", Toast.LENGTH_LONG).show();
+	    	finish();
         	
     	}
 	}
