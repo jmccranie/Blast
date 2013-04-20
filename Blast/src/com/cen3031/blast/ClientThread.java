@@ -4,20 +4,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.util.ArrayList;
 
-import oracle.jdbc.rowset.OracleCachedRowSet;
 import android.content.Context;
 
 class ClientThread extends Thread {
 	
-	public interface GameReceiver{
-		public void getActiveGames(OracleCachedRowSet cset);
-	}
-	public interface GameUpdateReceiver{
-		public void updateGame(OracleCachedRowSet cset);
-	}
+	
 	ActiveGameMenuActivity menuAct=null;
 	UnitAllocationActivity unitAct=null;
 	Socket socket=null;
@@ -36,12 +29,13 @@ class ClientThread extends Thread {
 	public ClientThread(ActiveGameMenuActivity menuAct,String SERVER_IP){
 		this.menuAct=menuAct;
 		this.SERVER_IP=SERVER_IP;
-		this.option=4;
+		this.option=3;
 	}
     public void run() {
         try {
-            InetAddress serverAddr = InetAddress.getByName("10.137.87.236");
+            InetAddress serverAddr = InetAddress.getByName("192.168.1.36");
             this.socket = new Socket(serverAddr, 8000);
+            System.out.println("test Friday1");
                 	    
             try {
                 //---get an InputStream object to read from the server---
@@ -62,7 +56,6 @@ class ClientThread extends Thread {
             	switch(option){
                 case 1:                     //create new game
                     try{
-                    	out = new ObjectOutputStream(socket.getOutputStream());
                     	out.writeObject(gs);
                     	out.flush();
                     }
@@ -73,7 +66,6 @@ class ClientThread extends Thread {
                     
                 case 2:         //update active game
                     try{
-                    	out = new ObjectOutputStream(socket.getOutputStream());
                     	out.writeObject(gs);
                     	out.flush();
                     }
@@ -82,10 +74,16 @@ class ClientThread extends Thread {
                     }
                     break;
                     
-                case 3:             //retrieve available games
+                case 3:            	 //retrieve available games
                     try{
-                    	OracleCachedRowSet cset = (OracleCachedRowSet)in.readObject();
-                    	System.out.println(cset.getString(1));
+                    	out.writeObject("RandomID");
+                    	out.flush();
+                    	ArrayList<GameState> available = (ArrayList<GameState>)in.readObject();
+                    	
+                    	if (!available.isEmpty()) {
+                    		menuAct.availableGames=available;
+//							System.out.println(available.get(0).user1ID);
+						}
                     }
                     catch(Exception e){
                         
@@ -96,13 +94,13 @@ class ClientThread extends Thread {
                     try{
                         
                         //the players turn
-                    	OracleCachedRowSet myturn = (OracleCachedRowSet)in.readObject();
+                    	ArrayList<GameState> myTurn = (ArrayList<GameState>)in.readObject();
                         
                         //not the player's turn
-                    	OracleCachedRowSet notmyturn = (OracleCachedRowSet)in.readObject();
+                    	ArrayList<GameState> theirTurn = (ArrayList<GameState>)in.readObject();
                     	
                         //finished games
-                    	OracleCachedRowSet finished = (OracleCachedRowSet)in.readObject();
+                    	ArrayList<GameState> finishedGames = (ArrayList<GameState>)in.readObject();
                     }
                     catch(Exception e){
                         

@@ -4,7 +4,6 @@ package com.cen3031.blast;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import oracle.jdbc.rowset.OracleCachedRowSet;
 
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
@@ -44,11 +43,12 @@ import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
-import com.cen3031.blast.ClientThread.GameUpdateReceiver;
+
 import com.cen3031.blast.UnitAllocationActivity.Soldier;
 import com.cen3031.blast.UnitAllocationActivity.Tank;
 
-public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener,GameUpdateReceiver {
+
+public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener {
 
 	// ===========================================================
 	// Constants
@@ -983,13 +983,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
 				Tank selTank,float targetX,float targetY){
 		
-		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY,selTank, targetX, targetY,"RandomID",null,"Pedro",null,null);
-		System.out.println("test sendData1");
+		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,"RandomID",null,"Pedro",null,null);
 		Thread client = new Thread(new ClientThread(this,gameState));
 	    client.start();
 	    try{
 	    	client.join();
-	    	System.out.println("test sendData4");
 	    }
 	    catch(Exception e){
 	    	
@@ -997,9 +995,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		
 	}
 	
-	public void updateGame(OracleCachedRowSet cset){
-		
-	}
 	
 	//Convert TanKList to XandY lists
 	public void setTankXYList(LinkedList<Tank> list,LinkedList<Tank> list2){
