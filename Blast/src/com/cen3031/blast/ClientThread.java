@@ -109,6 +109,16 @@ class ClientThread extends Thread {
                         
                     }
                     break;
+                    
+                case 5:         //join game
+                    try{
+                    	out.writeObject(gs);
+                    	out.flush();
+                    }
+                    catch(Exception e){
+
+                    }
+                    break;
             	}
             	
             }
