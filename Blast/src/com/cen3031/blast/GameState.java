@@ -28,10 +28,9 @@ public class GameState implements Serializable  {
   float targetY;
   public String pIDturn;
   int turn;
-  public GameState(String user1, String user2,int gameID){
-	  this.user1ID = user1;
-	  this.user2ID = user2;
-	  this.gameID = gameID;
+  public GameState(String user1, String user2){
+	  this.user1name = user1;
+	  this.user2name = user2;
   }
   
   public GameState(  LinkedList <Integer> p1TanksX,LinkedList <Integer> p1TanksY,LinkedList <Integer> p2TanksX,LinkedList <Integer> p2TanksY,

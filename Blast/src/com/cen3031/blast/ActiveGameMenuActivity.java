@@ -31,11 +31,12 @@ public class ActiveGameMenuActivity extends Activity {
 	 public ArrayList<GameState> availableGames=null;
 	 String phoneID;
 	 TelephonyManager telephonyManager;
+	 boolean isStartGame = false;
 	/** Called when the activity is first created. */
 
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    
+	    //get phone id
 	    setContentView(R.layout.activity_active_game_menu);
 	    telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 	    phoneID = telephonyManager.getDeviceId(); 
@@ -57,6 +58,7 @@ public class ActiveGameMenuActivity extends Activity {
 		    //Creating a game
 	        createButton.setOnClickListener(new View.OnClickListener() {
 	        	public void onClick(View v) {
+	        		isStartGame = true;
 	        		startGame();
 	        		
 	        	}
@@ -66,9 +68,8 @@ public class ActiveGameMenuActivity extends Activity {
 	     final TextView joinButton = (TextView) findViewById(R.id.joinView);
 	        joinButton.setOnClickListener(new View.OnClickListener() {
 	        	public void onClick(View v) {
-	        		Intent intent = new Intent(getBaseContext(), AvailGamesActivity.class);
-			    	  intent.putExtra("phoneID", phoneID);
-			    	  startActivity(intent);
+			    	isStartGame = false;
+	        		startGame();
 	        	}
 	        });
 	    
@@ -97,16 +98,31 @@ public class ActiveGameMenuActivity extends Activity {
   	     alert.setTitle("Create a Game");  
   	     alert.setMessage("Enter Username:");                
   	     alert.setView(textEntryView);
-  	  
+  	     
+  	     //GO TO UNIT ALLOC when starting new game
   	     alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {  
-  	     public void onClick(DialogInterface dialog, int whichButton) {  
-  	    	 EditText createText;
-	         createText = (EditText) textEntryView.findViewById(R.id.user_name);
-	         String username = createText.getText().toString();
-  	         GameState game = new GameState(username,"Waiting for Challenger",1);
-  	         tv_games.add(game);
-  	         adapter.notifyDataSetChanged();
-  	         return;                  
+  	    	 public void onClick(DialogInterface dialog, int whichButton) {  
+  	    		EditText createText;
+  		        createText = (EditText) textEntryView.findViewById(R.id.user_name);
+  		        String username = createText.getText().toString();
+  		        if(!username.equals("")){
+	 	    		if(isStartGame){
+	 	    			isStartGame = false;
+	  		        	Intent intent = new Intent(getBaseContext(), UnitAllocationActivity.class);
+				    	intent.putExtra("phoneID", phoneID);
+				    	intent.putExtra("user",username);
+				    	intent.putExtra("activity", "NewGame");
+				    	startActivity(intent);
+	 	    		}else{
+	 	    			Intent intent = new Intent(getBaseContext(), AvailGamesActivity.class);
+				    	intent.putExtra("phoneID2", phoneID);
+				    	intent.putExtra("user2",username);
+				    	startActivity(intent);
+	 	    		}
+  		        }else{
+	        		Toast.makeText(getApplicationContext(), "Please Enter a Username", Toast.LENGTH_LONG).show();
+	        		return;
+  		        }
   	        }  
   	      });  
 
@@ -123,6 +139,7 @@ public class ActiveGameMenuActivity extends Activity {
 
 
 	@Override
+	//FETCH active games from server
 	protected void onStart() {
 		super.onStart();
 	    Intent intent = getIntent();
@@ -132,12 +149,15 @@ public class ActiveGameMenuActivity extends Activity {
 	    try{
 	    	client.join();
 	    	System.out.println(availableGames.get(0).user1ID);
+	    	 popGamesList();
         }
 	    catch (Exception e) {
     		Toast.makeText(getApplicationContext(), "Sorry, Could not connect to Server", Toast.LENGTH_LONG).show();
-	    	finish();
+	    	//finish();
         	
     	}
+	    //populate active games list
+	   
 	}
 	
 		
@@ -146,7 +166,15 @@ public class ActiveGameMenuActivity extends Activity {
 	        super.onStop();
 	        return;
 	    } 	 
-
+	 
+	 void popGamesList(){
+		 for(int i = 0; i < availableGames.size(); i++){
+			 String username = availableGames.get(i).user1name;
+  	         GameState game = new GameState(username,"Waiting for Challenger");
+			 tv_games.add(game);
+			 adapter.notifyDataSetChanged();
+		 }
+	 }
 
 	        
-	    }
+}

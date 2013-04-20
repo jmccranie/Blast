@@ -40,6 +40,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
@@ -122,6 +123,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	ButtonSprite mineButton;
 	Text tankText;
 	Text mineText;
+	Text user1Text;
+	Text user2Text;
 	ButtonSprite fireButton;
 	ButtonSprite mapButton;
 	ButtonSprite moveButton;
@@ -137,11 +140,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	int MONEY = 2;
 	int balance1 = MONEY;
 	int balance2 = MONEY;
-	String user1;
-	String user2;
+	String user1 = null;
+	String user2 = null;
 	String pIDturn = null;
-	String phoneID1;
-	String phoneID2;
+	String phoneID1 = null;
+	String phoneID2 = null;
 	int turn = 0;
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -196,6 +199,20 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	}
 	@Override
 	public Scene onCreateScene() {
+		//ONLINE GAME SETUPS
+      	Bundle extras = getIntent().getExtras();
+      		if (extras != null) {
+      			String activity = extras.getString("activity");
+      			//Player starts new game
+      			if(activity.equals("NewGame")){
+	      			phoneID1 = extras.getString("phoneID");
+	      			user1 = extras.getString("user");
+	      			if (phoneID1 != null && user1 != null) {
+	      				isOnline = true;
+	      			} 
+      			}
+      		}
+        
 		this.mEngine.registerUpdateHandler(new FPSLogger());
 		
 		scene = new Scene();
@@ -208,19 +225,32 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         final float textCenterX =(CAMERA_WIDTH - this.mPlayer1TextureRegion.getWidth()) / 2;
         
         this.barricade = new Sprite(centerX, centerY, this.mBarricadeTextureRegion, this.mEngine.getVertexBufferObjectManager());
-        Sprite player1text= new Sprite(textCenterX , CAMERA_HEIGHT-30, this.mPlayer1TextureRegion, this.mEngine.getVertexBufferObjectManager());
-        Sprite player2text = new Sprite(textCenterX , 10, this.mPlayer2TextureRegion, this.mEngine.getVertexBufferObjectManager());
-        
         scene.attachChild(this.barricade);
-        player1text.setScale(4);
-        scene.attachChild(player1text);
-        player2text.setScale(4);
-        player2text.setRotation(180);
-        scene.attachChild(player2text);
        
+    	//ONLINE PLAYER1 NAME
+    	if(user1 != null){
+    		user1Text =  new Text(textCenterX-10, CAMERA_HEIGHT-40, this.mFont, user1, new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());	
+    	}else{
+    	//PASS AND PLAY Player1 NAME
+    		user1Text =  new Text(textCenterX-10, CAMERA_HEIGHT-40, this.mFont, "PLAYER1", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+    	}
+    	//ONLINE PLAYER2 NAME
+    	if(user2 != null){
+    		user2Text =  new Text(textCenterX, 10, this.mFont, user2, new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+    	}else{
+    	//PASS AND PLAY Player2 NAME
+    		user2Text =  new Text(textCenterX, 10, this.mFont, "PLAYER2", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+    	}
+    	
+    	//SET USER1 and 2 text
+    	user1Text.setScale(2);
+        scene.attachChild(user1Text);
+        user2Text.setScale(2);
+        user2Text.setRotation(180);
+        scene.attachChild(user2Text);
+        
         player1 = true;
     	gameStart = false;
-    	pIDturn = phoneID1;
     	
     	gameDialog(5);
 		
@@ -388,6 +418,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        			      //updateTankText(tankList2);
 		        			      //updateMineText(mineList2);
 		        			      updateMoneyText(MONEY);
+		        			    //SUMBIT PLAYER1 SIDE	
+		        			      if(balance1 == 0 && isOnline){
+		        						setTankXYList(tankList,tankList2);
+		        						setMineXYList(mineList,mineList2);
+		        						sendData(tankXList,tankYList,null,null,mineXList,mineYList,null,null,-1,-1);
+		        					}
 		        				  return;                  
 		        			  }  
 		        		  });  
@@ -510,7 +546,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	        		  AlertDialog.Builder alert5 = new AlertDialog.Builder(UnitAllocationActivity.this);                 
 	        		  alert5.setTitle("Helpful Tips");
 	        		 
-	        		  alert5.setMessage("-Each Player Places 5 Tanks and 2 Mines \n" +
+	        		  alert5.setMessage("-Each Player Places any Combination of Tanks,Mines " +
+	        		  			"and Soldier with the allotted Balance \n" +
 	        		  			"-Each turn a Player Selects Fire or Move \n" +
 	        				  	"-Tap Tanks to Fire/ Drag to Move \n" +
 	        		  			"-Tapping Area on Screen to Submit \n" +
@@ -588,7 +625,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			}else if(balance1 == 0){
 				player1 = false;
 				gameDialog(1);
-				
+			
 			}
 		}
 		//PLAYER2 SET UP SIDE
@@ -970,7 +1007,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				if(isOnline){
 					setTankXYList(tankList,tankList2);
 					setMineXYList(mineList,mineList2);
-					sendData(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,selTank,targetX,targetY);
+					sendData(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,targetX,targetY);
 				}
 			}
         };
@@ -981,9 +1018,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
      }       
 	void sendData(LinkedList <Integer> p1TanksX,LinkedList <Integer> p1TanksY,LinkedList <Integer> p2TanksX,LinkedList <Integer> p2TanksY,
 				LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
-				Tank selTank,float targetX,float targetY){
+				float targetX,float targetY){
 		
-		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,"RandomID",null,"Pedro",null,null);
+		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);
+		System.out.println(gameState.user1name + "," + gameState.user1ID);
+		System.out.println(gameState.user2name + "," + gameState.user2ID);
 		Thread client = new Thread(new ClientThread(this,gameState));
 	    client.start();
 	    try{
@@ -992,6 +1031,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	    catch(Exception e){
 	    	
 	    }
+	    
+	    Intent intent = new Intent(getBaseContext(), ActiveGameMenuActivity.class);
+    	startActivity(intent);
 		
 	}
 	

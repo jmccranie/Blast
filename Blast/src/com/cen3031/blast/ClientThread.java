@@ -13,6 +13,7 @@ class ClientThread extends Thread {
 	
 	ActiveGameMenuActivity menuAct=null;
 	UnitAllocationActivity unitAct=null;
+	AvailGamesActivity gamesAct = null;
 	Socket socket=null;
 	Context context=null;
 	String SERVER_IP=null;
@@ -31,9 +32,14 @@ class ClientThread extends Thread {
 		this.SERVER_IP=SERVER_IP;
 		this.option=3;
 	}
+	public ClientThread(AvailGamesActivity gamesAct,String SERVER_IP){
+		this.gamesAct=gamesAct;
+		this.SERVER_IP=SERVER_IP;
+		this.option=3;
+	}
     public void run() {
         try {
-            InetAddress serverAddr = InetAddress.getByName("192.168.1.36");
+            InetAddress serverAddr = InetAddress.getByName("10.136.16.155");
             this.socket = new Socket(serverAddr, 8000);
             System.out.println("test Friday1");
                 	    
