@@ -1,18 +1,18 @@
 
 package com.cen3031.blast;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;
-import java.io.IOException;
 
+import org.andengine.audio.sound.Sound;
+import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.options.EngineOptions;
 import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
-import org.andengine.audio.sound.Sound;
-import org.andengine.audio.sound.SoundFactory;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.MoveByModifier;
 import org.andengine.entity.primitive.Rectangle;
@@ -47,10 +47,6 @@ import android.util.DisplayMetrics;
 import android.widget.Toast;
 
 
-import com.cen3031.blast.UnitAllocationActivity.Soldier;
-import com.cen3031.blast.UnitAllocationActivity.Tank;
-
-
 public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener {
 
 	// ===========================================================
@@ -82,6 +78,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private TextureRegion mBulletTextureRegion;
 	private Sprite barricade;
 	private RepeatingSpriteBackground mGrassBackground;
+	private Sound snd_explosion;
 	Camera camera;
 	
 	Tank tank;
@@ -148,7 +145,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	String phoneID1 = null;
 	String phoneID2 = null;
 	int turn = 0;
-	Sound snd_explosion;
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 		DisplayMetrics metrics = new DisplayMetrics();
@@ -158,9 +154,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 
 		camera = new Camera(0, 0, CAMERA_WIDTH, CAMERA_HEIGHT);
 	     
-		EngineOptions en = new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
-		en.getAudioOptions().setNeedsSound(true);
-		return en;
+        return new EngineOptions(true, ScreenOrientation.PORTRAIT_FIXED, new RatioResolutionPolicy(CAMERA_WIDTH, CAMERA_HEIGHT), camera);
 	}
 
 	@Override
@@ -195,14 +189,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         SoundFactory.setAssetBasePath("sounds/");
         try
         {
-         snd_explosion = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
+        	snd_explosion = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
            "Hit.ogg");
         } catch (IOException e)
         {
          e.printStackTrace();
         }
-       
-	}
+       	}
 	
 	@Override
 	public void onPause(){
@@ -1009,7 +1002,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						oppTanks.remove(i);
 						Sprite explosion = new Sprite(touchX,CAMERA_HEIGHT-touchY, UnitAllocationActivity.mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
 						scene.attachChild(explosion);
-						snd_explosion.play();
+
 					}
 				}
 				//if hits mine
@@ -1133,6 +1126,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
     catch(Exception e){
     	
     }
+    	Intent intent = new Intent(getBaseContext(), ActiveGameMenuActivity.class);
+    	startActivity(intent);
 	}
 	//Convert TanKList to XandY lists
 	public void setTankXYList(LinkedList<Tank> list,LinkedList<Tank> list2){
