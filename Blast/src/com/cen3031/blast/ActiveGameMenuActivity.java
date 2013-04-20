@@ -21,15 +21,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.cen3031.blast.ClientThread.GameReceiver;
 
-public class ActiveGameMenuActivity extends Activity implements GameReceiver {
+public class ActiveGameMenuActivity extends Activity {
 	 static final int SERVER_PORT = 8000;
 	 String SERVER_IP;
 	 Handler handler = new Handler();
 	 public ListView listView;
 	 public List<GameState> tv_games =  new ArrayList<GameState>();
 	 GameStateArrayAdaptor adapter;
+	 public ArrayList<GameState> availableGames=null;
 	 String phoneID;
 	 TelephonyManager telephonyManager;
 	/** Called when the activity is first created. */
@@ -129,15 +129,13 @@ public class ActiveGameMenuActivity extends Activity implements GameReceiver {
 	    client.start();
 	    try{
 	    	client.join();
+	    	System.out.println(availableGames.get(0).user1ID);
         }
 	    catch (Exception e) {
         	
     	}
 	}
 	
-	public void getActiveGames(OracleCachedRowSet cset){
-		
-	}
 		
 	 @Override
 	    protected void onStop() {

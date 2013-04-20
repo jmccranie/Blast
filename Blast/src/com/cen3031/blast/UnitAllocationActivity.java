@@ -4,8 +4,6 @@ package com.cen3031.blast;
 import java.io.Serializable;
 import java.util.LinkedList;
 
-import oracle.jdbc.rowset.OracleCachedRowSet;
-
 import org.andengine.engine.Engine;
 import org.andengine.engine.camera.Camera;
 import org.andengine.engine.camera.hud.HUD;
@@ -40,14 +38,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
-import com.cen3031.blast.ClientThread.GameUpdateReceiver;
-
-public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener,GameUpdateReceiver {
+public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener {
 
 	// ===========================================================
 	// Constants
@@ -953,10 +948,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				}
 				if(isOnline){
 					setTankXYList(tankList,tankList2);
-					System.out.println("test Friday3");
 					setMineXYList(mineList,mineList2);
-					System.out.println("test Friday4");
-					System.out.println("test Friday2");
 					sendData(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,selTank,targetX,targetY);
 				}
 			}
@@ -971,12 +963,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				Tank selTank,float targetX,float targetY){
 		
 		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,"RandomID",null,"Pedro",null,null);
-		System.out.println("test sendData1");
 		Thread client = new Thread(new ClientThread(this,gameState));
 	    client.start();
 	    try{
 	    	client.join();
-	    	System.out.println("test sendData4");
 	    }
 	    catch(Exception e){
 	    	
@@ -984,9 +974,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		
 	}
 	
-	public void updateGame(OracleCachedRowSet cset){
-		
-	}
 	
 	//Convert TanKList to XandY lists
 	public void setTankXYList(LinkedList<Tank> list,LinkedList<Tank> list2){
