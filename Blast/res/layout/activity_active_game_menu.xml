@@ -109,6 +109,18 @@
         android:text="Join a Game"
         android:layout_marginTop="20dp"
         android:textSize="24dip" />
+    <Button
+        android:id="@+id/refreshButton"
+        android:layout_below="@+id/overLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:onClick="btn_refresh"
+        android:background="@drawable/btn"
+        android:text="Refresh"
+        android:textColor="@android:color/white" />
 
 </RelativeLayout>
 </RelativeLayout>
