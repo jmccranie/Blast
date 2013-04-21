@@ -209,6 +209,12 @@ public class ActiveGameMenuActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 	    Intent intent = getIntent();
+	    my_games.clear();
+    	their_games.clear();
+    	over_games.clear();
+    	myadapter.notifyDataSetChanged();
+    	theiradapter.notifyDataSetChanged();
+    	overadapter.notifyDataSetChanged();
 	    SERVER_IP = intent.getStringExtra("ipAddr");
 	    Thread client = new Thread(new ClientThread(this,SERVER_IP));
 	    client.start();
@@ -232,7 +238,6 @@ public class ActiveGameMenuActivity extends Activity {
 	        return;
 	    } 	 
 	 public void btn_refresh(View v){
-	    	Button btn = (Button) findViewById(R.id.refreshButton);
 	    	my_games.clear();
 	    	their_games.clear();
 	    	over_games.clear();
