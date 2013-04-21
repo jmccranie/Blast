@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -221,7 +222,6 @@ public class ActiveGameMenuActivity extends Activity {
 	    	//finish();
         	
     	}
-	    //populate active games list
 	   
 	}
 	
@@ -231,6 +231,26 @@ public class ActiveGameMenuActivity extends Activity {
 	        super.onStop();
 	        return;
 	    } 	 
+	 public void btn_refresh(View v){
+	    	Button btn = (Button) findViewById(R.id.refreshButton);
+	    	my_games.clear();
+	    	their_games.clear();
+	    	over_games.clear();
+	    	myadapter.notifyDataSetChanged();
+	    	theiradapter.notifyDataSetChanged();
+	    	overadapter.notifyDataSetChanged();
+	    	Thread client = new Thread(new ClientThread(this,SERVER_IP));
+		    client.start();
+		    try{
+		    	client.join();
+		    	popGamesList();
+	        }
+		    catch (Exception e) {
+	    		Toast.makeText(getApplicationContext(), "Sorry, Could not connect to Server", Toast.LENGTH_LONG).show();
+		    	//finish();
+	        	
+	    	}
+	    }
 	 
 	 void popGamesList(){
 		 for(int i = 0; i < myTurn.size(); i++){
