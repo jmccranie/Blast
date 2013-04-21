@@ -188,11 +188,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         this.mEngine.getTextureManager().loadTexture(this.mFontTexture);
         this.getFontManager().loadFont(this.mFont);
         
-        SoundFactory.setAssetBasePath("sounds/");
+        //SoundFactory.setAssetBasePath("sounds/");
         try
         {
         	snd_explosion = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
-           "Hit.ogg");
+           "sounds/explosion.wav");
         } catch (IOException e)
         {
          e.printStackTrace();
@@ -1003,7 +1003,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						oppTanks.remove(i);
 						Sprite explosion = new Sprite(touchX,CAMERA_HEIGHT-touchY, UnitAllocationActivity.mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
 						scene.attachChild(explosion);
-
+						snd_explosion.play();
 					}
 				}
 				//if hits mine
@@ -1064,7 +1064,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					setTankXYList(tankList,tankList2);
 					setMineXYList(mineList,mineList2);
 					if(player1win() || player2win()){
-						pIDturn = null;
+						pIDturn = "null";
 						if(player1win()){
 							win = 1;
 						}else{
