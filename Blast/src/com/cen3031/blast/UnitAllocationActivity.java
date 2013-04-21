@@ -79,6 +79,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private Sprite barricade;
 	private RepeatingSpriteBackground mGrassBackground;
 	private Sound snd_explosion;
+	private Sound snd_game_win;
+	private Sound snd_game_loss;
 	Camera camera;
 	
 	Tank tank;
@@ -145,6 +147,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	String phoneID1 = null;
 	String phoneID2 = null;
 	int turn = 0;
+	
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 //		DisplayMetrics metrics = new DisplayMetrics();
@@ -191,8 +194,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         //SoundFactory.setAssetBasePath("sounds/");
         try
         {
-        	snd_explosion = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(),
-           "sounds/explosion.wav");
+        	snd_explosion = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(), "sounds/explosion.wav");
+        	snd_game_win = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(), "sounds/GameOverWin.wav");
+        	snd_game_loss = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(), "sounds/GameOverLoss.wav");
         } catch (IOException e)
         {
          e.printStackTrace();
@@ -207,6 +211,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		mineList.clear();
 		mineList2.clear();
 	}
+
 	@Override
 	public Scene onCreateScene() {
 		scene = new Scene();
@@ -566,8 +571,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        		  AlertDialog.Builder alert4 = new AlertDialog.Builder(UnitAllocationActivity.this);                 
 		        		  if(player1win()){
 		        			  alert4.setTitle("Player1 WINS!!");
+		        			  snd_game_win.play();
 		        		  }else{
 		        			  alert4.setTitle("Player2 WINS!!");
+		        			  snd_game_loss.play();
 		        		  }
 		        		  alert4.setCancelable(false);
 		        		  alert4.setMessage("Would You Like to Play Again?");                
