@@ -1059,10 +1059,19 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				}else{
 					pIDturn = phoneID2;
 				}
+				int win = -1;
 				if(isOnline){
 					setTankXYList(tankList,tankList2);
 					setMineXYList(mineList,mineList2);
-					sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);				}
+					if(player1win() || player2win()){
+						pIDturn = null;
+						if(player1win()){
+							win = 1;
+						}else{
+							win = 2;
+						}
+					}
+					sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,win,-1);				}
 			}
         };
         bullet.registerEntityModifier(moveBullet);
