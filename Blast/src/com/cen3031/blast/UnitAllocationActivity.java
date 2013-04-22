@@ -81,6 +81,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private Sound snd_explosion;
 	private Sound snd_game_win;
 	private Sound snd_game_loss;
+	private Sound snd_miss;
+	private Sound snd_fire;
 	Camera camera;
 	
 	Tank tank;
@@ -197,11 +199,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         	snd_explosion = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(), "sounds/explosion.wav");
         	snd_game_win = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(), "sounds/GameOverWin.wav");
         	snd_game_loss = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(), "sounds/GameOverLoss.wav");
+        	snd_miss = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(), "sounds/Miss.wav");
+        	snd_fire = SoundFactory.createSoundFromAsset(this.getSoundManager(), this.getApplicationContext(), "sounds/MissileFire.wav");
         } catch (IOException e)
         {
-         e.printStackTrace();
+        	e.printStackTrace();
         }
-       	}
+    }
 	
 	@Override
 	public void onPause(){
@@ -574,7 +578,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        			  snd_game_win.play();
 		        		  }else{
 		        			  alert4.setTitle("Player2 WINS!!");
-		        			  snd_game_loss.play();
+		        			  snd_game_win.play();
 		        		  }
 		        		  alert4.setCancelable(false);
 		        		  alert4.setMessage("Would You Like to Play Again?");                
@@ -982,6 +986,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		circle = new Sprite(touchX,CAMERA_HEIGHT-touchY, this.mCircleTextureRegion, this.mEngine.getVertexBufferObjectManager());
 		scene.attachChild(circle);
 		//Shoots bullet
+		snd_fire.play();
 		final Tank selTank = myTanks.get(index);
 		final float targetX = touchX;
 		final float targetY = CAMERA_HEIGHT-touchY;
@@ -1003,14 +1008,24 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			protected void onModifierFinished(IEntity pItem) {
 				super.onModifierFinished(pItem);
         		//Collision detection
-        		for(int i = 0; i < oppTanks.size();i++){  
+        		for(int i = 0; i < oppTanks.size();i++){ 
+        			boolean somethingDied = false;
+        			snd_fire.stop();
+        			
 					if( circle.collidesWith(oppTanks.get(i)) ){
 						scene.detachChild(oppTanks.get(i));
 						scene.detachChild(circle);
 						oppTanks.remove(i);
 						Sprite explosion = new Sprite(touchX,CAMERA_HEIGHT-touchY, UnitAllocationActivity.mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
 						scene.attachChild(explosion);
+						
 						snd_explosion.play();
+						somethingDied = true;
+					}
+					
+					if (!somethingDied)
+					{
+						snd_miss.play(); // This sound plays when the player misses
 					}
 				}
 				//if hits mine
