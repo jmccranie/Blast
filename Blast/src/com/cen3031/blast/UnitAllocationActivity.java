@@ -15,6 +15,7 @@ import org.andengine.engine.options.ScreenOrientation;
 import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.IEntity;
 import org.andengine.entity.modifier.MoveByModifier;
+import org.andengine.entity.modifier.MoveModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
@@ -47,6 +48,9 @@ import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
+import java.util.Iterator;
+import org.andengine.engine.handler.IUpdateHandler;
+import android.util.Log;
 
 public class UnitAllocationActivity extends SimpleBaseGameActivity implements IOnSceneTouchListener,OnClickListener {
 
@@ -64,6 +68,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private BitmapTextureAtlas mBitmapTextureAtlas;
 	private BitmapTextureAtlas mBitmapTextureAtlas2;
 	private TextureRegion mTankTextureRegion;
+	private TextureRegion SoldierTextureRegion;
+	private TextureRegion SoldierBut1TextureRegion;
+	private TextureRegion SoldierBut2TextureRegion;
+	public TextureRegion aimTextureRegion;
 	static TextureRegion mBarricadeTextureRegion;
 	private TextureRegion mCircleTextureRegion;
 	private static TextureRegion mExplosionTextureRegion;
@@ -87,6 +95,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	Camera camera;
 	
 	Tank tank;
+	Soldier soldier;
 	Sprite mine;
 	float touchX; 
 	float touchY;
@@ -123,16 +132,20 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	boolean gameStart;
 	boolean tankSel;
 	boolean mineSel;
+	boolean soldierSel;
 	ButtonSprite tankButton;
 	ButtonSprite mineButton;
+	ButtonSprite soldierButton;
 	Text tankText;
 	Text mineText;
+	Text soldText;
 	Text user1Text;
 	Text user2Text;
 	ButtonSprite fireButton;
 	ButtonSprite mapButton;
 	ButtonSprite moveButton;
 	Sprite bullet;
+	Sprite bullet_s;
 	int bulletSpeed = 500;
 	Sprite circle;
 	boolean animOver;
@@ -172,9 +185,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	@Override
 	public void onCreateResources() {
 		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/");
-		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(),32, 32, TextureOptions.BILINEAR);
+		this.mBitmapTextureAtlas = new BitmapTextureAtlas(this.getTextureManager(),128, 128, TextureOptions.BILINEAR);
 		this.mBitmapTextureAtlas2 = new BitmapTextureAtlas(this.getTextureManager(),1024, 1024, TextureOptions.BILINEAR);
 		this.mTankTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "tank.png", 0, 0);
+		this.SoldierTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "sprite_soldier.png",30,0);
+		this.SoldierBut1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "sprite_soldier_but1.png",60,0);
+		this.SoldierBut2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "sprite_soldier_but2.png",90,0);
+		this.aimTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas, this, "soldier_aim.png",0,30);
 		this.mBarricadeTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "barricade.png", 0, 0);
 		this.mExplosionTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "explosion.png", 0, 50);
 		this.mCircleTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "small_circle.png", 20, 200);
@@ -330,7 +347,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         mineButton.setSize(75,75);
         mineText =  new Text(5, 0, this.mFont, Integer.toString(1), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         
-        balanceLabel = new Rectangle(150,barricade.getY()-75,75,75,this.getVertexBufferObjectManager());
+        balanceLabel = new Rectangle(225,barricade.getY()-75,75,75,this.getVertexBufferObjectManager());
         balanceLabel.setColor(0,0,0);
         Text balanceText =  new Text(-20, -10, this.mFont, "Balance", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         balanceText.setScale(.5f);
@@ -342,7 +359,12 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         Text unitAllocText =  new Text(0, 0, this.mFont, "Unit Allocation", new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
         unitAllocText.setScale(.9f);
         
+        soldierButton = new ButtonSprite(150, barricade.getY()-75, this.SoldierBut1TextureRegion,this.SoldierBut2TextureRegion, this.getVertexBufferObjectManager(),this);
+        soldierButton.setSize(75,75);
+        soldText = new Text(5, 0, this.mFont, Integer.toString(1), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
+        
         tankButton.attachChild(tankText);
+        soldierButton.attachChild(soldText);
         mineButton.attachChild(mineText);
         balanceLabel.attachChild(balanceText);
         unitAllocLabel.attachChild(unitAllocText);
@@ -351,8 +373,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         hud.attachChild(unitAllocLabel);
         hud.attachChild(tankButton);
         hud.attachChild(mineButton);
+        hud.attachChild(soldierButton);
         hud.registerTouchArea(tankButton);
         hud.registerTouchArea(mineButton);
+        hud.registerTouchArea(soldierButton);
         hud.setTouchAreaBindingOnActionDownEnabled(true);
         this.camera.setHUD(hud);
         
@@ -383,6 +407,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			  hud.clearTouchAreas();
 			  updateHUD();
         }
+        scene.registerUpdateHandler(detect);
         return scene;
 		}
 	 
@@ -407,14 +432,24 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					 
 					}
 				}
+				else if (pButtonSprite == soldierButton){
+					if(!gameStart){
+						soldierSel = true;
+						Log.d("DEBUG: ", "Soldier Button Pressed!");
+					}
+				}
 				else if(pButtonSprite == fireButton){ 
+					Log.d("debug","fire button pressed");
        				  fire = true;
        				  move = false;
        				  viewMap = false;
        				  if(player1){
        					  registerItems(tankList);
+       					  registerItems_sold(soldList);
+       
        				  }else{
        					  registerItems(tankList2);
+       					  registerItems_sold(soldList2);
        				  }
        				  hud.setVisible(false);
 				}
@@ -424,6 +459,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				      viewMap = true;
 				      unregisterItems(tankList);
 				      unregisterItems(tankList2);
+				      unregisterItems_sold(soldList);
+				      unregisterItems_sold(soldList2);
      				  hud.setVisible(false);
 				}
 				else if(pButtonSprite == moveButton){ 
@@ -432,8 +469,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				      viewMap = false;
 				      if(player1){
   					  registerItems(tankList);
+  					  registerItems_sold(soldList);
 				      }else{
   					  registerItems(tankList2);
+  					  registerItems_sold(soldList2);
 				      }
 				      hud.setVisible(false);
 				}
@@ -476,6 +515,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  gameToast("Player2 Turn to place Units");
 		        				  unregisterItems(tankList);
 		        				  registerItems(tankList2);
+		        				  unregisterItems_sold(soldList);
+		        				  registerItems_sold(soldList2);
 		        				  camera.setRotation(180f);
 		        			      updateMoneyText(MONEY);
 		        			    //SUMBIT PLAYER1 SIDE	
@@ -492,6 +533,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        			  public void onClick(DialogInterface dialog, int which) {
 		     	        	 	player1 = true;
 		     	        	 	registerItems(tankList);
+		     	        	 	registerItems_sold(soldList);
 		     	        	 	return;   
 		     	         }
 		     	     });
@@ -512,10 +554,14 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  turn1mes = false;
 		        				  gameToast("Game Started!");
 		        				  gameToast("Player1 turn");
+		        				  registerItems(tankList);
+		        				  registerItems_sold(soldList);
 		        				  unregisterItems(tankList2);
+		        				  unregisterItems_sold(soldList2);
 		        				  camera.setRotation(0f);
 		        				  hud.detachChild(tankButton);
 		        				  hud.detachChild(mineButton);
+		        				  hud.detachChild(soldierButton);
 		        				  hud.detachChild(balanceLabel);
 		        				  hud.detachChild(unitAllocLabel);
 		        				  hud.clearTouchAreas();
@@ -550,8 +596,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  viewMap = false;
 		        				  if(player1){
 		        					  registerItems(tankList);
+		        					  registerItems_sold(soldList);
 		        				  }else{
 		        					  registerItems(tankList2);
+		        					  registerItems_sold(soldList2);
 		        				  }
 		        				  return;
 		        			  }  
@@ -563,6 +611,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	        				      viewMap = true;
 	        				      unregisterItems(tankList);
 	        				      unregisterItems(tankList2);
+	        				      unregisterItems_sold(soldList);
+	        				      unregisterItems_sold(soldList2);
 		        				  return;   
 		        	     }
 		        		  });
@@ -573,8 +623,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	        				      viewMap = false;
 	        				      if(player1){
 		        					  registerItems(tankList);
+		        					  registerItems_sold(soldList);
 		        				  }else{
 		        					  registerItems(tankList2);
+		        					  registerItems_sold(soldList2);
 		        				  }
 		     	        	 	return;   
 		     	         }
@@ -645,10 +697,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			//Checks each touch if the tank has been removed from the screen
 			//Removes it from Linked List
 			checkRemove(tankList);
+			checkRemove_sold(soldList);
 			//Checks if any other tanks are selected 
 			//If they are deselect them
 			unregisterItems(tankList2);
+			unregisterItems_sold(soldList2);
 			checkOthersSelected(tankList);
+			checkOthersSelected_sold(soldList);
 			
 			if(0<balance1 && tankSel){
 				if (pSceneTouchEvent.isActionDown()) {
@@ -670,7 +725,26 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					
 				return false;
 				} 
-			}else if(0 < balance1 && mineSel){
+			}
+			else if((balance1 > 0) && (soldierSel == true)){
+				Log.d("DEBUG: ", "Soldier Selected!");
+				if (pSceneTouchEvent.isActionDown()) {
+					soldier = new Soldier(touchX ,touchY,30,30, this.SoldierTextureRegion, this.getVertexBufferObjectManager());
+					float posY = touchY - soldier.getHeight() / 2;
+					if(posY > (CAMERA_HEIGHT / 2) + 5 && placeSoldier(soldier,soldList) ){
+						Log.d("DEBUG: ", "Soldier Placed!");
+						soldList.add(soldier);
+						scene.registerTouchArea(soldier); // register touch area , so this allows you to drag it
+						scene.attachChild(soldier); //add it to the scene
+						soldierSel = false;
+						balance1--;
+						updateMoneyText(balance1);
+					}
+				        //???  
+				    return false;
+		       	}
+			}
+			else if(0 < balance1 && mineSel){
 				//Check if player has only mines on side
 				if(mineList.size() != MONEY-1){
 					if(pSceneTouchEvent.isActionDown()){
@@ -704,10 +778,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				//Checks each touch if the tank has been removed from the screen
 				//Removes it from Linked List
 				checkRemove(tankList2);
+				checkRemove_sold(soldList2);
 				//Checks if any other tanks are selected 
 				//If they are deselect them
 				unregisterItems(tankList);
+				unregisterItems_sold(soldList);
 				checkOthersSelected(tankList2);
+				checkOthersSelected_sold(soldList2);
 				if (pSceneTouchEvent.isActionDown()) {
 					touchX = pSceneTouchEvent.getX();
 					touchY = pSceneTouchEvent.getY();
@@ -728,7 +805,27 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					
 				return false;
 				} 
-			}else if(0 < balance2 && mineSel){
+			}
+			else if((balance2 > 0) && (soldierSel == true)){
+				Log.d("DEBUG: ", "Soldier Selected!");
+				if (pSceneTouchEvent.isActionDown()) {
+					soldier = new Soldier(touchX ,touchY,30,30, this.SoldierTextureRegion, this.getVertexBufferObjectManager());
+					float posY = touchY - soldier.getHeight() / 2;
+					if(posY < (CAMERA_HEIGHT / 2) + 5 && placeSoldier(soldier,soldList) ){
+						Log.d("DEBUG: ", "Soldier Placed!");
+						soldList2.add(soldier);
+						soldier.setRotation(180);
+						scene.registerTouchArea(soldier); // register touch area , so this allows you to drag it
+						scene.attachChild(soldier); //add it to the scene
+						soldierSel = false;
+						balance2--;
+						updateMoneyText(balance2);
+					}
+				        //???  
+				    return false;
+		       	}
+			}
+			else if(0 < balance2 && mineSel){
 				//PLACE MINES
 				//Check if player has only mines on side
 				if(mineList2.size() != MONEY-1){
@@ -762,16 +859,21 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					
 					gameToast("Player1 turn");
 					unregisterItems(tankList2);
+					unregisterItems_sold(soldList2);
+//					checkOthersSelected(tankList);
+//					checkOthersSelected_sold(soldList);
 					turn1mes = false;
 					turn2mes = true;
 					hud.setVisible(true);
-				}else{
-					camera.setRotation(0f);
 				}
+					//else{
+//					camera.setRotation(0f);
+//				}
 				//User selects fire on dialog
 				if(fire){
 					int index = 0;
 					canFire = false;
+					boolean soldierFire = false;
 					for(int i = 0;i < tankList.size();i++){
 						if(tankList.get(i).isSelected){
 							index = i;
@@ -779,32 +881,55 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 							canFire = true;
 						}
 					}
-					if(canFire){
+					if(canFire == false){
+			            for(int i = 0;i < soldList.size();i++){
+			              if(soldList.get(i).isSelected){
+			                index = i;
+			                soldList.get(i).outline.setVisible(false);
+			                canFire = true;
+			                soldierFire  = true;
+			              }
+			            }
+			         }
+					if(canFire && soldierFire == false){
 						//Makes sure a tank is selected to fire
 						
-					if (pSceneTouchEvent.isActionDown()) {
-						touchX = pSceneTouchEvent.getX();
-						touchY = pSceneTouchEvent.getY();
-						float posY = touchY - tank.getHeight() / 2;
-						 
-						if(posY > (CAMERA_HEIGHT / 2)){
-							tankFire(tankList,tankList2,mineList2,touchX,touchY,index,mEngine);
-							
-							
-							
-							
-						}else{
-							registerItems(tankList);
+						if (pSceneTouchEvent.isActionDown()) {
+							touchX = pSceneTouchEvent.getX();
+							touchY = pSceneTouchEvent.getY();
+							float posY = touchY - tank.getHeight() / 2;
+							 
+							if(posY > (CAMERA_HEIGHT / 2)){
+								tankFire(tankList,tankList2,mineList2,touchX,touchY,index,mEngine);
+							}else{
+								registerItems(tankList);
+								registerItems_sold(soldList);
+							}
 						}
 					}
-					}
+					else if(canFire && soldierFire == true){
+		            if (pSceneTouchEvent.isActionDown()) {
+		              touchX = pSceneTouchEvent.getX();
+		              touchY = pSceneTouchEvent.getY();
+		              float posY = touchY - soldier.getHeight() / 2;
+		               
+		              //if(posY > (CAMERA_HEIGHT / 2)){
+		                soldierFire(index);
+		              //}else{
+		                //registerItems(tankList);
+		                //registerItems_sold(soldList);
+		              //}
+		            }
+		          }
 				}
 				//IF USER PICKS MOVE
 				else if(move){
 					player1 = false;
 					turn2mes = true;
+					turn1mes = false;
 					move = false;
-					unregisterItems(tankList);
+					unregisterItems(tankList2);
+					unregisterItems_sold(soldList2);
 					if(isOnline){
 						setTankXYList(tankList,tankList2);
 						setMineXYList(mineList,mineList2);
@@ -819,15 +944,22 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				if(turn2mes){
 					
 					unregisterItems(tankList);
+					unregisterItems_sold(soldList);
 					gameToast("Player2 turn");
 					turn2mes = false;
+					turn1mes = true;
+//					checkOthersSelected(tankList2);
+//					checkOthersSelected_sold(soldList2);
 					hud.setVisible(true);
 				}
-					
+//				else{
+//					camera.setRotation(180f);
+//				}
 					//IF USER SELECTS FIRE
 					if(fire){
 						int index = 0;
 						canFire = false;
+						boolean soldierFire = false;
 						//Makes sure a tank is selected to fire
 						for(int i = 0;i < tankList2.size();i++){
 							if(tankList2.get(i).isSelected){
@@ -836,26 +968,54 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 								canFire = true;
 							}
 						}
-						if(canFire){
+						if(canFire == false){
+				            for(int i = 0;i < soldList2.size();i++){
+				              if(soldList2.get(i).isSelected){
+				                index = i;
+				                soldList2.get(i).outline.setVisible(false);
+				                canFire = true;
+				                soldierFire  = true;
+				              }
+				            }
+				         }
+						if(canFire && soldierFire == false){
 						
-						if (pSceneTouchEvent.isActionDown()) {
-							touchX = pSceneTouchEvent.getX();
-							touchY = pSceneTouchEvent.getY();
-							float posY = touchY - tank.getHeight() / 2;  
-							if(posY <= (CAMERA_HEIGHT / 2)){
-								tankFire(tankList2,tankList,mineList,touchX,touchY,index,mEngine);
-								
-							}else{
-								registerItems(tankList2);
+							if (pSceneTouchEvent.isActionDown()) {
+								touchX = pSceneTouchEvent.getX();
+								touchY = pSceneTouchEvent.getY();
+								float posY = touchY - tank.getHeight() / 2;  
+								if(posY <= (CAMERA_HEIGHT / 2)){
+									tankFire(tankList2,tankList,mineList,touchX,touchY,index,mEngine);
+									
+								}else{
+									registerItems(tankList2);
+									registerItems_sold(soldList2);
+								}
 							}
 						}
-					}
+						else if(canFire && soldierFire == true){
+				            if (pSceneTouchEvent.isActionDown()) {
+				              touchX = pSceneTouchEvent.getX();
+				              touchY = pSceneTouchEvent.getY();
+				              float posY = touchY - soldier.getHeight() / 2;
+				               
+				             // if(posY > (CAMERA_HEIGHT / 2)){
+				                soldierFire(index);
+				              //}else{
+				                //registerItems(tankList2);
+				                //registerItems_sold(soldList2);
+				             // }
+				            }
+				          }
 					}
 					//IF USER SELECTS MOVE
 					else if(move){
 						player1 = true;
 						turn1mes = true;
+						turn2mes = false;
 						move = false;
+						unregisterItems(tankList);
+						unregisterItems_sold(soldList);
 						if(isOnline){
 							setTankXYList(tankList,tankList2);
 							setMineXYList(mineList,mineList2);
@@ -888,10 +1048,141 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		return false;
 	}
 	
+	  float x,y;
+	  boolean s_hit = false;
+	  IUpdateHandler detect = new IUpdateHandler() {
+	    @Override
+	    public void reset() {
+	    }  
+	
+	    @Override
+	    public void onUpdate(float pSecondsElapsed) {
+	    	if(player1){
+	    		camera.setRotation(0);
+	    	}
+	    	else{
+	    		camera.setRotation(180);
+	    }
+	      Iterator<Tank> it;
+	      Iterator<Soldier> its;
+	      Tank target_tank;
+	      Soldier target_soldier;
+	      if(!player1){
+	        it = tankList2.iterator();
+	        // iterating over the targets
+	        while (it.hasNext()) {
+	          target_tank = it.next();
+	          if(bullet_s != null && target_tank != null){
+	            if(target_tank.collidesWith(bullet_s)){
+	            	snd_explosion.play();
+	              x = target_tank.originX;
+	              y = target_tank.originY;
+	              s_hit = true;
+	              scene.detachChild(target_tank);
+	               try {
+	                 Log.d("DEBUG", "Tring to remove tank from tanklist");
+	                 it.remove();
+                     } 
+                     catch (Exception e) {
+                       e.printStackTrace();
+                     }
+	            }
+	          }
+	        }
+	        
+	        its = soldList2.iterator();
+	        while (its.hasNext()) {
+	          target_soldier = its.next();
+	          if(bullet_s != null && target_soldier != null){
+	            if(target_soldier.collidesWith(bullet_s)){
+	            	snd_explosion.play();
+	              x = target_soldier.originX;
+	              y = target_soldier.originY;
+	              s_hit = true;
+	              scene.detachChild(target_soldier);
+	               try {
+	                 Log.d("DEBUG", "Tring to remove soldier from tanklist");
+	                 its.remove();
+	                 } 
+	                 catch (Exception e) {
+	                   e.printStackTrace();
+	                 }
+	            } 
+	          }
+	        }
+	      }
+	      else{
+	    	  it = tankList.iterator();
+		        // iterating over the targets
+		        while (it.hasNext()) {
+		          target_tank = it.next();
+		          if(bullet_s != null && target_tank != null){
+		            if(target_tank.collidesWith(bullet_s)){
+		            	snd_explosion.play();
+		              x = target_tank.originX;
+		              y = target_tank.originY;
+		              s_hit = true;
+		              scene.detachChild(target_tank);
+		               try {
+		                 Log.d("DEBUG", "Tring to remove tank from tanklist");
+		                 it.remove();
+	                     } 
+	                     catch (Exception e) {
+	                       e.printStackTrace();
+	                     }
+		            }
+		          }
+		        }
+		        
+		        its = soldList.iterator();
+		        while (its.hasNext()) {
+		          target_soldier = its.next();
+		          if(bullet_s != null && target_soldier != null){
+		            if(target_soldier.collidesWith(bullet_s)){
+		            	snd_explosion.play();
+		              x = target_soldier.originX;
+		              y = target_soldier.originY;
+		              s_hit = true;
+		              scene.detachChild(target_soldier);
+		               try {
+		                 Log.d("DEBUG", "Tring to remove soldier from tanklist");
+		                 its.remove();
+		                 } 
+		                 catch (Exception e) {
+		                   e.printStackTrace();
+		                 }
+		            } 
+		          }
+		        }
+	      }
+	      if(s_hit == true){
+				fire = false;
+				if(player1win()){
+					turn2mes = false;
+					gameDialog(4);
+				}else{
+					turn2mes = true;
+				}
+				if(player2win()){
+					turn1mes = false;
+					gameDialog(4);
+				}else{
+					turn1mes = true;
+				}
+			}
+	    }
+	  };
+	
 
 	// ===========================================================
 	// Methods
 	// ===========================================================
+	
+	public void attach_explo(float x, float y){
+	  Sprite explo = new Sprite(x,y, mExplosionTextureRegion, getVertexBufferObjectManager());
+	  scene.attachChild(explo);
+	}
+	  
 	public static void checkOthersSelected(LinkedList<Tank> list){
 		 for(int i = 0; i < list.size(); i++){
 			    if(list.get(i).isSelected){
@@ -901,6 +1192,15 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		   }
 	}
 	
+	public static void checkOthersSelected_sold(LinkedList<Soldier> list){
+	     for(int i = 0; i < list.size(); i++){
+	          if(list.get(i).isSelected){
+	            list.get(i).isSelected = false;
+	            list.get(i).outline.setVisible(false);
+	          }
+	       }
+	  }
+	
 	public static void checkRemove(LinkedList<Tank> list){
 		for(int i = 0; i < list.size(); i++){
 			if(list.get(i).removed){
@@ -909,12 +1209,27 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		}
 	}
 	
+	public static void checkRemove_sold(LinkedList<Soldier> list){
+	    for(int i = 0; i < list.size(); i++){
+	      if(list.get(i).removed){
+	        list.remove(i);
+	      }
+	    }
+	  }
+	
 	public static void unregisterItems(LinkedList<Tank> list){
 		for(int i = 0; i < list.size(); i++){
 				scene.unregisterTouchArea(list.get(i));
 			
 		}
 	}
+	
+	public static void unregisterItems_sold(LinkedList<Soldier> list){
+	    for(int i = 0; i < list.size(); i++){
+	        scene.unregisterTouchArea(list.get(i));
+	      
+	    }
+	  }
 	
 	public static void registerItems(LinkedList<Tank> list){
 		for(int i = 0; i < list.size(); i++){
@@ -923,15 +1238,22 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		}
 	}
 	
+	public static void registerItems_sold(LinkedList<Soldier> list){
+	    for(int i = 0; i < list.size(); i++){
+	        scene.registerTouchArea(list.get(i));
+	      
+	    }
+	  }
+	
 	public boolean player1win(){
-		if(tankList2.isEmpty()){
+		if(tankList2.isEmpty() && soldList2.isEmpty()){
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean player2win(){
-		if(tankList.isEmpty()){
+		if(tankList.isEmpty() && soldList2.isEmpty()){
 			return true;
 		}
 		return false;
@@ -961,6 +1283,15 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		return true;
 	}
 	
+	boolean placeSoldier(Soldier sold, LinkedList<Soldier> list){
+	    for(int i = 0; i < list.size(); i++){
+	      if(sold.collidesWith(list.get(i))){
+	    	  return false;
+	      }
+	    }
+	    return true;
+	 }
+	
 	void updateTankText(LinkedList<Tank> list){
 		tankButton.detachChild(tankText);
 		tankText = new Text(0, 0, this.mFont, Integer.toString(MAX_TANKS-list.size()), new TextOptions(HorizontalAlign.CENTER), this.getVertexBufferObjectManager());
@@ -988,9 +1319,118 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		hud.registerTouchArea(moveButton);
 	}
 	
-	void fireBullet(float targetX,float targetY,float tx,float ty){
-        
-        
+	void soldierFire(final int index){
+	    float slope,b;
+	    float newX = 0;
+	    float newY = 0;
+	    Soldier selected;
+	    snd_fire.play();
+	    if(player1){
+	      selected = soldList.get(index);
+	    }
+	    else{
+	      selected = soldList2.get(index);
+	    }
+	    selected.stopAimer();
+	    bullet_s  = new Sprite(selected.getX()+selected.getWidth(),selected.getY()-selected.getHeight(), 10, 10, mExplosionTextureRegion,this.getVertexBufferObjectManager());
+	    if(selected.getRotation() == 0){
+	      slope = (selected.getAimPosY() - (selected.originY - selected.getHeight()/2)) / (selected.getAimPosX() - (selected.originX + selected.getWidth()/2));
+	    }
+	    else{
+	      slope = (selected.getAimPosY_2() - (selected.originY - selected.getHeight()/2)) / (selected.getAimPosX() - (selected.originX + selected.getWidth()/2));
+	    }
+	    b = (selected.originY - selected.getHeight()/2) - slope*(selected.originX + selected.getWidth()/2);
+	    MoveModifier moveBullet = null;
+	    if(selected.getAimPosX() > bullet_s.getX()){
+	      newX = selected.getX() + (CAMERA_WIDTH-(selected.getX()));
+	      newY =newX*slope+b;
+	    }
+	    else if(selected.getAimPosX() < bullet_s.getX()){
+	      newX = selected.getX() - (CAMERA_WIDTH - (CAMERA_WIDTH - selected.getX()));
+	      newY = (newX)*slope+b;
+	    }
+	    else if(selected.getAimPosX() == bullet_s.getX()){
+	      newX = selected.getX();
+	      newY = CAMERA_HEIGHT+10;
+	    }
+	    else{
+	      newX = selected.getX();
+	      newY = selected.getY();
+	    }
+	    if(((newY < -800.0f) || (newY > 1350.0f)) && (selected.getRotation() == 0)){
+	      newX = selected.getX();
+	      newY = 0.0f;
+	    }
+	    else if(((newY < -800.0f) || (newY > 1350.0f)) && (selected.getRotation() != 0)){
+	      newX = selected.getX();
+	      newY = CAMERA_HEIGHT;
+	    }
+	    if(player1){
+	          player1 = false;
+	        }else{
+	          player1 = true;
+	    }
+	    moveBullet = new MoveModifier(1f,selected.getX(),newX,selected.getY(),newY){
+	      @Override
+	      protected void onModifierFinished(IEntity pItem){
+	        super.onModifierFinished(pItem);
+	        if(s_hit){
+	          attach_explo(x,y);
+	          s_hit = false;
+	        }
+	        //pItem.clearEntityModifiers();
+	        if(!player1){
+	          soldList.get(index).isSelected = false;
+	          unregisterItems_sold(soldList);
+	          //player1 = false;
+	          fire = false;
+	          if(player1win()){
+	            turn2mes = false;
+	            gameDialog(4);
+	          }else{
+	            turn2mes = true;
+	          }
+	        }else{
+	          
+	          soldList2.get(index).isSelected = false;
+	          unregisterItems_sold(soldList2);
+	          //player1 = true;
+	      fire = false;
+	          if(player2win()){
+	            turn1mes = false;
+	            gameDialog(4);
+	          }else{
+	            turn1mes = true;
+	          }
+	          
+	        }
+	        if(!player1){
+	          camera.setRotation(180f);
+	          Log.d("DEBUG","rotated:180");
+	        }else{
+	          camera.setRotation(0f);
+	          Log.d("DEBUG","rotated:0");
+	        }
+	        scene.detachChild(bullet_s);
+	        //boolean pturn = !player1;
+	        if(player1){
+	          pIDturn = phoneID1;
+	        }else{
+	          pIDturn = phoneID2;
+	        }
+	        if(isOnline){
+	          setTankXYList(tankList,tankList2);
+	          setMineXYList(mineList,mineList2);
+	          sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);        }
+	      }
+	    };
+	    Log.d("originX",Float.toString(selected.getX()));
+	    Log.d("originY",Float.toString(selected.getY()));
+	    Log.d("final x",Float.toString(newX));
+	    Log.d("final y",Float.toString(newY));
+	    
+	    bullet_s.registerEntityModifier(moveBullet);
+	        scene.attachChild(bullet_s);
 	}
 
 	void tankFire(final LinkedList<Tank> myTanks, final LinkedList<Tank> oppTanks,final LinkedList<Sprite> oppMines,final float touchX, final float touchY,final int index, final Engine mEngine){
@@ -1024,7 +1464,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
     			snd_fire.stop();
     			
         		for(int i = 0; i < oppTanks.size();i++){ 
-        			
 					if( circle.collidesWith(oppTanks.get(i)) ){
 						scene.detachChild(oppTanks.get(i));
 						scene.detachChild(circle);
@@ -1036,6 +1475,35 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						somethingDied = true;
 					}
 				}
+        		if(player1){
+	        		for(int i = 0; i < soldList2.size();i++){ 
+						if( circle.collidesWith(soldList2.get(i)) ){
+							scene.detachChild(soldList2.get(i));
+							scene.detachChild(circle);
+							soldList2.remove(i);
+							Sprite explosion = new Sprite(touchX,CAMERA_HEIGHT-touchY, UnitAllocationActivity.mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
+							scene.attachChild(explosion);
+							
+							snd_explosion.play();
+							somethingDied = true;
+						}
+					}
+        		}
+        		else{
+        			for(int i = 0; i < soldList.size();i++){ 
+						if( circle.collidesWith(soldList.get(i)) ){
+							scene.detachChild(soldList.get(i));
+							scene.detachChild(circle);
+							soldList.remove(i);
+							Sprite explosion = new Sprite(touchX,CAMERA_HEIGHT-touchY, UnitAllocationActivity.mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
+							scene.attachChild(explosion);
+							
+							snd_explosion.play();
+							somethingDied = true;
+						}
+					}
+        		}
+        		
 				//if hits mine
 				//find selected tank and destroy it
 				for(int i = 0; i < oppMines.size();i++){  
@@ -1096,6 +1564,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					camera.setRotation(0f);
 				}
 				scene.detachChild(bullet);
+				scene.detachChild(circle);
 				//boolean pturn = !player1;
 				if(player1){
 					pIDturn = phoneID1;
@@ -1446,137 +1915,283 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 * Soldier Class when selected is highlighted by
 * a rectangle object
 ******************************************************/
-	class Soldier extends Sprite {
-		float originX, originY;
-		boolean removed,isSelected, validMove;
-		Rectangle outline;
-		public Soldier(float pX, float pY, float pWidth, float pHeight,
-				ITextureRegion mTankTextureRegion, VertexBufferObjectManager  vbom) {
-			super(pX, pY, pWidth, pHeight, mTankTextureRegion, vbom);
-			originX = pX;
-			originY = pY;
-			removed = false;
-			validMove = false;
-			outline = new Rectangle (pX-2,pY-2,pWidth+4,pHeight+4, vbom);
-			outline.setVisible(false);
-			outline.setColor(1,1,0);
-			UnitAllocationActivity.scene.attachChild(outline);
-		}
+class Soldier extends Sprite implements Serializable {
+	/**
+ * 
+ */
+private static final long serialVersionUID = 1L;
+	float originX, originY;
+	Sprite aimer;
+	Sprite tester;
+	Runnable aimRun;
+	Thread aimThread;
+	int runOnce;
+	int aimAngle;
+	boolean aimContinue = false;
+	boolean removed,isSelected, validMove;
+	Rectangle outline;
+	public Soldier(float pX, float pY, float pWidth, float pHeight,
+			ITextureRegion mTankTextureRegion, VertexBufferObjectManager  vbom) {
+		super(pX, pY, pWidth, pHeight, mTankTextureRegion, vbom);
+		originX = pX;
+		originY = pY;
+		removed = false;
+		validMove = false;
+		outline = new Rectangle (pX-2,pY-2,pWidth+4,pHeight+4, vbom);
+		outline.setVisible(false);
+		outline.setColor(1,1,0);
+		UnitAllocationActivity.scene.attachChild(outline);
+		runOnce = 0;
+	}
 
-		public Soldier(float centerX, int i, ITextureRegion mTankTextureRegion,
-				VertexBufferObjectManager vertexBufferObjectManager) {
-			super(centerX,i,mTankTextureRegion,vertexBufferObjectManager);
-			// TODO Auto-generated constructor stub
-		}
-		@Override
-		public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
-			float posY = pSceneTouchEvent.getY() - this.getHeight() / 2;
-			float posX = pSceneTouchEvent.getX() - this.getWidth() / 2;
-		if(fire){
-			if(UnitAllocationActivity.player1){
-				 checkOthersSelected(tankList);
-			 }else{
-				 checkOthersSelected(tankList2);
-			 }	 
-			 isSelected = true;
-			 outline.setVisible(true);
-			 if(gameStart){
-				 unregisterItems(tankList);
-				 unregisterItems(tankList2);
-			 }  
-		}else{
-			if(pSceneTouchEvent.isActionDown()){
-				 this.originX = posX;
-				 this.originY = posY;
-	             validMove = true;
-				 if(UnitAllocationActivity.player1){
-						 checkOthersSelected(tankList);
-					 }else{
-						 checkOthersSelected(tankList2);
-					 }
-				 	isSelected = true;
-					 outline.setVisible(true);
-					 return true;
-			}
-			else if(pSceneTouchEvent.isActionMove()){
-				 if(player1){
-					 checkOthersSelected(tankList);
+	public Soldier(float centerX, int i, ITextureRegion mTankTextureRegion,
+			VertexBufferObjectManager vertexBufferObjectManager) {
+		super(centerX,i,mTankTextureRegion,vertexBufferObjectManager);
+		// TODO Auto-generated constructor stub
+	}
+	@Override
+	public boolean onAreaTouched(TouchEvent pSceneTouchEvent, float pTouchAreaLocalX, float pTouchAreaLocalY) {
+		float posY = pSceneTouchEvent.getY() - this.getHeight() / 2;
+		float posX = pSceneTouchEvent.getX() - this.getWidth() / 2;
+	if(fire){
+		if(UnitAllocationActivity.player1){
+			 checkOthersSelected_sold(soldList);
+		 }else{
+			 checkOthersSelected_sold(soldList2);
+		 }	 
+		 isSelected = true;
+		 outline.setVisible(true);
+		 if(gameStart){
+			 unregisterItems_sold(soldList);
+			 unregisterItems_sold(soldList2);
+			 soldierAim();
+		 }  
+	}else{
+		if(pSceneTouchEvent.isActionDown()){
+			 this.originX = posX;
+			 this.originY = posY;
+             validMove = true;
+			 if(UnitAllocationActivity.player1){
+					 checkOthersSelected_sold(soldList);
 				 }else{
-					 checkOthersSelected(tankList2);
+					 checkOthersSelected_sold(soldList2);
 				 }
-				 isSelected = true;
-				if (validMove) {
-					if(player1){
-						for (int i = 0; i < tankList.size(); i++) {
-							if (this != soldList.get(i)) {
-								if (this.collidesWith(tankList.get(i))) {
-									this.setPosition(this.originX, this.originY);
-									this.outline.setPosition(this.originX - 2, this.originY - 2);
-									validMove = false;
-									return true;
-								}
-							}
-						}
-						for (int i = 0; i < mineList.size(); i++) {
-								if (this.collidesWith(mineList.get(i))) {
-									this.setPosition(this.originX, this.originY);
-									this.outline.setPosition(this.originX - 2, this.originY - 2);
-									validMove = false;
-									return true;
-								}
-						}
-						if  (posY < ( (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2))) {
-							posY = (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2);
-						}
-
-					}else{
-						for (int i = 0; i < tankList2.size(); i++) {
-							if (this != soldList2.get(i)) {
-								if (this.collidesWith(tankList2.get(i))) {
-									this.setPosition(this.originX, this.originY);
-									this.outline.setPosition(this.originX - 2, this.originY - 2);
-									validMove = false;
-									return true;
-								}
-							}
-						}
-						for (int i = 0; i < mineList2.size(); i++) {
-							if (this.collidesWith(mineList2.get(i))) {
+			 	isSelected = true;
+				 outline.setVisible(true);
+				 return true;
+		}
+		else if(pSceneTouchEvent.isActionMove()){
+			 if(player1){
+				 checkOthersSelected_sold(soldList);
+			 }else{
+				 checkOthersSelected_sold(soldList2);
+			 }
+			 isSelected = true;
+			if (validMove) {
+				if(player1){
+					for (int i = 0; i < soldList.size(); i++) {
+						if (this != soldList.get(i)) {
+							if (this.collidesWith(soldList.get(i))) {
 								this.setPosition(this.originX, this.originY);
 								this.outline.setPosition(this.originX - 2, this.originY - 2);
 								validMove = false;
 								return true;
 							}
 						}
-						if  (posY > ( (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2))) {
-							posY = (barricade.getY()-barricade.getHeight()*2);
+					}
+					for (int i = 0; i < tankList.size(); i++) {
+						if (this.collidesWith(tankList.get(i))) {
+							this.setPosition(this.originX, this.originY);
+							this.outline.setPosition(this.originX - 2, this.originY - 2);
+							validMove = false;
+							return true;
 						}
 					}
-					
-					
-				    this.setPosition(posX, posY);
-				    outline.setPosition(posX - 2, posY - 2);
-				}else{
-					return true;
-				}
-          
-        } 
-		else if (pSceneTouchEvent.isActionUp()) {
-			 if(UnitAllocationActivity.player1){
-				 checkOthersSelected(tankList);
-			 }else{
-				 checkOthersSelected(tankList2);
-			 }
-			 isSelected = true;
-			if (validMove) {
-				this.originX = posX;
-			    this.originY = posY;
+					for (int i = 0; i < mineList.size(); i++) {
+						if (this.collidesWith(mineList.get(i))) {
+							this.setPosition(this.originX, this.originY);
+							this.outline.setPosition(this.originX - 2, this.originY - 2);
+							validMove = false;
+							return true;
+						}
+					}
+					if  (posY < ( (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2))) {
+						posY = (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2);
+					}
 
-			    
+				}else{
+					for (int i = 0; i < soldList2.size(); i++) {
+						if (this != soldList2.get(i)) {
+							if (this.collidesWith(soldList2.get(i))) {
+								this.setPosition(this.originX, this.originY);
+								this.outline.setPosition(this.originX - 2, this.originY - 2);
+								validMove = false;
+								return true;
+							}
+						}
+					}
+					for (int i = 0; i < tankList2.size(); i++) {
+						if (this.collidesWith(tankList2.get(i))) {
+							this.setPosition(this.originX, this.originY);
+							this.outline.setPosition(this.originX - 2, this.originY - 2);
+							validMove = false;
+							return true;
+						}
+					}
+					for (int i = 0; i < mineList2.size(); i++) {
+						if (this.collidesWith(mineList2.get(i))) {
+							this.setPosition(this.originX, this.originY);
+							this.outline.setPosition(this.originX - 2, this.originY - 2);
+							validMove = false;
+							return true;
+						}
+					}
+					if  (posY > ( (CAMERA_HEIGHT / 2) + (mBarricadeTextureRegion.getHeight() / 2))) {
+						posY = (barricade.getY()-barricade.getHeight()*2);
+					}
+				}
+				
+				
+			    this.setPosition(posX, posY);
+			    outline.setPosition(posX - 2, posY - 2);
+			}else{
+				return true;
 			}
+      
+    } 
+	else if (pSceneTouchEvent.isActionUp()) {
+		 if(UnitAllocationActivity.player1){
+			 checkOthersSelected_sold(soldList);
+		 }else{
+			 checkOthersSelected_sold(soldList2);
+		 }
+		 isSelected = true;
+		if (validMove) {
+			this.originX = posX;
+		    this.originY = posY;
+
+		    
 		}
-	 }
-	  return true;
+	}
+ }
+  return true;
+}
+	void soldierAim(){
+		if(runOnce == 0){
+			aimer = new Sprite(originX+(this.mWidth/2),originY-(this.mHeight/2)+10,120,30, aimTextureRegion, this.getVertexBufferObjectManager());
+			//tester = new Sprite(0f,200f,20,20,mExplosionTextureRegion, this.getVertexBufferObjectManager());
+			if(this.getRotation() == 180){
+				aimer.setRotation(180);
+			}
+			scene.attachChild(aimer);
+			//scene.attachChild(tester);
+			aimer.setRotationCenter(0,aimer.getHeight()/2);
+			aimContinue = true;
+			runOnce++;
+			startAimer();
+		}
+	}
+	
+	void stopAimer(){
+		scene.detachChild(aimer);
+		aimContinue = false;
+		runOnce = 0;
+	}
+	
+	float getAimPosX(){
+		float x = (float) (aimer.getX() + aimer.getWidth()*Math.cos(Math.toRadians(aimAngle)));
+		return x;
+	}
+	
+	float getAimPosY(){
+		float y = (float) (aimer.getY() - aimer.getWidth()*Math.sin(Math.toRadians(aimAngle)));
+		return y;
+	}
+	
+	float getAimPosX_2(){
+		float x = (float) (aimer.getX() + aimer.getWidth()*Math.cos(Math.toRadians(aimAngle)));
+		return x;
+	}
+	
+	float getAimPosY_2(){
+		float y = (float) (aimer.getY() + aimer.getWidth()*Math.sin(Math.toRadians(aimAngle)));
+		return y;
+	}
+	
+	void startAimer(){
+		aimRun = new Runnable() {
+	        @Override
+	        public void run() {
+	           while(aimContinue){
+	        	   if(getRotation() == 0){
+		        	   for(int i = 0; i < 180; i++){
+		        		   if(!aimContinue){
+		        			   break;
+		        		   }
+		        		   aimer.setRotation(-i);
+		        		   aimAngle = i;
+//		        		   tester.setX(getAimPosX());
+//		        		   tester.setY(getAimPosY());
+		        		   try {
+		        			   Thread.sleep(3);
+		        		   }
+		        		   catch (InterruptedException e) {
+		        			   e.printStackTrace();
+		        		   }
+		        	   }
+		        	   for(int i = 180; i > 0; i--){
+		        		   if(!aimContinue){
+		        			   break;
+		        		   }
+		        		   aimer.setRotation(-i);
+		        		   aimAngle = i;
+//		        		   tester.setX(getAimPosX());
+//		        		   tester.setY(getAimPosY());
+		        		   try {
+		        			   Thread.sleep(3);
+		        		   } 
+		        		   catch (InterruptedException e) {
+		        			   e.printStackTrace();
+		        		   }
+		        	   }
+	        	   }
+	        	   else{
+	        		   for(int i = 0; i < 180; i++){
+		        		   if(!aimContinue){
+		        			   break;
+		        		   }
+		        		   aimer.setRotation(i);
+		        		   aimAngle = i;
+//		        		   tester.setX(getAimPosX());
+//		        		   tester.setY(getAimPosY_2());
+		        		   try {
+		        			   Thread.sleep(3);
+		        		   }
+		        		   catch (InterruptedException e) {
+		        			   e.printStackTrace();
+		        		   }
+		        	   }
+		        	   for(int i = 180; i > 0; i--){
+		        		   if(!aimContinue){
+		        			   break;
+		        		   }
+		        		   aimer.setRotation(i);
+		        		   aimAngle = i;
+//		        		   tester.setX(getAimPosX());
+//		        		   tester.setY(getAimPosY_2());
+		        		   try {
+		        			   Thread.sleep(3);
+		        		   } 
+		        		   catch (InterruptedException e) {
+		        			   e.printStackTrace();
+		        		   }
+		        	   }
+	        	   }
+	           }
+	        }
+	    };
+	    aimThread = new Thread(aimRun);
+	    aimThread.start();
 	}
 };
 }
