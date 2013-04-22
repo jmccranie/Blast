@@ -1008,9 +1008,10 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			protected void onModifierFinished(IEntity pItem) {
 				super.onModifierFinished(pItem);
         		//Collision detection
+				boolean somethingDied = false;
+    			snd_fire.stop();
+    			
         		for(int i = 0; i < oppTanks.size();i++){ 
-        			boolean somethingDied = false;
-        			snd_fire.stop();
         			
 					if( circle.collidesWith(oppTanks.get(i)) ){
 						scene.detachChild(oppTanks.get(i));
@@ -1021,11 +1022,6 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						
 						snd_explosion.play();
 						somethingDied = true;
-					}
-					
-					if (!somethingDied)
-					{
-						snd_miss.play(); // This sound plays when the player misses
 					}
 				}
 				//if hits mine
@@ -1041,7 +1037,15 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						scene.attachChild(explosion2);
 						myTanks.remove(myTanks.get(index));
 						oppMines.remove(i);
+						
+						snd_explosion.play();
+						somethingDied = true;
 					}
+				}
+				
+				if (!somethingDied)
+				{
+					snd_miss.play(); // This sound plays when the player misses
 				}
 				//Switch turns and check winner
 				if(!player1){
