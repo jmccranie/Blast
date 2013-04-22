@@ -220,7 +220,32 @@ public class ActiveGameMenuActivity extends Activity {
 	    client.start();
 	    try{
 	    	client.join();
-	    	System.out.println("test");
+	    	 popGamesList();
+        }
+	    catch (Exception e) {
+    		Toast.makeText(getApplicationContext(), "Sorry, Could not connect to Server", Toast.LENGTH_LONG).show();
+	    	//finish();
+        	
+    	}
+	   
+	}
+	
+	@Override
+	//FETCH active games from server
+	protected void onResume() {
+		super.onStart();
+	    Intent intent = getIntent();
+	    my_games.clear();
+    	their_games.clear();
+    	over_games.clear();
+    	myadapter.notifyDataSetChanged();
+    	theiradapter.notifyDataSetChanged();
+    	overadapter.notifyDataSetChanged();
+	    SERVER_IP = intent.getStringExtra("ipAddr");
+	    Thread client = new Thread(new ClientThread(this,SERVER_IP));
+	    client.start();
+	    try{
+	    	client.join();
 	    	 popGamesList();
         }
 	    catch (Exception e) {
