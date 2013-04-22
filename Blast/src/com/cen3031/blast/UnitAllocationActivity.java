@@ -148,6 +148,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	String pIDturn = null;
 	String phoneID1 = null;
 	String phoneID2 = null;
+	int gameID;
 	int turn = 0;
 	
 	@Override
@@ -1152,6 +1153,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			float targetX,float targetY){
 	pIDturn = phoneID1;
 	gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);
+	gameState.gameID=gameID;
 	System.out.println(gameState.user1name + "," + gameState.user1ID);
 	System.out.println(gameState.user2name + "," + gameState.user2ID);
 	Thread client = new Thread(new ClientThread(this,gameState,5));
@@ -1276,6 +1278,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		user2 = gs.user2name;
 		phoneID2 = gs.user2ID;
 		pIDturn = gs.pIDturn;
+		gameID = gs.gameID;
 	}
 /********************************************************************************************************************/	
 	
