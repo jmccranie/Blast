@@ -19,6 +19,7 @@ import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.RepeatingSpriteBackground;
+import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.ButtonSprite;
 import org.andengine.entity.sprite.ButtonSprite.OnClickListener;
 import org.andengine.entity.sprite.Sprite;
@@ -77,7 +78,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	private TextureRegion mButton2TextureRegion;
 	private TextureRegion mBulletTextureRegion;
 	private Sprite barricade;
-	private RepeatingSpriteBackground mGrassBackground;
+	private SpriteBackground mGrassBackground;
 	private Sound snd_explosion;
 	private Sound snd_game_win;
 	private Sound snd_game_loss;
@@ -140,7 +141,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	Rectangle balanceLabel;
 	Rectangle unitAllocLabel;
 	Text moneyText;
-	int MONEY = 2;
+	int MONEY = 4;
 	int balance1 = MONEY;
 	int balance2 = MONEY;
 	String user1 = null;
@@ -149,6 +150,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	String phoneID1 = null;
 	String phoneID2 = null;
 	int turn = 0;
+	
+	public TextureRegion ITextureRegion;
+	public BitmapTextureAtlas BitmapTextureAtlas3;
 	
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -183,9 +187,14 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		this.mButton1TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "button1.png", 450, 450);
 		this.mButton2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "button2.png", 550, 550);
 		this.mBulletTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "bullet.png", 650, 650);
-		this.mGrassBackground = new RepeatingSpriteBackground(CAMERA_WIDTH, CAMERA_HEIGHT, this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), "gfx/background_grass.png"), this.getVertexBufferObjectManager());
+		//this.mGrassBackground = new RepeatingSpriteBackground(CAMERA_WIDTH, CAMERA_HEIGHT, this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), "gfx/background_grass.png"), this.getVertexBufferObjectManager());
+		this.BitmapTextureAtlas3 = new BitmapTextureAtlas (this.getTextureManager (), CAMERA_WIDTH, CAMERA_HEIGHT);
+		this.ITextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset (this.BitmapTextureAtlas3, this, "field.png", 0, 0);
+		
+		//this.mGrassBackground = new SpriteBackground(CAMERA_WIDTH, CAMERA_HEIGHT, this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), "gfx/field.png"), this.getVertexBufferObjectManager());	
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas2);
+		this.getEngine().getTextureManager().loadTexture(BitmapTextureAtlas3);
 		this.mFontTexture = new BitmapTextureAtlas(this.getTextureManager(),256, 256, TextureOptions.BILINEAR_PREMULTIPLYALPHA);
 
         this.mFont = new Font(this.getFontManager(), this.mFontTexture, Typeface.create(Typeface.DEFAULT, Typeface.BOLD), 32, true, Color.WHITE);
@@ -219,7 +228,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	@Override
 	public Scene onCreateScene() {
 		scene = new Scene();
-		scene.setBackground(this.mGrassBackground);
+		Sprite back = new Sprite (0, 0, CAMERA_WIDTH,CAMERA_HEIGHT,this.ITextureRegion, this.getVertexBufferObjectManager ());
+		scene.setBackground(new SpriteBackground (back));
 		scene.setTouchAreaBindingOnActionDownEnabled(true);
 		scene.setOnSceneTouchListener(this);
 		//ONLINE GAME SETUPS
@@ -987,6 +997,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		scene.attachChild(circle);
 		//Shoots bullet
 		snd_fire.play();
+		
 		final Tank selTank = myTanks.get(index);
 		final float targetX = touchX;
 		final float targetY = CAMERA_HEIGHT-touchY;
@@ -1003,7 +1014,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		}
         MoveByModifier moveBullet = new MoveByModifier(0.5f, gX,  gY){
         		
-        	
+        	int tankInt = 0;
 			@Override
 			protected void onModifierFinished(IEntity pItem) {
 				super.onModifierFinished(pItem);
@@ -1040,6 +1051,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						
 						snd_explosion.play();
 						somethingDied = true;
+						tankInt = i;
+						break;
 					}
 				}
 				
@@ -1049,7 +1062,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				}
 				//Switch turns and check winner
 				if(!player1){
-					tankList.get(index).isSelected = false;
+					if(tankInt != index){
+						tankList.get(index).isSelected = false;
+					}
 					unregisterItems(tankList);
 					//player1 = false;
 					fire = false;
@@ -1060,8 +1075,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						turn2mes = true;
 					}
 				}else{
-					
-					tankList2.get(index).isSelected = false;
+					if(tankInt != index){
+						tankList2.get(index).isSelected = false;
+					}
 					unregisterItems(tankList2);
 					//player1 = true;
 					fire = false;
