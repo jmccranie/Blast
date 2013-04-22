@@ -38,24 +38,15 @@ class ClientThread extends Thread {
 	}
     public void run() {
         try {
-            InetAddress serverAddr = InetAddress.getByName("192.168.1.36");
+            InetAddress serverAddr = InetAddress.getByName("10.136.16.155");
             this.socket = new Socket(serverAddr, 8000);
-            System.out.println("test Friday1");
                 	    
             try {
                 //---get an InputStream object to read from the server---
             	in = new ObjectInputStream(socket.getInputStream());
-//            	gs = (GameState)in.readObject();
-//            	System.out.println((in.readObject()).toString());
-//            	System.out.println("hell yeeeeah");
-//                BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                //System.out.println(in==null);
-                //str = (in.readLine()).toString();
             	
-            	System.out.println("test sendData5");
             	out = new ObjectOutputStream(socket.getOutputStream());
             	out.writeObject(Integer.toString(option));
-            	System.out.println("test sendData6");
             	out.flush();
             	
             	switch(option){
