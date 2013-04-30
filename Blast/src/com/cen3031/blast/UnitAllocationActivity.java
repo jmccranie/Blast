@@ -1831,7 +1831,7 @@ public void setNewSoldierList(LinkedList<Integer> listX,LinkedList<Integer> list
 	public void setGameState(GameState gs){
 		setNewTankList(gs.p1TanksX,gs.p1TanksY,gs.p2TanksX,gs.p2TanksY);
 		setNewMineList(gs.p2MinesX,gs.p2MinesY,gs.p2MinesX,gs.p2MinesY);
-		setNewSoldierList(gs.p2MinesX,gs.p2MinesY,gs.p2MinesX,gs.p2MinesY);
+		setNewSoldierList(gs.p2SoldierX,gs.p2SoldierY,gs.p2SoldierX,gs.p2SoldierY);
 		user1 = gs.user1name;
 		phoneID1 = gs.user1ID;
 		user2 = gs.user2name;
