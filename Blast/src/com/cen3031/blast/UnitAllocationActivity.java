@@ -259,6 +259,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		tankList2.clear();
 		mineList.clear();
 		mineList2.clear();
+		soldList.clear();
+		soldList2.clear();
 	}
 
 	@Override
@@ -515,12 +517,24 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	 public void onBackPressed() {
 		 scene.registerUpdateHandler(detect);
 		 scene.unregisterUpdateHandler(detect);
+		 tankList.clear();
+			tankList2.clear();
+			mineList.clear();
+			mineList2.clear();
+			soldList.clear();
+			soldList2.clear();
 		 finish();
 	 }
 	 public void onCancel(DialogInterface dialog) {
 	        // if from activity
 		 	scene.registerUpdateHandler(detect);
 			scene.unregisterUpdateHandler(detect);
+			tankList.clear();
+			tankList2.clear();
+			mineList.clear();
+			mineList2.clear();
+			soldList.clear();
+			soldList2.clear();
 	        finish();
 	        // if activity is a field
 	        //activity.finish();
@@ -1603,7 +1617,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						turn2mes = false;
 						gameDialog(4);
 					}
-					if(player2win() && isOnline == false){
+					else if(player2win() && isOnline == false){
 						turn2mes = false;
 						gameDialog(4);
 					}
@@ -1612,7 +1626,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					}
 				}else{
 					System.out.print("Pat 4");
-					if(tankList2.size() != 1){
+					if(!tankList2.isEmpty()){
 						tankList2.get(index).isSelected = false;
 					}
 					System.out.print("Pat 5");

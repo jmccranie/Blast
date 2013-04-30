@@ -231,6 +231,12 @@ public class ActiveGameMenuActivity extends Activity {
 	   
 	}
 	
+	 @Override
+	 public void onBackPressed() {
+		 Intent intent = new Intent(this, PlayMenuActivity.class);
+	     startActivity(intent);
+	 }
+	
 	@Override
 	//FETCH active games from server
 	protected void onResume() {

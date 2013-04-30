@@ -38,7 +38,7 @@ class ClientThread extends Thread {
 	}
     public void run() {
         try {
-            InetAddress serverAddr = InetAddress.getByName("10.137.105.62");
+            InetAddress serverAddr = InetAddress.getByName("10.136.28.59");
             this.socket = new Socket(serverAddr, 8000);
                 	    
             try {
