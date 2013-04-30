@@ -49,8 +49,6 @@ public class ActiveGameMenuActivity extends Activity {
 	    setContentView(R.layout.activity_active_game_menu);
 	    telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 	    phoneID = telephonyManager.getDeviceId(); 
-	    Intent intent = getIntent();
-		SERVER_IP = intent.getStringExtra("ipAddr");
 		final TextView createButton = (TextView) findViewById(R.id.createView);
 		    
 		myadapter = new GameStateArrayAdaptor(this,my_games );
@@ -83,9 +81,10 @@ public class ActiveGameMenuActivity extends Activity {
 	    overListView = (ListView)findViewById(R.id.overLayout);
 	    overListView.setAdapter(overadapter);
 	    overListView.setOnItemClickListener(new OnItemClickListener() {
-	    GameState over = (GameState) over_games;
+	   
 	    	public void onItemClick(AdapterView<?> parent, View view,
 	    		int position, long id) {
+	    		 GameState over = (GameState) over_games.get(position);
 		            if(over.targetX == 1)
 		            	Toast.makeText(getApplicationContext(), over.user1name + " WON", Toast.LENGTH_LONG).show();
 		            else if(over.targetX == 2)
