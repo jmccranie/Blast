@@ -398,7 +398,9 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         hud.setTouchAreaBindingOnActionDownEnabled(true);
         this.camera.setHUD(hud);
         
-        
+        if(isOnline){
+        	hud.detachChild(soldierButton);
+        }
         //FIRE AND MOVE BUTTONS
         fireButton =  new ButtonSprite(0, CAMERA_HEIGHT-75, this.mButton1TextureRegion,this.mButton2TextureRegion, this.getVertexBufferObjectManager(),this);
         fireButton.setSize(CAMERA_WIDTH/3-5,75);
@@ -1553,6 +1555,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         		
 				//if hits mine
 				//find selected tank and destroy it
+        		System.out.print("Pat 0-0");
 				for(int i = 0; i < oppMines.size();i++){  
 					if( circle.collidesWith(oppMines.get(i)) ){
 						scene.detachChild(myTanks.get(index));
@@ -1562,9 +1565,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						scene.attachChild(explosion);
 						Sprite explosion2 = new Sprite(touchX,CAMERA_HEIGHT-touchY, UnitAllocationActivity.mExplosionTextureRegion, mEngine.getVertexBufferObjectManager());
 						scene.attachChild(explosion2);
+						System.out.print("Pat 0");
 						myTanks.remove(myTanks.get(index));
+						System.out.print("Pat 0-1");
 						oppMines.remove(i);
-						
+						System.out.print("Pat 0-2");
 						snd_explosion.play();
 						somethingDied = true;
 						tankInt = i;
@@ -1578,28 +1583,44 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				}
 				//Switch turns and check winner
 				if(!player1){
-					if(tankInt != index){
+					System.out.print("Pat 0-3");
+					if(!tankList.isEmpty() ){
+						System.out.print("Pat 1");
 						tankList.get(index).isSelected = false;
 					}
+					System.out.print("Pat 2");
 					unregisterItems(tankList);
+					System.out.print("Pat 3");
 					//player1 = false;
 					fire = false;
 					if(player1win() && isOnline == false){
 						turn2mes = false;
 						gameDialog(4);
-					}else{
+					}
+					if(player2win() && isOnline == false){
+						turn2mes = false;
+						gameDialog(4);
+					}
+					else{
 						turn2mes = true;
 					}
 				}else{
-					if(tankInt != index){
+					System.out.print("Pat 4");
+					if(tankList2.size() != 1){
 						tankList2.get(index).isSelected = false;
 					}
+					System.out.print("Pat 5");
 					unregisterItems(tankList2);
+					System.out.print("Pat 6");
 					//player1 = true;
 					fire = false;
 					if(player2win()){
 						turn1mes = false;
 						gameDialog(4);
+					}else if(player1win()){
+							turn1mes = false;
+							gameDialog(4);
+						
 					}else{
 						turn1mes = true;
 					}
@@ -1709,12 +1730,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		tankYList.clear();
 		tankXList2.clear();
 		tankYList2.clear();
-		if(list != null && list2 != null){
+		if(list != null){
 			for(int i = 0; i < list.size(); i++){
 				tankXList.add((int) list.get(i).getX());
 				tankYList.add((int) list.get(i).getY());
 			}
-			
+		}
+		if(list2 != null){
 			for(int i = 0; i < list2.size(); i++){
 				tankXList2.add((int) list2.get(i).getX());
 				tankYList2.add((int) list2.get(i).getY());
@@ -1727,12 +1749,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		mineYList.clear();
 		mineXList2.clear();
 		mineYList2.clear();
-		if(list != null && list2 != null){
+		if(list != null){
 			for(int i = 0; i < list.size(); i++){
 				mineXList.add((int) list.get(i).getX());
 				mineYList.add((int) list.get(i).getY());
 			}
-			
+		}
+		if(list2 != null){
 			for(int i = 0; i < list2.size(); i++){
 				mineXList2.add((int) list2.get(i).getX());
 				mineYList2.add((int) list2.get(i).getY());
@@ -1745,12 +1768,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		soldYList.clear();
 		soldXList2.clear();
 		soldYList2.clear();
-		if(list != null && list2 != null){
+		if(list != null){
 			for(int i = 0; i < list.size(); i++){
 				soldXList.add((int) list.get(i).getX());
 				soldYList.add((int) list.get(i).getY());
 			}
-			
+		}
+		if(list2 != null){
 			for(int i = 0; i < list2.size(); i++){
 				soldXList2.add((int) list2.get(i).getX());
 				soldYList2.add((int) list2.get(i).getY());
@@ -1830,8 +1854,8 @@ public void setNewSoldierList(LinkedList<Integer> listX,LinkedList<Integer> list
 	//creates game state
 	public void setGameState(GameState gs){
 		setNewTankList(gs.p1TanksX,gs.p1TanksY,gs.p2TanksX,gs.p2TanksY);
-		setNewMineList(gs.p2MinesX,gs.p2MinesY,gs.p2MinesX,gs.p2MinesY);
-		setNewSoldierList(gs.p2SoldierX,gs.p2SoldierY,gs.p2SoldierX,gs.p2SoldierY);
+		setNewMineList(gs.p1MinesX,gs.p1MinesY,gs.p2MinesX,gs.p2MinesY);
+		//setNewSoldierList(gs.p1SoldierX,gs.p1SoldierY,gs.p2SoldierX,gs.p2SoldierY);
 		user1 = gs.user1name;
 		phoneID1 = gs.user1ID;
 		user2 = gs.user2name;

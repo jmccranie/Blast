@@ -39,7 +39,7 @@
     <ListView
         android:id="@+id/yourLayout"
         android:layout_width="match_parent"
-        android:layout_height="100dip"
+        android:layout_height="250dip"
         android:layout_below="@+id/yourLabel"
         android:background="@drawable/border"
         android:orientation="vertical"
@@ -61,7 +61,7 @@
     <ListView
         android:id="@+id/theirLayout"
         android:layout_width="match_parent"
-        android:layout_height="100dip"
+        android:layout_height="250dip"
         android:layout_below="@+id/theirLabel"
         android:background="@drawable/border"
         android:orientation="vertical">
@@ -83,7 +83,7 @@
     <ListView
         android:id="@+id/overLayout"
         android:layout_width="match_parent"
-        android:layout_height="100dip"
+        android:layout_height="250dip"
         android:layout_below="@+id/overLabel"
         android:background="@drawable/border"
         android:orientation="vertical" >
