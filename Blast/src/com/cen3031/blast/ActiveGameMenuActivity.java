@@ -75,7 +75,7 @@ public class ActiveGameMenuActivity extends Activity {
 	    theirListView.setOnItemClickListener(new OnItemClickListener() {
 	    	public void onItemClick(AdapterView<?> parent, View view,
 	    		int position, long id) {
-	    		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
+	    		Toast.makeText(getApplicationContext(), "Waiting for Opponent", Toast.LENGTH_LONG).show();
 		       	  }
 	    });
 		    
@@ -83,11 +83,13 @@ public class ActiveGameMenuActivity extends Activity {
 	    overListView = (ListView)findViewById(R.id.overLayout);
 	    overListView.setAdapter(overadapter);
 	    overListView.setOnItemClickListener(new OnItemClickListener() {
+	    GameState over = (GameState) over_games;
 	    	public void onItemClick(AdapterView<?> parent, View view,
 	    		int position, long id) {
-		            
-		       		Toast.makeText(getApplicationContext(), "Waiting for Challenger...", Toast.LENGTH_LONG).show();
-		         
+		            if(over.targetX == 1)
+		            	Toast.makeText(getApplicationContext(), over.user1name + " WON", Toast.LENGTH_LONG).show();
+		            else if(over.targetX == 2)
+			       		Toast.makeText(getApplicationContext(), over.user2name + " WON", Toast.LENGTH_LONG).show();
 		       	  }
 	    });
 		    

@@ -96,7 +96,8 @@ public class PlayMenuActivity extends Activity {
     public void btn_online(View v){
     	Button btn = (Button) findViewById(R.id.tv_online);
     	btn.startAnimation(a);
-        enterIP();
+    	Intent intent = new Intent(PlayMenuActivity.this, ActiveGameMenuActivity.class);
+        startActivity(intent);
     }
     
 //    public void onClick(View v) {

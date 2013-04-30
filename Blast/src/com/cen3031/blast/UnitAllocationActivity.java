@@ -4,6 +4,7 @@ package com.cen3031.blast;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.Random;
 
 import org.andengine.audio.sound.Sound;
 import org.andengine.audio.sound.SoundFactory;
@@ -164,6 +165,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	String phoneID2 = null;
 	int gameID;
 	int turn = 0;
+	int starter = 0;
 	
 	public TextureRegion ITextureRegion;
 	public BitmapTextureAtlas BitmapTextureAtlas3;
@@ -206,9 +208,25 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		this.mButton2TextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "button2.png", 550, 550);
 		this.mBulletTextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset(this.mBitmapTextureAtlas2, this, "bullet.png", 650, 650);
 		//this.mGrassBackground = new RepeatingSpriteBackground(CAMERA_WIDTH, CAMERA_HEIGHT, this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), "gfx/background_grass.png"), this.getVertexBufferObjectManager());
-		this.BitmapTextureAtlas3 = new BitmapTextureAtlas (this.getTextureManager (), CAMERA_WIDTH, CAMERA_HEIGHT);
-		this.ITextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset (this.BitmapTextureAtlas3, this, "field.png", 0, 0);
 		
+		this.BitmapTextureAtlas3 = new BitmapTextureAtlas (this.getTextureManager (), CAMERA_WIDTH, CAMERA_HEIGHT);
+		Random r = new Random();
+		int i1 = r.nextInt(3) + 1;
+		
+		if (starter==0) {
+			if (i1 == 1 ) {
+				this.ITextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset (this.BitmapTextureAtlas3, this, "field.png", 0, 0);
+			}
+			if (i1 == 2 ) {
+				this.ITextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset (this.BitmapTextureAtlas3, this, "snowbackground.png", 0, 0);
+			}
+			if (i1 == 3 ) {
+				this.ITextureRegion = BitmapTextureAtlasTextureRegionFactory.createFromAsset (this.BitmapTextureAtlas3, this, "dessert.png", 0, 0);
+			}
+			
+			starter = 1;
+			
+		}
 		//this.mGrassBackground = new SpriteBackground(CAMERA_WIDTH, CAMERA_HEIGHT, this.getTextureManager(), AssetBitmapTextureAtlasSource.create(this.getAssets(), "gfx/field.png"), this.getVertexBufferObjectManager());	
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas);
 		this.getEngine().getTextureManager().loadTexture(mBitmapTextureAtlas2);
@@ -420,22 +438,23 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					if(!gameStart){
 
 						tankSel = true;
-						
-		
+						mineSel = false;
+						soldierSel = false;
 					}
 				}
 				else if(pButtonSprite == mineButton){
 					if(!gameStart){
-
+						tankSel = false;
 						mineSel = true;
-						
+						soldierSel = false;
 					 
 					}
 				}
 				else if (pButtonSprite == soldierButton){
 					if(!gameStart){
+						tankSel = false;
+						mineSel = false;
 						soldierSel = true;
-						Log.d("DEBUG: ", "Soldier Button Pressed!");
 					}
 				}
 				else if(pButtonSprite == fireButton){ 
@@ -491,10 +510,14 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	 
 	 @Override
 	 public void onBackPressed() {
+		 scene.registerUpdateHandler(detect);
+		 scene.unregisterUpdateHandler(detect);
 		 finish();
 	 }
 	 public void onCancel(DialogInterface dialog) {
 	        // if from activity
+		 	scene.registerUpdateHandler(detect);
+			scene.unregisterUpdateHandler(detect);
 	        finish();
 	        // if activity is a field
 	        //activity.finish();
@@ -523,6 +546,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        			      if(balance1 == 0 && isOnline){
 		        						setTankXYList(tankList,tankList2);
 		        						setMineXYList(mineList,mineList2);
+		        						setSoldierXYList(soldList,soldList2);
 		        						sendData(tankXList,tankYList,null,null,mineXList,mineYList,null,null,-1,-1);
 		        					}
 		        				  return;                  
@@ -569,6 +593,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		        				  if(balance2 == 0 && isOnline){
 		        						setTankXYList(tankList,tankList2);
 		        						setMineXYList(mineList,mineList2);
+		        						setSoldierXYList(soldList,soldList2);
 		        						pIDturn = phoneID1;
 		        						sendData3(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);
 		        					}
@@ -933,6 +958,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					if(isOnline){
 						setTankXYList(tankList,tankList2);
 						setMineXYList(mineList,mineList2);
+						setSoldierXYList(soldList,soldList2);
 						sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);	
 					}
 				//Player1 selects View Map
@@ -1019,6 +1045,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						if(isOnline){
 							setTankXYList(tankList,tankList2);
 							setMineXYList(mineList,mineList2);
+							setSoldierXYList(soldList,soldList2);
 							sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);	
 						}
 					//Player1 selects View Map
@@ -1157,13 +1184,13 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	      }
 	      if(s_hit == true){
 				fire = false;
-				if(player1win()){
+				if(player1win() && isOnline == false){
 					turn2mes = false;
 					gameDialog(4);
 				}else{
 					turn2mes = true;
 				}
-				if(player2win()){
+				if(player2win() && isOnline == false){
 					turn1mes = false;
 					gameDialog(4);
 				}else{
@@ -1247,13 +1274,17 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	
 	public boolean player1win(){
 		if(tankList2.isEmpty() && soldList2.isEmpty()){
+			scene.registerUpdateHandler(detect);
+			scene.unregisterUpdateHandler(detect);
 			return true;
 		}
 		return false;
 	}
 	
 	public boolean player2win(){
-		if(tankList.isEmpty() && soldList2.isEmpty()){
+		if(tankList.isEmpty() && soldList.isEmpty()){
+			scene.registerUpdateHandler(detect);
+			scene.unregisterUpdateHandler(detect);
 			return true;
 		}
 		return false;
@@ -1384,7 +1415,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	          unregisterItems_sold(soldList);
 	          //player1 = false;
 	          fire = false;
-	          if(player1win()){
+	          if(player1win() && isOnline == false){
 	            turn2mes = false;
 	            gameDialog(4);
 	          }else{
@@ -1396,7 +1427,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	          unregisterItems_sold(soldList2);
 	          //player1 = true;
 	      fire = false;
-	          if(player2win()){
+	          if(player2win() && !isOnline){
 	            turn1mes = false;
 	            gameDialog(4);
 	          }else{
@@ -1419,9 +1450,21 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	          pIDturn = phoneID2;
 	        }
 	        if(isOnline){
+	          int win = 0;
 	          setTankXYList(tankList,tankList2);
 	          setMineXYList(mineList,mineList2);
-	          sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,-1,-1);        }
+	          setSoldierXYList(soldList,soldList2);
+	          if(player1win() || player2win()){
+	        	  	
+					pIDturn = "null";
+					if(player1win()){
+						win = 1;
+					}else{
+						win = 2;
+					}
+				}
+				sendData2(tankXList,tankYList,tankXList2,tankYList2,mineXList,mineYList,mineXList2,mineYList2,win,-1);	
+				}
 	      }
 	    };
 	    Log.d("originX",Float.toString(selected.getX()));
@@ -1475,9 +1518,11 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 						somethingDied = true;
 					}
 				}
-        		if(player1){
+        		if(!player1){
 	        		for(int i = 0; i < soldList2.size();i++){ 
+	        			
 						if( circle.collidesWith(soldList2.get(i)) ){
+							System.out.println("SOLDIER HIT");
 							scene.detachChild(soldList2.get(i));
 							scene.detachChild(circle);
 							soldList2.remove(i);
@@ -1492,6 +1537,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         		else{
         			for(int i = 0; i < soldList.size();i++){ 
 						if( circle.collidesWith(soldList.get(i)) ){
+							System.out.println("SOLDIER HIT");
 							scene.detachChild(soldList.get(i));
 							scene.detachChild(circle);
 							soldList.remove(i);
@@ -1537,7 +1583,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					unregisterItems(tankList);
 					//player1 = false;
 					fire = false;
-					if(player1win()){
+					if(player1win() && isOnline == false){
 						turn2mes = false;
 						gameDialog(4);
 					}else{
@@ -1564,7 +1610,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 					camera.setRotation(0f);
 				}
 				scene.detachChild(bullet);
-				scene.detachChild(circle);
+				
 				//boolean pturn = !player1;
 				if(player1){
 					pIDturn = phoneID1;
@@ -1575,6 +1621,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				if(isOnline){
 					setTankXYList(tankList,tankList2);
 					setMineXYList(mineList,mineList2);
+					setSoldierXYList(soldList,soldList2);
 					if(player1win() || player2win()){
 						pIDturn = "null";
 						if(player1win()){
@@ -1595,7 +1642,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
 				float targetX,float targetY){
 		
-		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);
+		gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, soldXList,soldYList,soldXList2,soldYList2,
+				targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);		
 		System.out.println(gameState.user1name + "," + gameState.user1ID);
 		System.out.println(gameState.user2name + "," + gameState.user2ID);
 		Thread client = new Thread(new ClientThread(this,gameState,1));
@@ -1616,7 +1664,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
 			float targetX,float targetY){
 	
-	gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);
+	gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, soldXList,soldYList,soldXList2,soldYList2,
+								targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);
 	gameState.gameID=this.gameID;
 	System.out.println(gameState.user1name + "," + gameState.user1ID);
 	System.out.println(gameState.user2name + "," + gameState.user2ID);
@@ -1638,8 +1687,8 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 			LinkedList <Integer> p1MinesX,LinkedList <Integer> p1MinesY,LinkedList <Integer> p2MinesX,LinkedList <Integer> p2MinesY,
 			float targetX,float targetY){
 	pIDturn = phoneID1;
-	gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);
-	
+	gameState = new GameState(p1TanksX,p1TanksY,p2TanksX,p2TanksY,p1MinesX,p1MinesY,p2MinesX,p2MinesY, soldXList,soldYList,soldXList2,soldYList2,
+			targetX, targetY,phoneID1,phoneID2,user1,user2,pIDturn);	
 	System.out.println(gameState.user1name + "," + gameState.user1ID);
 	System.out.println(gameState.user2name + "," + gameState.user2ID);
 	Thread client = new Thread(new ClientThread(this,gameState,5));
@@ -1754,11 +1803,34 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 		}
 		
 	}
+	
+public void setNewSoldierList(LinkedList<Integer> listX,LinkedList<Integer> listY,LinkedList<Integer> listX2,LinkedList<Integer> listY2){
+		
+		if(listX != null && listY != null){
+			soldList.clear();
+			for(int i = 0; i < listX.size(); i++){
+				soldier = new Soldier(touchX ,touchY,30,30, this.SoldierTextureRegion, this.getVertexBufferObjectManager());
+				soldList.add(soldier);
+				scene.attachChild(soldier);
+			}
+		}
+		
+		if(listX2 != null && listY2 != null){
+			soldList2.clear();
+			for(int i = 0; i < listX2.size(); i++){
+				soldier = new Soldier(touchX ,touchY,30,30, this.SoldierTextureRegion, this.getVertexBufferObjectManager());
+				soldList2.add(soldier);
+				scene.attachChild(soldier);
+
+			}
+		}
+		
+	}
 	//creates game state
 	public void setGameState(GameState gs){
 		setNewTankList(gs.p1TanksX,gs.p1TanksY,gs.p2TanksX,gs.p2TanksY);
 		setNewMineList(gs.p2MinesX,gs.p2MinesY,gs.p2MinesX,gs.p2MinesY);
-		
+		setNewSoldierList(gs.p2MinesX,gs.p2MinesY,gs.p2MinesX,gs.p2MinesY);
 		user1 = gs.user1name;
 		phoneID1 = gs.user1ID;
 		user2 = gs.user2name;
