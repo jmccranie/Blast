@@ -1095,7 +1095,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	      Iterator<Soldier> its;
 	      Tank target_tank;
 	      Soldier target_soldier;
-	      if(!player1){
+	      if(!player1 && s_hit == false){
 	        it = tankList2.iterator();
 	        // iterating over the targets
 	        while (it.hasNext()) {
@@ -1139,7 +1139,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 	          }
 	        }
 	      }
-	      else{
+	      else if(player1 && s_hit == false){
 	    	  it = tankList.iterator();
 		        // iterating over the targets
 		        while (it.hasNext()) {
@@ -1188,12 +1188,18 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
 				if(player1win() && isOnline == false){
 					turn2mes = false;
 					gameDialog(4);
+					if (mEngine.isRunning()) {
+				        mEngine.stop();
+				    }
 				}else{
 					turn2mes = true;
 				}
 				if(player2win() && isOnline == false){
 					turn1mes = false;
 					gameDialog(4);
+					if (mEngine.isRunning()) {
+				        mEngine.stop();
+				    }
 				}else{
 					turn1mes = true;
 				}
@@ -2150,7 +2156,7 @@ private static final long serialVersionUID = 1L;
   return true;
 }
 	void soldierAim(){
-		if(runOnce == 0){
+		if(runOnce == 0 && isSelected){
 			aimer = new Sprite(originX+(this.mWidth/2),originY-(this.mHeight/2)+10,120,30, aimTextureRegion, this.getVertexBufferObjectManager());
 			//tester = new Sprite(0f,200f,20,20,mExplosionTextureRegion, this.getVertexBufferObjectManager());
 			if(this.getRotation() == 180){
