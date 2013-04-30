@@ -420,6 +420,7 @@ public class UnitAllocationActivity extends SimpleBaseGameActivity implements IO
         if(isOnline && gameStart){
         	  hud.detachChild(tankButton);
 			  hud.detachChild(mineButton);
+			  hud.detachChild(soldierButton);
 			  hud.detachChild(balanceLabel);
 			  hud.detachChild(unitAllocLabel);
 			  hud.clearTouchAreas();
